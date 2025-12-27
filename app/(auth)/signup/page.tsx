@@ -60,7 +60,15 @@ export default function SignupPage() {
       router.push('/verify-otp');
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.error || 'Failed to create account.');
+      let errorMessage = 'Failed to create account.';
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.code === 'ECONNABORTED') {
+        errorMessage = 'Request timed out. Please try again.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
