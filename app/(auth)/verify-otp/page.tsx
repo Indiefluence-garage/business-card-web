@@ -105,9 +105,21 @@ export default function VerifyOTPPage() {
         otp: data.otp,
       });
 
-      // Success! Clear session and redirect
+      // Success! Clear session and redirect based on type
+      const pendingVerification = sessionStorage.getItem('pendingVerification');
+      let redirectPath = '/dashboard'; // Default
+
+      if (pendingVerification) {
+        const { type } = JSON.parse(pendingVerification);
+        if (type === 'organization') {
+          redirectPath = '/onboarding/organization';
+        } else if (type === 'individual') {
+          redirectPath = '/onboarding/individual';
+        }
+      }
+
       sessionStorage.removeItem('pendingVerification');
-      router.push('/login?verified=true');
+      router.push(`${redirectPath}?verified=true`);
     } catch (err: any) {
       console.error(err);
 

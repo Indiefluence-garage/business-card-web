@@ -53,7 +53,8 @@ export default function SignupPage() {
       // Store verification session securely (not in URL)
       sessionStorage.setItem('pendingVerification', JSON.stringify({
         email: data.email,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        type: 'individual' // Explicitly set type
       }));
 
       // Redirect to OTP verification (no email in URL for security)
@@ -76,7 +77,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8">
-       <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold tracking-tight text-center text-primary">Create an account</CardTitle>
           <CardDescription className="text-center">
@@ -85,7 +86,7 @@ export default function SignupPage() {
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
-             {error && (
+            {error && (
               <div className="flex items-center gap-2 rounded-md bg-destructive/15 p-3 text-sm text-destructive bg-red-50 text-red-600 border border-red-200">
                 <AlertCircle className="h-4 w-4" />
                 <p>{error}</p>
@@ -107,8 +108,8 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
-                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                 <Input
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
                   id="email"
                   placeholder="name@example.com"
                   type="email"
@@ -134,10 +135,10 @@ export default function SignupPage() {
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-               <PasswordInput
-                  id="confirmPassword"
-                  {...register('confirmPassword')}
-                />
+              <PasswordInput
+                id="confirmPassword"
+                {...register('confirmPassword')}
+              />
               {errors.confirmPassword && (
                 <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>
               )}
@@ -152,6 +153,11 @@ export default function SignupPage() {
               Already have an account?{' '}
               <Link href="/login" className="font-medium text-primary hover:underline">
                 Sign in
+              </Link>
+            </div>
+            <div className="text-center text-sm text-muted-foreground">
+              <Link href="/select-type" className="font-medium text-primary hover:underline">
+                &larr; Back to account selection
               </Link>
             </div>
           </CardFooter>
