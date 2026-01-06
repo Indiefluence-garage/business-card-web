@@ -25,19 +25,10 @@ export default function DashboardPage() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
 
       if (!token) {
         router.push('/login');
         return;
-      }
-
-      if (userData) {
-        const parsedUser = JSON.parse(userData);
-        if (parsedUser.userType === 'organization') {
-          router.push('/organization/dashboard');
-          return;
-        }
       }
 
       console.log('🔄 [FETCH PROFILE] Starting profile fetch...');
@@ -47,16 +38,26 @@ export default function DashboardPage() {
       // @ts-ignore - The API returns { success: true, data: User } but type definition might be slightly off in usage here or response structure
       // Adjusting based on userService.getProfile returning response.data which is ProfileResponse<User>
       if (profileData && profileData.data) {
+        const userData = profileData.data;
+
+        // Check if user is organization type - redirect them to org dashboard
+        if (userData.userType === 'organization') {
+          console.log('User is organization type, redirecting to org dashboard');
+          router.push('/organization/dashboard');
+          return;
+        }
+
+        // User is individual type, proceed
         console.log('📦 [FETCH PROFILE] User data:', {
-          firstName: profileData.data.firstName,
-          lastName: profileData.data.lastName,
-          phoneNumber: profileData.data.phoneNumber,
-          country: profileData.data.country,
-          planId: profileData.data.planId,
-          subscriptionStatus: profileData.data.subscriptionStatus
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          phoneNumber: userData.phoneNumber,
+          country: userData.country,
+          planId: userData.planId,
+          subscriptionStatus: userData.subscriptionStatus
         });
-        setUser(profileData.data);
-        setFormData(profileData.data);
+        setUser(userData);
+        setFormData(userData);
       } else {
         // Fallback if structure is different
         console.log('⚠️ [FETCH PROFILE] Using fallback');

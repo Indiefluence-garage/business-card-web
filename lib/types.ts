@@ -9,6 +9,7 @@ export interface User {
   firstName: string;
   lastName: string;
   image?: string | null;
+  userType?: 'individual' | 'organization'; // User account type
 
   // Contact Info
   phoneNumber?: string | null;
