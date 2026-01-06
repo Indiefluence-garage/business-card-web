@@ -14,7 +14,7 @@ export const userService = {
   uploadProfileImage: async (file: File) => {
     const formData = new FormData();
     formData.append('profileImage', file);
-    const response = await api.post<ProfileResponse<{ imageUrl: string; user: User }>>('/profile/image', formData, {
+    const response = await api.post<ProfileResponse<{ image: string; user: User }>>('/profile/image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -22,7 +22,7 @@ export const userService = {
     return response.data;
   },
   deleteProfileImage: async () => {
-    const response = await api.delete<ProfileResponse<{ id: string; imageUrl: null }>>('/profile/image');
+    const response = await api.delete<ProfileResponse<{ id: string; image: null }>>('/profile/image');
     return response.data;
   },
 

@@ -6,9 +6,9 @@ import { Button } from './button';
 import { userService } from '@/lib/services/user.service';
 
 interface ProfileImageUploadProps {
-  currentImageUrl?: string | null;
+  image?: string | null;
   userInitials?: string;
-  onUploadSuccess?: (imageUrl: string) => void;
+  onUploadSuccess?: (image: string) => void;
   onDeleteSuccess?: () => void;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -19,7 +19,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
 
 export function ProfileImageUpload({
-  currentImageUrl,
+  image,
   userInitials = '??',
   onUploadSuccess,
   onDeleteSuccess,
@@ -86,18 +86,17 @@ export function ProfileImageUpload({
       const response = await userService.uploadProfileImage(file);
       console.log('✅ [PROFILE IMAGE] Upload success:', response);
 
-      // Extract imageUrl from response
-      let imageUrl: string | null = null;
+      let imageRes: string | null = null;
       if (response?.data && typeof response.data === 'object') {
-        if ('imageUrl' in response.data) {
-          imageUrl = (response.data as any).imageUrl;
-        } else if ('user' in response.data && (response.data as any).user?.imageUrl) {
-          imageUrl = (response.data as any).user.imageUrl;
+        if ('image' in response.data) {
+          imageRes = (response.data as any).image;
+        } else if ('user' in response.data && (response.data as any).user?.image) {
+          imageRes = (response.data as any).user.image;
         }
       }
 
-      if (imageUrl && onUploadSuccess) {
-        onUploadSuccess(imageUrl);
+      if (imageRes && onUploadSuccess) {
+        onUploadSuccess(imageRes);
       }
 
       setPreview(null);
@@ -168,15 +167,14 @@ export function ProfileImageUpload({
     }
   };
 
-  const displayImage = preview || currentImageUrl;
+  const displayImage = preview || image;
 
   return (
     <div className={`relative ${className}`}>
       {/* Main Image Display */}
       <div
-        className={`relative group ${sizeClasses[size]} rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden transition-all ${
-          isDragging ? 'ring-4 ring-primary ring-offset-2' : ''
-        }`}
+        className={`relative group ${sizeClasses[size]} rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden transition-all ${isDragging ? 'ring-4 ring-primary ring-offset-2' : ''
+          }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -221,9 +219,8 @@ export function ProfileImageUpload({
       <div className="absolute -bottom-1 -right-1 flex gap-1">
         {/* Upload Button */}
         <label
-          className={`bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${
-            uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+          className={`bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
         >
           <Camera className="h-4 w-4" />
           <input
@@ -237,13 +234,12 @@ export function ProfileImageUpload({
         </label>
 
         {/* Delete Button */}
-        {currentImageUrl && !preview && (
+        {image && !preview && (
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={uploading || deleting}
-            className={`bg-destructive text-white p-2 rounded-full hover:bg-destructive/90 transition-colors shadow-lg ${
-              uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`bg-destructive text-white p-2 rounded-full hover:bg-destructive/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
           >
             <Trash2 className="h-4 w-4" />
           </button>

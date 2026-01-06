@@ -8,7 +8,7 @@ export interface User {
   // Basic Info
   firstName: string;
   lastName: string;
-  imageUrl?: string | null;
+  image?: string | null;
 
   // Contact Info
   phoneNumber?: string | null;
