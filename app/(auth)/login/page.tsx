@@ -55,7 +55,12 @@ export default function LoginPage() {
       // Trigger auth state update across the app
       window.dispatchEvent(new Event('auth-change'));
 
-      router.push('/dashboard');
+      // Redirect based on user type
+      if (user.userType === 'organization') {
+        router.push('/organization/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.error || 'Failed to login. Please check your credentials.');
@@ -75,7 +80,7 @@ export default function LoginPage() {
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
-             {error && (
+            {error && (
               <div className="flex items-center gap-2 rounded-md bg-destructive/15 p-3 text-sm text-destructive bg-red-50 text-red-600 border border-red-200">
                 <AlertCircle className="h-4 w-4" />
                 <p>{error}</p>
@@ -90,8 +95,8 @@ export default function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
-                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                 <Input
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
                   id="email"
                   placeholder="name@example.com"
                   type="email"

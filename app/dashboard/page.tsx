@@ -25,9 +25,19 @@ export default function DashboardPage() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+
       if (!token) {
         router.push('/login');
         return;
+      }
+
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        if (parsedUser.userType === 'organization') {
+          router.push('/organization/dashboard');
+          return;
+        }
       }
 
       console.log('🔄 [FETCH PROFILE] Starting profile fetch...');

@@ -74,13 +74,32 @@ export default function RegisterOrganizationPage() {
 
             router.push('/verify-otp');
         } catch (err: any) {
-            console.error(err);
+            // Log full error for debugging
+            console.error('Register organization error (FULL):', err);
+
+            if (err.response) {
+                console.error('Server Response Data:', err.response.data);
+                console.error('Server Response Status:', err.response.status);
+            } else if (err.request) {
+                console.error('No response received (Network/CORS?):', err.request);
+            } else {
+                console.error('Error setting up request:', err.message);
+            }
+
             let errorMessage = 'Failed to register organization.';
+
+            // Prefer structured server error message, then details, then generic message
             if (err.response?.data?.error) {
                 errorMessage = err.response.data.error;
+            } else if (err.response?.data?.details) {
+                // specific handling if details is an object
+                errorMessage = typeof err.response.data.details === 'string'
+                    ? err.response.data.details
+                    : JSON.stringify(err.response.data.details);
             } else if (err.message) {
                 errorMessage = err.message;
             }
+
             setError(errorMessage);
         } finally {
             setIsLoading(false);

@@ -2,23 +2,21 @@ import { useState, useEffect } from 'react';
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Check for token in localStorage
-    const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      setIsAuthenticated(!!token);
-      setIsLoading(false);
-    };
+  const checkAuth = () => {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    setIsAuthenticated(!!token);
+    setUser(userData ? JSON.parse(userData) : null);
+    setIsLoading(false);
+  };
 
+  useEffect(() => {
     checkAuth();
 
-    // Optional: Listen for storage events to update state across tabs
-    // or if other components modify localStorage directly
     window.addEventListener('storage', checkAuth);
-
-    // Custom event to handle login/logout within the same tab without reload
     window.addEventListener('auth-change', checkAuth);
 
     return () => {
@@ -27,8 +25,9 @@ export function useAuth() {
     };
   }, []);
 
-  const login = (token: string) => {
+  const login = (token: string, userData: any) => {
     localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
     window.dispatchEvent(new Event('auth-change'));
   };
 
@@ -38,5 +37,5 @@ export function useAuth() {
     window.dispatchEvent(new Event('auth-change'));
   };
 
-  return { isAuthenticated, isLoading, login, logout };
+  return { isAuthenticated, isLoading, user, login, logout };
 }

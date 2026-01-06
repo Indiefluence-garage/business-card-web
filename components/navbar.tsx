@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/hooks/use-auth"
 import { useRouter } from "next/navigation"
 
 export function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -24,7 +24,10 @@ export function Navbar() {
           </Link>
           <nav className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
             {isAuthenticated && (
-              <Link href="/dashboard" className="transition-colors hover:text-foreground">
+              <Link
+                href={user?.userType === 'organization' ? "/organization/dashboard" : "/dashboard"}
+                className="transition-colors hover:text-foreground"
+              >
                 Dashboard
               </Link>
             )}
@@ -45,9 +48,9 @@ export function Navbar() {
                 </Button>
               </>
             ) : (
-                <Button variant="ghost" onClick={handleLogout}>
-                  Logout
-                </Button>
+              <Button variant="ghost" onClick={handleLogout}>
+                Logout
+              </Button>
             )}
           </div>
           <ThemeToggle />
