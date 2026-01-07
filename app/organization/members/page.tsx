@@ -6,7 +6,7 @@ import { invitationService, Member, Invitation } from '@/lib/services/invitation
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/form-elements';
 import { Button } from '@/components/ui/button';
 import { Input, Label } from '@/components/ui/form-elements';
-import { Users, Mail, Send, RefreshCw, Trash2, UserPlus, Shield, User as UserIcon } from 'lucide-react';
+import { Users, Mail, Send, RefreshCw, Trash2, UserPlus, Shield, User as UserIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function MembersPage() {
@@ -85,6 +85,21 @@ export default function MembersPage() {
             fetchMembers();
         } catch (error: any) {
             toast.error('Failed to cancel invitation');
+        }
+    };
+
+    const handleRemoveMember = async (memberId: string, memberName: string) => {
+        if (!confirm(`Are you sure you want to remove ${memberName} from the organization?`)) {
+            return;
+        }
+
+        try {
+            await invitationService.removeMember(memberId);
+            toast.success('Member removed successfully');
+            fetchMembers(); // Refresh the list
+        } catch (error: any) {
+            const errorMsg = error.response?.data?.error || 'Failed to remove member';
+            toast.error(errorMsg);
         }
     };
 
@@ -195,6 +210,7 @@ export default function MembersPage() {
                                             <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Email</th>
                                             <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Role</th>
                                             <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Joined</th>
+                                            <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -227,6 +243,18 @@ export default function MembersPage() {
                                                     </span>
                                                 </td>
                                                 <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{formatDate(member.joinedAt)}</td>
+                                                <td className="py-3 px-4">
+                                                    {member.role !== 'owner' && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => handleRemoveMember(member.id, member.name)}
+                                                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                        </Button>
+                                                    )}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

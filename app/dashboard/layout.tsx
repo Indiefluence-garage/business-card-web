@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, User, CreditCard, LogOut, Settings, Building2, ChevronDown, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, User, CreditCard, LogOut, Settings, Building2, ChevronDown, ChevronRight, MoreVertical } from 'lucide-react';
 import { organizationService, UserOrganization } from '@/lib/services/organization.service';
 import { toast } from 'sonner';
 
@@ -16,6 +16,7 @@ export default function DashboardLayout({
   const [organizations, setOrganizations] = useState<UserOrganization[]>([]);
   const [loadingOrgs, setLoadingOrgs] = useState(true);
   const [showOrganizations, setShowOrganizations] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrganizations();
@@ -53,6 +54,22 @@ export default function DashboardLayout({
     localStorage.removeItem('user');
     toast.success('Logged out successfully');
     router.push('/login');
+  };
+
+  const handleLeaveOrganization = async (orgId: string, orgName: string) => {
+    if (!confirm(`Are you sure you want to leave "${orgName}"? You will need to be invited again to rejoin.`)) {
+      return;
+    }
+
+    try {
+      await organizationService.leaveOrganization(orgId);
+      toast.success(`You have left ${orgName}`);
+      setOpenDropdown(null);
+      fetchOrganizations(); // Refresh the list
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.error || 'Failed to leave organization';
+      toast.error(errorMsg);
+    }
   };
 
   return (
@@ -116,19 +133,57 @@ export default function DashboardLayout({
                   <li>
                     <ul className="space-y-1 ml-2">
                       {organizations.map((org) => (
-                        <li key={org.id}>
-                          <button
-                            onClick={() => handleOrganizationClick(org)}
-                            className="flex items-center gap-3 rounded-lg px-4 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground w-full text-left"
-                          >
-                            <div className="w-6 h-6 bg-gradient-to-br from-primary to-primary/70 rounded flex items-center justify-center text-xs text-white font-semibold flex-shrink-0">
-                              {org.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium truncate">{org.name}</p>
-                              <p className="text-xs text-muted-foreground capitalize">{org.role}</p>
-                            </div>
-                          </button>
+                        <li key={org.id} className="relative">
+                          <div className="flex items-center gap-1 group">
+                            <button
+                              onClick={() => handleOrganizationClick(org)}
+                              className="flex items-center gap-3 rounded-lg px-4 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground flex-1 text-left"
+                            >
+                              <div className="w-6 h-6 bg-gradient-to-br from-primary to-primary/70 rounded flex items-center justify-center text-xs text-white font-semibold flex-shrink-0">
+                                {org.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium truncate">{org.name}</p>
+                                <p className="text-xs text-muted-foreground capitalize">{org.role}</p>
+                              </div>
+                            </button>
+
+                            {/* Three dots menu */}
+                            {org.role !== 'owner' && (
+                              <div className="relative">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenDropdown(openDropdown === org.id ? null : org.id);
+                                  }}
+                                  className="p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                                </button>
+
+                                {openDropdown === org.id && (
+                                  <>
+                                    {/* Backdrop to close dropdown */}
+                                    <div
+                                      className="fixed inset-0 z-10"
+                                      onClick={() => setOpenDropdown(null)}
+                                    />
+
+                                    {/* Dropdown menu */}
+                                    <div className="absolute right-0 top-8 z-20 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1">
+                                      <button
+                                        onClick={() => handleLeaveOrganization(org.id, org.name)}
+                                        className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                      >
+                                        <LogOut className="h-4 w-4" />
+                                        Leave Organization
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </li>
                       ))}
                     </ul>

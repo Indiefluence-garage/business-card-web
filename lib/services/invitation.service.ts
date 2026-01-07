@@ -93,4 +93,12 @@ export const invitationService = {
         const response = await api.delete(`/organizations/invitations/${invitationId}`);
         return response.data;
     },
+
+    /**
+     * Remove member from organization
+     */
+    async removeMember(memberId: string): Promise<{ success: true; message: string }> {
+        const response = await api.delete(`/organizations/members/${memberId}`);
+        return response.data;
+    },
 };

@@ -48,4 +48,12 @@ export const organizationService = {
         const response = await api.get<UserOrganizationsResponse>('/organizations/my-organizations');
         return response.data;
     },
+
+    /**
+     * Leave an organization (for individual users)
+     */
+    async leaveOrganization(organizationId: string): Promise<{ success: true; message: string }> {
+        const response = await api.post(`/organizations/leave/${organizationId}`);
+        return response.data;
+    },
 };
