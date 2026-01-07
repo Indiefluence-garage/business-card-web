@@ -105,8 +105,21 @@ export default function VerifyOTPPage() {
         otp: data.otp,
       });
 
+      console.log('✅ [VERIFY OTP] Email verified, response:', response);
+
+      // CRITICAL: Store the token in localStorage so user is authenticated
+      if (response.token) {
+        console.log('🔑 [VERIFY OTP] Storing auth token...');
+        localStorage.setItem('token', response.token);
+
+        // Trigger auth state update
+        window.dispatchEvent(new Event('auth-change'));
+      }
+
       // Success! Clear session and redirect based on type
       const pendingVerification = sessionStorage.getItem('pendingVerification');
+      const pendingInviteToken = sessionStorage.getItem('pendingInviteToken');
+
       let redirectPath = '/dashboard'; // Default
 
       if (pendingVerification) {
@@ -114,10 +127,19 @@ export default function VerifyOTPPage() {
         if (type === 'organization') {
           redirectPath = '/onboarding/organization';
         } else if (type === 'individual') {
-          redirectPath = '/onboarding/individual';
+          // Check if there's a pending invitation
+          if (pendingInviteToken) {
+            // Set flag to trigger auto-accept
+            console.log('🎯 [VERIFY OTP] Setting justSignedUp flag for auto-accept...');
+            sessionStorage.setItem('justSignedUp', 'true');
+            redirectPath = `/accept-invite/${pendingInviteToken}`;
+          } else {
+            redirectPath = '/onboarding/individual';
+          }
         }
       }
 
+      console.log('➡️ [VERIFY OTP] Redirecting to:', redirectPath);
       sessionStorage.removeItem('pendingVerification');
       router.push(`${redirectPath}?verified=true`);
     } catch (err: any) {
