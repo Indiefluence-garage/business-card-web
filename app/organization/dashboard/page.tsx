@@ -10,8 +10,9 @@ import { userService } from '@/lib/services/user.service';
 import { organizationService, Organization } from '@/lib/services/organization.service';
 import { ProfileImageUpload } from '@/components/ui/ProfileImageUpload';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label, Textarea } from '@/components/ui/form-elements';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter, Input, Label, Textarea } from '@/components/ui/form-elements';
 import { toast } from 'sonner';
+import { Shield } from 'lucide-react';
 
 export default function OrganizationDashboard() {
     const router = useRouter();
@@ -108,6 +109,47 @@ export default function OrganizationDashboard() {
         }
     };
 
+    const handleGetLocation = () => {
+        if (!navigator.geolocation) {
+            toast.error('Geolocation is not supported by your browser');
+            return;
+        }
+
+        toast.loading('Fetching location...', { id: 'location-fetch' });
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            try {
+                const { latitude, longitude } = position.coords;
+                // Using Nominatim (OpenStreetMap) for free reverse geocoding
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`);
+                const data = await response.json();
+
+                if (data && data.address) {
+                    const address = data.address;
+                    const street = address.road || address.pedestrian || address.suburb || "";
+                    const city = address.city || address.town || address.village || "";
+                    const postcode = address.postcode || "";
+                    const country = address.country || "";
+
+                    const formattedAddress = [street, city, postcode].filter(Boolean).join(", ");
+
+                    setFormData((prev: any) => ({
+                        ...prev,
+                        address: formattedAddress,
+                        country: country
+                    }));
+                    toast.success('Location updated!', { id: 'location-fetch' });
+                }
+            } catch (error) {
+                console.error('Failed to reverse geocode:', error);
+                toast.error('Failed to get address details', { id: 'location-fetch' });
+            }
+        }, (error) => {
+            console.error('Geolocation error:', error);
+            toast.error('Could not get your location', { id: 'location-fetch' });
+        });
+    };
+
     if (loading && !user) {
         return (
             <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -168,8 +210,15 @@ export default function OrganizationDashboard() {
                                 size="lg"
                                 className="ring-4 ring-background shadow-2xl"
                             />
-                            <div className="text-center md:text-left pb-2">
-                                <h2 className="text-3xl font-bold">{organization?.name || user.name}</h2>
+                            <div className="text-center md:text-left pb-2 flex-1">
+                                <div className="flex flex-col md:flex-row items-center md:items-end gap-3">
+                                    <h2 className="text-3xl font-bold">{organization?.name || user.name}</h2>
+                                    {user.planId && (
+                                        <div className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 mb-1">
+                                            {user.planId.replace('tier', 'Tier ')} Plan
+                                        </div>
+                                    )}
+                                </div>
                                 <p className="text-muted-foreground mt-1">{user.email}</p>
                                 {organization?.slug && (
                                     <p className="text-sm text-primary mt-1">@{organization.slug}</p>
@@ -211,9 +260,20 @@ export default function OrganizationDashboard() {
                                     <Label>Country</Label>
                                     <Input name="country" value={formData.country || ''} onChange={handleInputChange} placeholder="United States" />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>Address</Label>
-                                    <Input name="address" value={formData.address || ''} onChange={handleInputChange} placeholder="123 Main St, City" />
+                                <div className="space-y-2 md:col-span-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label>Address</Label>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={handleGetLocation}
+                                            className="h-8 text-xs text-primary hover:text-primary hover:bg-primary/10"
+                                        >
+                                            <MapPin className="mr-2 h-3 w-3" /> Use Current Location
+                                        </Button>
+                                    </div>
+                                    <Input name="address" value={formData.address || ''} onChange={handleInputChange} placeholder="123 Main St, City, Zip" />
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
                                     <Label>Bio / Description</Label>
@@ -290,6 +350,87 @@ export default function OrganizationDashboard() {
                         )}
                     </CardContent>
                 </Card>
+
+                {/* Subscription Status Card - New for Organization */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="md:col-span-2 border-none shadow-lg">
+                        <CardHeader>
+                            <CardTitle>Team Workspace</CardTitle>
+                            <CardDescription>Stats and active members</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center">
+                                    <p className="text-3xl font-bold text-primary">2</p>
+                                    <p className="text-sm text-muted-foreground">Active Members</p>
+                                </div>
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center text-muted-foreground">
+                                    <p className="text-3xl font-bold italic">--</p>
+                                    <p className="text-sm">Team Scans</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button variant="outline" className="w-full" onClick={() => router.push('/organization/members')}>
+                                Manage Members
+                            </Button>
+                        </CardFooter>
+                    </Card>
+
+                    <Card className="border-none shadow-lg">
+                        <CardHeader>
+                            <CardTitle>Subscription</CardTitle>
+                            <CardDescription>Current plan details</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex flex-col items-center justify-center py-6 space-y-4">
+                                <Shield className="h-16 w-16 text-primary/50" />
+                                <div className="text-center space-y-2 w-full">
+                                    <h3 className="text-2xl font-bold capitalize">
+                                        {user.planId ? user.planId.replace('tier', 'Tier ') : 'Free'} Plan
+                                    </h3>
+
+                                    {/* Status Badge */}
+                                    <div className="flex justify-center">
+                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${user.subscriptionStatus === 'active'
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                            : user.subscriptionStatus === 'expired'
+                                                ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                                                : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+                                            }`}>
+                                            {user.subscriptionStatus === 'active' ? '✓ Active' :
+                                                user.subscriptionStatus === 'expired' ? '✗ Expired' :
+                                                    'Free Tier'}
+                                        </span>
+                                    </div>
+
+                                    {/* Credits */}
+                                    <p className="text-sm text-muted-foreground">
+                                        {user.creditsRemaining === 999999
+                                            ? 'Unlimited Scans'
+                                            : `${user.creditsRemaining || 0} Credits Remaining`}
+                                    </p>
+
+                                    {/* Expiration Date */}
+                                    {user.planEndsAt && (
+                                        <div className="pt-2 border-t mt-2">
+                                            <p className="text-xs text-muted-foreground">
+                                                {new Date(user.planEndsAt) > new Date()
+                                                    ? `Expires: ${new Date(user.planEndsAt).toLocaleDateString()}`
+                                                    : `Expired: ${new Date(user.planEndsAt).toLocaleDateString()}`}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
+                                {user.subscriptionStatus === 'active' ? 'Upgrade Plan' : 'View Plans'}
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </div>
             </div>
         </div>
     );

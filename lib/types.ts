@@ -60,6 +60,7 @@ export interface ProfileResponse<T> {
 export interface Plan {
   id: string; // 'free' | 'tier1' | 'tier2' | 'tier3'
   name: string;
+  targetType: 'individual' | 'organization';
   price: number; // in cents
   interval: string; // '30 days' | '90 days' | '365 days'
   features: string[];
