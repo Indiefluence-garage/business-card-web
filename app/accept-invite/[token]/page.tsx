@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { invitationService, Invitation } from '@/lib/services/invitation.service';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/form-elements';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Building2, UserPlus, X, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function AcceptInvitePage() {
+function AcceptInviteContent() {
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
@@ -311,5 +311,17 @@ export default function AcceptInvitePage() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function AcceptInvitePage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        }>
+            <AcceptInviteContent />
+        </Suspense>
     );
 }

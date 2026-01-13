@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/form-elements';
 import { Button } from '@/components/ui/button';
 import { Check, X, AlertCircle, Loader2 } from 'lucide-react';
 import { paymentService } from '@/lib/services/payment.service';
 
-export default function CheckoutTestPage() {
+function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planId = searchParams.get('planId') || 'tier1';
@@ -184,11 +184,10 @@ export default function CheckoutTestPage() {
 
       {/* Result Display */}
       {result && (
-        <Card className={`${
-          result.type === 'success' ? 'border-green-500 bg-green-50 dark:bg-green-950/20' :
-          result.type === 'warning' ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20' :
-          'border-red-500 bg-red-50 dark:bg-red-950/20'
-        }`}>
+        <Card className={`${result.type === 'success' ? 'border-green-500 bg-green-50 dark:bg-green-950/20' :
+            result.type === 'warning' ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20' :
+              'border-red-500 bg-red-50 dark:bg-red-950/20'
+          }`}>
           <CardHeader>
             <div className="flex items-center gap-2">
               {result.type === 'success' && <Check className="h-6 w-6 text-green-600" />}
@@ -196,16 +195,16 @@ export default function CheckoutTestPage() {
               {result.type === 'error' && <X className="h-6 w-6 text-red-600" />}
               <CardTitle className={
                 result.type === 'success' ? 'text-green-900 dark:text-green-100' :
-                result.type === 'warning' ? 'text-yellow-900 dark:text-yellow-100' :
-                'text-red-900 dark:text-red-100'
+                  result.type === 'warning' ? 'text-yellow-900 dark:text-yellow-100' :
+                    'text-red-900 dark:text-red-100'
               }>
                 {result.title}
               </CardTitle>
             </div>
             <CardDescription className={
               result.type === 'success' ? 'text-green-700 dark:text-green-300' :
-              result.type === 'warning' ? 'text-yellow-700 dark:text-yellow-300' :
-              'text-red-700 dark:text-red-300'
+                result.type === 'warning' ? 'text-yellow-700 dark:text-yellow-300' :
+                  'text-red-700 dark:text-red-300'
             }>
               {result.message}
             </CardDescription>
@@ -237,5 +236,17 @@ export default function CheckoutTestPage() {
         </ul>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutTestPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }
