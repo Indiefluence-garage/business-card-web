@@ -10,7 +10,7 @@ export default function Home() {
           <span className="text-primary">intelligently.</span>
         </h1>
         <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto sm:mx-0">
-          Card CRM is the modern way to organize business cards and contacts.
+          Lukewarm is the modern way to organize business cards and contacts.
           Scan, save, and sync your professional network across all devices.
         </p>
 

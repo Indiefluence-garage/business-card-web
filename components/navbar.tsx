@@ -20,7 +20,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center space-x-2 font-bold text-xl">
-            <span>Card CRM</span>
+            <span>Lukewarm</span>
           </Link>
           <nav className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
             {isAuthenticated && (

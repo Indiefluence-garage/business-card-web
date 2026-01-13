@@ -81,7 +81,7 @@ export default function SignupPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold tracking-tight text-center text-primary">Create an account</CardTitle>
           <CardDescription className="text-center">
-            Enter your details to get started with Card CRM
+            Enter your details to get started with Lukewarm
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>

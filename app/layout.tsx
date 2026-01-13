@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Card CRM",
+  title: "Lukewarm",
   description: "Manage your business cards and contacts efficiently",
 };
 

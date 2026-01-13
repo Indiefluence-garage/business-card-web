@@ -12,7 +12,7 @@ export default function SelectTypePage() {
                 <CardHeader className="space-y-1 text-center">
                     <CardTitle className="text-2xl font-bold tracking-tight text-primary">Choose Account Type</CardTitle>
                     <CardDescription>
-                        Select how you want to use Card CRM
+                        Select how you want to use Lukewarm
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6 md:grid-cols-2 p-6">
