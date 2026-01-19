@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Loader2, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
-import api from '@/lib/api';
+import { authService } from '@/lib/services/auth.service';
 
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/PasswordInput';
@@ -45,25 +45,42 @@ function LoginForm() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.post('/auth/login', data);
-      const { token, user } = response.data;
+      const response = await authService.login({
+        email: data.email,
+        password: data.password,
+      });
 
-      // Store token and user data
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      // Store token if available (for JWT compatibility)
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
+
+      // Store user data
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
 
       // Trigger auth state update across the app
       window.dispatchEvent(new Event('auth-change'));
 
       // Redirect based on user type
-      if (user.userType === 'organization') {
+      const user = response.user as any;
+      const userType = user?.userType || user?.user_type;
+      if (userType === 'organization') {
         router.push('/organization/dashboard');
       } else {
         router.push('/dashboard');
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.error || 'Failed to login. Please check your credentials.');
+
+      // Handle specific error codes
+      if (err.message === 'EMAIL_NOT_VERIFIED') {
+        setError('Your email is not verified. Please check your inbox for verification code.');
+        // Optionally redirect to verify page
+      } else {
+        setError(err.message || 'Failed to login. Please check your credentials.');
+      }
     } finally {
       setIsLoading(false);
     }

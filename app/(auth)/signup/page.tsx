@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Loader2, User, Mail, Lock, AlertCircle } from 'lucide-react';
-import api from '@/lib/api';
+import { authService } from '@/lib/services/auth.service';
 
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/PasswordInput';
@@ -43,7 +43,7 @@ export default function SignupPage() {
     setIsLoading(true);
     setError(null);
     try {
-      await api.post('/auth/register', {
+      await authService.register({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
@@ -61,15 +61,7 @@ export default function SignupPage() {
       router.push('/verify-otp');
     } catch (err: any) {
       console.error(err);
-      let errorMessage = 'Failed to create account.';
-      if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.code === 'ECONNABORTED') {
-        errorMessage = 'Request timed out. Please try again.';
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      setError(errorMessage);
+      setError(err.message || 'Failed to create account.');
     } finally {
       setIsLoading(false);
     }
