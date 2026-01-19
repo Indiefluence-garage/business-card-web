@@ -88,10 +88,10 @@ export function ProfileImageUpload({
 
       let imageRes: string | null = null;
       if (response?.data && typeof response.data === 'object') {
-        if ('image' in response.data) {
-          imageRes = (response.data as any).image;
-        } else if ('user' in response.data && (response.data as any).user?.image) {
-          imageRes = (response.data as any).user.image;
+        if ('imageUrl' in response.data) {
+          imageRes = (response.data as any).imageUrl;
+        } else if ('user' in response.data && (response.data as any).user?.imageUrl) {
+          imageRes = (response.data as any).user.imageUrl;
         }
       }
 

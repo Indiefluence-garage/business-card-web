@@ -162,7 +162,7 @@ export default function DashboardPage() {
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row items-center gap-6 p-4 border rounded-lg bg-card/50">
               <ProfileImageUpload
-                image={user.image}
+                image={user.imageUrl}
                 userInitials={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
                 onUploadSuccess={async (image) => {
                   console.log('✅ [DASHBOARD] Image uploaded:', image);
