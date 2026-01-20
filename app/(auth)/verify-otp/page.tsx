@@ -107,10 +107,14 @@ export default function VerifyOTPPage() {
 
       console.log('✅ [VERIFY OTP] Email verified, response:', response);
 
-      // CRITICAL: Store the token in localStorage so user is authenticated
+      // CRITICAL: Store the token and user in localStorage so user is authenticated
       if (response.token) {
         console.log('🔑 [VERIFY OTP] Storing auth token...');
         localStorage.setItem('token', response.token);
+
+        if (response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+        }
 
         // Trigger auth state update
         window.dispatchEvent(new Event('auth-change'));

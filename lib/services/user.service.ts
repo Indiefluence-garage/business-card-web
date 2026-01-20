@@ -14,7 +14,7 @@ export const userService = {
   uploadProfileImage: async (file: File) => {
     const formData = new FormData();
     formData.append('profileImage', file);
-    const response = await api.post<ProfileResponse<{ image: string; user: User }>>('/profile/image', formData, {
+    const response = await api.post<ProfileResponse<{ imageUrl: string; user: User }>>('/profile/image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
