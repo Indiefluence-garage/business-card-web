@@ -49,8 +49,7 @@ export default function DashboardPage() {
 
         // User is individual type, proceed
         console.log('📦 [FETCH PROFILE] User data:', {
-          firstName: userData.firstName,
-          lastName: userData.lastName,
+          name: userData.name,
           phoneNumber: userData.phoneNumber,
           country: userData.country,
           planId: userData.planId,
@@ -93,8 +92,7 @@ export default function DashboardPage() {
       setLoading(true);
       console.log('💾 [UPDATE PROFILE] Sending update...');
       console.log('📤 [UPDATE PROFILE] Data:', {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        name: formData.name,
         phoneNumber: formData.phoneNumber,
         whatsappNumber: formData.whatsappNumber,
         country: formData.country,
@@ -161,9 +159,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row items-center gap-6 p-4 border rounded-lg bg-card/50">
-              <ProfileImageUpload
+                <ProfileImageUpload
                 image={user.image}
-                userInitials={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
+                userInitials={user.name ? user.name.substring(0, 2).toUpperCase() : 'U'}
                 onUploadSuccess={async (image) => {
                   console.log('✅ [DASHBOARD] Image uploaded:', image);
                   await fetchProfile();
@@ -175,7 +173,7 @@ export default function DashboardPage() {
                 size="lg"
               />
               <div className="text-center sm:text-left space-y-1 flex-1">
-                <h3 className="font-semibold text-xl">{user.firstName} {user.lastName}</h3>
+                <h3 className="font-semibold text-xl">{user.name}</h3>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
                 {user.bio && <p className="text-sm italic mt-2 text-foreground/80">{user.bio}</p>}
               </div>
@@ -184,13 +182,9 @@ export default function DashboardPage() {
             {isEditing ? (
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" name="firstName" value={formData.firstName || ''} onChange={handleInputChange} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" name="lastName" value={formData.lastName || ''} onChange={handleInputChange} />
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" name="name" value={formData.name || ''} onChange={handleInputChange} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Phone</Label>

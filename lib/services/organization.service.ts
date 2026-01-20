@@ -53,7 +53,36 @@ export const organizationService = {
      * Leave an organization (for individual users)
      */
     async leaveOrganization(organizationId: string): Promise<{ success: true; message: string }> {
-        const response = await api.post(`/organizations/leave/${organizationId}`);
+        const response = await api.post(`/organizations/leave`, { organizationId });
         return response.data;
     },
+
+    /**
+     * Switch the active organization context for the user
+     */
+    async switchOrganization(organizationId: string): Promise<{ success: true; message: string }> {
+        const response = await api.post('/organizations/switch', { organizationId });
+        return response.data;
+    },
+
+    async createOrganization(name: string, slug?: string): Promise<{ success: true, data: Organization }> {
+        const response = await api.post('/organizations/create', { name, slug });
+        // @ts-ignore
+        return response.data;
+    },
+
+    async updateOrganization(orgId: string, data: { name?: string; slug?: string; logo?: string }): Promise<{ success: true, data: Organization }> {
+        const response = await api.patch<{ success: true, data: Organization }>(`/organizations/${orgId}`, data);
+        return response.data;
+    },
+
+    async deleteOrganization(orgId: string): Promise<{ success: true }> {
+        const response = await api.delete<{ success: true }>(`/organizations/${orgId}`);
+        return response.data;
+    },
+
+    async inviteMember(orgId: string, email: string, role: string): Promise<{ success: true; message: string }> {
+        const response = await api.post<{ success: true; message: string }>(`/organizations/${orgId}/invitations`, { email, role });
+        return response.data;
+    }
 };

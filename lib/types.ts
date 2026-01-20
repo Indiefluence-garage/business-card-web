@@ -3,11 +3,13 @@ export interface User {
   id: string;
   email: string;
   authProvider?: 'email' | 'google';
-  isEmailVerified: boolean;
+  emailVerified: boolean; // Renamed from isEmailVerified
+  isEmailVerified?: never; // Deprecated
 
   // Basic Info
-  firstName: string;
-  lastName: string;
+  name: string; // Renamed from firstName/lastName
+  firstName?: never; // Deprecated
+  lastName?: never; // Deprecated
   image?: string | null;
   userType?: 'individual' | 'organization'; // User account type
 

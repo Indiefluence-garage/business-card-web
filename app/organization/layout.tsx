@@ -10,6 +10,7 @@ import { userService } from '@/lib/services/user.service';
 import { organizationService, Organization } from '@/lib/services/organization.service';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import OrganizationSwitcher from '@/components/organization/org-switcher';
 
 export default function OrganizationLayout({
     children,
@@ -96,13 +97,11 @@ export default function OrganizationLayout({
         <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
             {/* Sidebar */}
             <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hidden md:flex flex-col shadow-lg">
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/70 rounded-lg flex items-center justify-center shadow-md">
-                            <Building2 className="h-6 w-6 text-white" />
-                        </div>
-                        <span className="font-bold text-lg truncate">{organization?.name || user.name}</span>
-                    </div>
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <OrganizationSwitcher
+                        currentOrgId={organization?.id}
+                        className="w-full"
+                    />
                 </div>
                 <nav className="flex-1 p-4 space-y-2">
                     <Link href="/organization/dashboard">
