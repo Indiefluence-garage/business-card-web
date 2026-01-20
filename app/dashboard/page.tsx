@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter, Input, Label } from '@/components/ui/form-elements';
 import { User as UserIcon, Mail, Shield, Phone, MapPin, Globe, Linkedin, Instagram, Twitter, Facebook, Save, X } from 'lucide-react';
-import { userService } from '@/lib/services/user.service';
+import * as userService from '@/lib/services/user';
 import { User } from '@/lib/types';
 import { ProfileImageUpload } from '@/components/ui/ProfileImageUpload';
 

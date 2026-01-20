@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/form-elements';
 import { Button } from '@/components/ui/button';
 import { Check, X, AlertCircle, Loader2 } from 'lucide-react';
-import { paymentService } from '@/lib/services/payment.service';
+import * as paymentService from '@/lib/services/payment';
 
 function CheckoutContent() {
   const router = useRouter();

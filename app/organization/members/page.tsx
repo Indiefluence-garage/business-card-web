@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { invitationService, Member, Invitation } from '@/lib/services/invitation.service';
+import * as invitationService from '@/lib/services/invitation';
+import { Member, Invitation } from '@/lib/services/invitation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/form-elements';
 import { Button } from '@/components/ui/button';
 import { Input, Label } from '@/components/ui/form-elements';

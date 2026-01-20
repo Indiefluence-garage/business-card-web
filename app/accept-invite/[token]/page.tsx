@@ -2,7 +2,8 @@
 
 import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { invitationService, Invitation } from '@/lib/services/invitation.service';
+import * as invitationService from '@/lib/services/invitation';
+import { Invitation } from '@/lib/services/invitation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/form-elements';
 import { Button } from '@/components/ui/button';
 import { Building2, UserPlus, X, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';

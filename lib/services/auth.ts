@@ -19,9 +19,8 @@ interface AuthSuccessResponse {
   };
 }
 
-export const authService = {
-  // Register individual user with Better Auth
-  register: async (data: { email: string; password: string; firstName: string; lastName: string }) => {
+// Register individual user with Better Auth
+export const register = async (data: { email: string; password: string; firstName: string; lastName: string }) => {
     const name = `${data.firstName} ${data.lastName}`.trim();
 
     const result = await signUp.email({
@@ -45,39 +44,28 @@ export const authService = {
       message: 'Registration successful. Please check your email for OTP.',
       user: result.data?.user
     };
-  },
+};
 
-  // Login with Better Auth
-  login: async (data: { email: string; password: string }) => {
-    const result = await signIn.email({
+// Login with Custom API (Includes User Type & Org Context logic)
+export const login = async (data: { email: string; password: string }) => {
+    // We use the custom endpoint to ensure backend logic (auto-healing org context) runs
+    const response = await api.post<AuthSuccessResponse & { message: string, success: boolean }>('/auth/login', {
       email: data.email,
       password: data.password,
     });
 
-    if (result.error) {
-      // Check if email not verified
-      if (result.error.message?.includes('not verified')) {
-        throw new Error('EMAIL_NOT_VERIFIED');
-      }
-      throw new Error(result.error.message || 'Login failed');
-    }
+    // The backend returns { success: true, user: ..., token: ... }
+    return response.data;
+};
 
-    return {
-      success: true,
-      message: 'Login successful',
-      token: result.data?.token,
-      user: result.data?.user
-    };
-  },
-
-  // Google login - uses custom endpoint for native mobile
-  googleLogin: async (data: { idToken?: string; code?: string }) => {
+// Google login - uses custom endpoint for native mobile
+export const googleLogin = async (data: { idToken?: string; code?: string }) => {
     const response = await api.post<AuthSuccessResponse & { message: string }>('/auth/google', data);
     return response.data;
-  },
+};
 
-  // Verify email with Better Auth
-  verifyEmail: async (data: { email: string; otp: string }) => {
+// Verify email with Better Auth
+export const verifyEmail = async (data: { email: string; otp: string }) => {
     const result = await emailOtp.verifyEmail({
       email: data.email,
       otp: data.otp,
@@ -93,10 +81,10 @@ export const authService = {
       token: result.data?.token,
       user: result.data?.user
     };
-  },
+};
 
-  // Resend OTP with Better Auth
-  resendOtp: async (data: { email: string }) => {
+// Resend OTP with Better Auth
+export const resendOtp = async (data: { email: string }) => {
     const result = await emailOtp.sendVerificationOtp({
       email: data.email,
       type: "email-verification"
@@ -110,16 +98,16 @@ export const authService = {
       success: true,
       message: 'OTP sent to your email'
     };
-  },
+};
 
-  // Request password reset - uses custom endpoint
-  requestPasswordReset: async (data: { email: string }) => {
+// Request password reset - uses custom endpoint
+export const requestPasswordReset = async (data: { email: string }) => {
     const response = await api.post<{ message: string }>('/auth/request-password-reset', data);
     return response.data;
-  },
+};
 
-  // Reset password with Better Auth  
-  resetPassword: async (data: { email: string; otp: string; newPassword: string }) => {
+// Reset password with Better Auth
+export const resetPassword = async (data: { email: string; otp: string; newPassword: string }) => {
     // For OTP-based reset, we need to use custom endpoint
     const response = await api.post<{ message: string }>('/auth/reset-password', {
       email: data.email,
@@ -127,16 +115,16 @@ export const authService = {
       newPassword: data.newPassword
     });
     return response.data;
-  },
+};
 
-  // Change password - uses custom endpoint
-  changePassword: async (data: { currentPassword: string; newPassword: string }) => {
+// Change password - uses custom endpoint
+export const changePassword = async (data: { currentPassword: string; newPassword: string }) => {
     const response = await api.post<{ message: string }>('/auth/change-password', data);
     return response.data;
-  },
+};
 
-  // Logout - sign out from Better Auth
-  logout: async () => {
+// Logout - sign out from Better Auth
+export const logout = async () => {
     const result = await signOut();
 
     // Also call custom logout for JWT invalidation
@@ -150,16 +138,16 @@ export const authService = {
       success: true,
       message: 'Logout successful'
     };
-  },
+};
 
-  // Get current user - uses custom endpoint for JWT compatibility  
-  getMe: async () => {
+// Get current user - uses custom endpoint for JWT compatibility
+export const getMe = async () => {
     const response = await api.get<{ user: any }>('/auth/me');
     return response.data;
-  },
+};
 
-  // Register organization - uses custom endpoint
-  registerOrganization: async (data: {
+// Register organization - uses custom endpoint
+export const registerOrganization = async (data: {
     email: string;
     password: string;
     firstName: string;
@@ -169,6 +157,4 @@ export const authService = {
   }) => {
     const response = await api.post<AuthSuccessResponse & { organization: any; message: string }>('/auth/register-organization', data);
     return response.data;
-  }
 };
-

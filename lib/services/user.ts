@@ -1,17 +1,18 @@
 import api from '../api';
 import { User, ProfileResponse } from '../types';
 
-export const userService = {
-  // Profile Routes
-  getProfile: async () => {
+// Profile Routes
+export const getProfile = async () => {
     const response = await api.get<ProfileResponse<User>>('/profile');
     return response.data;
-  },
-  updateProfile: async (data: Partial<User>) => {
+};
+
+export const updateProfile = async (data: Partial<User>) => {
     const response = await api.put<ProfileResponse<User>>('/profile', data);
     return response.data;
-  },
-  uploadProfileImage: async (file: File) => {
+};
+
+export const uploadProfileImage = async (file: File) => {
     const formData = new FormData();
     formData.append('profileImage', file);
     const response = await api.post<ProfileResponse<{ imageUrl: string; user: User }>>('/profile/image', formData, {
@@ -20,26 +21,29 @@ export const userService = {
       },
     });
     return response.data;
-  },
-  deleteProfileImage: async () => {
+};
+
+export const deleteProfileImage = async () => {
     const response = await api.delete<ProfileResponse<{ id: string; image: null }>>('/profile/image');
     return response.data;
-  },
+};
 
-  // Admin Routes
-  getUsers: async () => {
+// Admin Routes
+export const getUsers = async () => {
     const response = await api.get<User[]>('/users');
     return response.data;
-  },
-  getUser: async (id: string) => {
+};
+
+export const getUser = async (id: string) => {
     const response = await api.get<User>(`/users/${id}`);
     return response.data;
-  },
-  updateUser: async (id: string, data: Partial<User>) => {
+};
+
+export const updateUser = async (id: string, data: Partial<User>) => {
     const response = await api.put<User>(`/users/${id}`, data);
     return response.data;
-  },
-  deleteUser: async (id: string) => {
+};
+
+export const deleteUser = async (id: string) => {
     await api.delete(`/users/${id}`);
-  },
 };

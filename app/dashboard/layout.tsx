@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LayoutDashboard, User, CreditCard, LogOut, Settings, Building2, ChevronDown, ChevronRight, MoreVertical } from 'lucide-react';
-import { organizationService, UserOrganization } from '@/lib/services/organization.service';
+import * as organizationService from '@/lib/services/organization';
+import { UserOrganization } from '@/lib/services/organization';
 import { toast } from 'sonner';
 
 export default function DashboardLayout({

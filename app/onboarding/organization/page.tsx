@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Building2, Phone, Globe, MapPin, AlignLeft, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
-import { userService } from '@/lib/services/user.service';
+import * as userService from '@/lib/services/user';
 import { ProfileImageUpload } from '@/components/ui/ProfileImageUpload';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input, Label, Textarea } from '@/components/ui/form-elements';

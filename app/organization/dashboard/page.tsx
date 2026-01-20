@@ -7,8 +7,8 @@ import {
     Save, X, Shield, Zap, Users, Crown, Mail,
     ExternalLink, Calendar, Check
 } from 'lucide-react';
-import { userService } from '@/lib/services/user.service';
-import { organizationService, Organization } from '@/lib/services/organization.service';
+import { getProfile, updateProfile } from '@/lib/services/user';
+import { getMyOrganization, Organization } from '@/lib/services/organization';
 import { ProfileImageUpload } from '@/components/ui/ProfileImageUpload';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label, Textarea } from '@/components/ui/form-elements';
@@ -35,20 +35,19 @@ export default function OrganizationDashboard() {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const profileData = await userService.getProfile();
+            const profileData = await getProfile();
             if (profileData && profileData.data) {
                 const userData = profileData.data;
-                if (userData.userType !== 'organization') {
-                    router.push('/dashboard');
-                    return;
-                }
+                // Allowed: Both 'organization' type users AND 'individual' users who are members of this org
+                // Logic: If they can fetch `getMyOrganization`, they have access.
+                // We rely on the API to return 404 or 403 if they don't belong here.
                 setUser(userData);
                 setFormData(userData);
                 localStorage.setItem('user', JSON.stringify(userData));
             }
 
             try {
-                const orgData = await organizationService.getMyOrganization();
+                const orgData = await getMyOrganization();
                 if (orgData && orgData.data) {
                     setOrganization(orgData.data);
                 }
@@ -73,7 +72,7 @@ export default function OrganizationDashboard() {
     const handleSave = async () => {
         try {
             setLoading(true);
-            const response = await userService.updateProfile(formData);
+            const response = await updateProfile(formData);
             if (response?.data) {
                 setUser(response.data);
                 setFormData(response.data);
@@ -117,20 +116,25 @@ export default function OrganizationDashboard() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        {!isEditing ? (
-                            <Button onClick={() => setIsEditing(true)} size="sm" variant="outline" className="rounded-full px-6">
-                                Edit Workspace
-                            </Button>
-                        ) : (
-                            <>
-                                <Button variant="ghost" size="sm" onClick={() => { setIsEditing(false); setFormData(user); }} disabled={loading}>
-                                    Cancel
+                    <div className="flex items-center gap-3">
+                        {/* RBAC: Only Owners and Admins can edit the workspace */}
+                        {(organization?.role === 'owner' || organization?.role === 'admin') && (
+                            !isEditing ? (
+                                <Button onClick={() => setIsEditing(true)} size="sm" variant="outline" className="rounded-full px-6">
+                                    Edit Workspace
                                 </Button>
-                                <Button onClick={handleSave} size="sm" className="rounded-full px-6" disabled={loading}>
-                                    {loading ? 'Saving...' : 'Save Changes'}
-                                </Button>
-                            </>
+                            ) : (
+                                <>
+                                    <Button variant="ghost" size="sm" onClick={() => { setIsEditing(false); setFormData(user); }} disabled={loading}>
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleSave} size="sm" className="rounded-full px-6" disabled={loading}>
+                                        {loading ? 'Saving...' : 'Save Changes'}
+                                    </Button>
+                                </>
+                            )
                         )}
+                    </div>
                     </div>
                 </div>
             </div>
@@ -330,9 +334,12 @@ export default function OrganizationDashboard() {
                                     )}
                                 </div>
 
-                                <Button className="w-full rounded-xl h-12 shadow-lg shadow-primary/10" onClick={() => router.push('/pricing')}>
-                                    Upgrade Workspace
-                                </Button>
+                                {/* RBAC: Only Owners/Admins see the Upgrade button */}
+                                {(organization?.role === 'owner' || organization?.role === 'admin') && (
+                                    <Button className="w-full rounded-xl h-12 shadow-lg shadow-primary/10" onClick={() => router.push('/pricing')}>
+                                        Upgrade Workspace
+                                    </Button>
+                                )}
                             </CardContent>
                         </Card>
                     </div>

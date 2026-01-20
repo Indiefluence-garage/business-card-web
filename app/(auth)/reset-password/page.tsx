@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Loader2, KeyRound, AlertCircle, ArrowLeft, CheckCircle } from 'lucide-react';
-import { authService } from '@/lib/services/auth.service';
+import * as authService from '@/lib/services/auth';
 
 import { Button } from '@/components/ui/button';
 import { Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/form-elements';

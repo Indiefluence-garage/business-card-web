@@ -6,8 +6,8 @@ import Link from 'next/link';
 import {
     Building2, Users, Settings, Bell, LogOut, LayoutDashboard, Activity
 } from 'lucide-react';
-import { userService } from '@/lib/services/user.service';
-import { organizationService, Organization } from '@/lib/services/organization.service';
+import { getProfile } from '@/lib/services/user';
+import { getMyOrganization, Organization } from '@/lib/services/organization';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import OrganizationSwitcher from '@/components/organization/org-switcher';
@@ -38,7 +38,7 @@ export default function OrganizationLayout({
             setLoading(true);
 
             // Fetch user profile FIRST to get accurate userType
-            const profileData = await userService.getProfile();
+            const profileData = await getProfile();
             if (profileData && profileData.data) {
                 const userData = profileData.data;
 
@@ -56,7 +56,7 @@ export default function OrganizationLayout({
 
             // Fetch organization details
             try {
-                const orgData = await organizationService.getMyOrganization();
+                const orgData = await getMyOrganization();
                 if (orgData && orgData.data) {
                     setOrganization(orgData.data);
                 }

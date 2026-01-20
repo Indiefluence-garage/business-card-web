@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, ChevronsUpDown, PlusCircle, Building2 } from 'lucide-react';
+import { Check, ChevronsUpDown, PlusCircle, Building2, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { organizationService, UserOrganization } from '@/lib/services/organization.service';
+import { getUserOrganizations, switchOrganization, UserOrganization } from '@/lib/services/organization';
 import { toast } from 'sonner';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
@@ -45,7 +45,7 @@ export default function OrganizationSwitcher({
 
   const fetchMyOrgs = async () => {
     try {
-      const response = await organizationService.getUserOrganizations();
+      const response = await getUserOrganizations();
       if (response.success && response.data.organizations) {
         setOrganizations(response.data.organizations);
 
@@ -62,8 +62,13 @@ export default function OrganizationSwitcher({
   const onSelectOrg = async (org: UserOrganization) => {
     try {
       setOpen(false);
-      setSelectedOrg(org);
-      const res = await organizationService.switchOrganization(org.id);
+
+      const isPersonal = org.id === '';
+      const orgIdToSwitch = isPersonal ? null : org.id;
+
+      setSelectedOrg(isPersonal ? undefined : org); // Clear selection for personal
+
+      const res = await switchOrganization(orgIdToSwitch);
       if (res.success) {
         toast.success(`Switched to ${org.name}`);
         if (onOrgChange) onOrgChange();
@@ -85,8 +90,13 @@ export default function OrganizationSwitcher({
           aria-label="Select a team"
           className={cn("w-[200px] justify-between", className)}
         >
-          <Building2 className="mr-2 h-4 w-4" />
-          {selectedOrg?.name || "Select Organization"}
+          {selectedOrg ? (
+             <Building2 className="mr-2 h-4 w-4" />
+          ) : (
+             <User className="mr-2 h-4 w-4" />
+          )}
+
+          {selectedOrg?.name || "Personal Account"}
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -95,6 +105,28 @@ export default function OrganizationSwitcher({
           <CommandList>
             <CommandInput placeholder="Search organization..." />
             <CommandEmpty>No organization found.</CommandEmpty>
+
+            {/* Personal Account Option */}
+            <CommandGroup heading="Personal">
+                <CommandItem
+                  onSelect={() => onSelectOrg({ id: '', name: 'Personal Account', role: 'owner' } as any)}
+                  className="text-sm"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Personal Account
+                  <Check
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      !selectedOrg?.id || selectedOrg.id === ''
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+            </CommandGroup>
+
+            <CommandSeparator />
+
             <CommandGroup heading="Organizations">
               {organizations.map((org) => (
                 <CommandItem

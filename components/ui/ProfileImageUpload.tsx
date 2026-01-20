@@ -3,7 +3,7 @@
 import { useState, useRef, DragEvent, ChangeEvent } from 'react';
 import { Camera, Trash2, Upload, X, Loader2 } from 'lucide-react';
 import { Button } from './button';
-import { userService } from '@/lib/services/user.service';
+import * as userService from '@/lib/services/user';
 
 interface ProfileImageUploadProps {
   image?: string | null;

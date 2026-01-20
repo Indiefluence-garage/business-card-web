@@ -1,12 +1,12 @@
 import api from '../api';
 import { SubscriptionResponse } from '../types';
 
-export const subscriptionService = {
-  getPlans: async () => {
+export const getPlans = async () => {
     const response = await api.get<SubscriptionResponse>('/subscriptions');
     return response.data;
-  },
-  getStatus: async () => {
+};
+
+export const getStatus = async () => {
     const response = await api.get<{
       success: boolean;
       data: {
@@ -15,5 +15,4 @@ export const subscriptionService = {
       }
     }>('/subscriptions/status');
     return response.data;
-  },
 };
