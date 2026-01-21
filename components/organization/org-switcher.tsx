@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, ChevronsUpDown, PlusCircle, Building2, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/lib/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -35,6 +36,7 @@ export default function OrganizationSwitcher({
   onOrgChange
 }: OrganizationSwitcherProps) {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [open, setOpen] = useState(false);
   const [organizations, setOrganizations] = useState<UserOrganization[]>([]);
   const [selectedOrg, setSelectedOrg] = useState<UserOrganization | undefined>(undefined);
@@ -72,7 +74,12 @@ export default function OrganizationSwitcher({
       if (res.success) {
         toast.success(`Switched to ${org.name}`);
         if (onOrgChange) onOrgChange();
-        window.location.reload(); // Reload to refresh all data with new context
+
+        // Refresh local user state to update activeOrganizationId
+        await refreshUser();
+
+        // Reload to refresh all data with new context
+        window.location.reload();
       }
     } catch (error) {
       toast.error('Failed to switch organization');

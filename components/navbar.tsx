@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/hooks/use-auth"
 import { useRouter } from "next/navigation"
 
 export function Navbar() {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout, user, refreshUser } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {

@@ -37,5 +37,24 @@ export function useAuth() {
     window.dispatchEvent(new Event('auth-change'));
   };
 
-  return { isAuthenticated, isLoading, user, login, logout };
+  const refreshUser = async () => {
+    try {
+      const { getProfile } = await import('@/lib/services/user');
+      const userData = await getProfile();
+
+      if (userData) {
+          // @ts-ignore
+          const safeData = userData.data || userData; // Handle possible wrapper
+          localStorage.setItem('user', JSON.stringify(safeData));
+          setUser(safeData);
+          window.dispatchEvent(new Event('auth-change'));
+          return safeData;
+      }
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
+    }
+    return null;
+  };
+
+  return { isAuthenticated, isLoading, user, login, logout, refreshUser };
 }
