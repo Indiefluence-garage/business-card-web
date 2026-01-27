@@ -174,9 +174,8 @@ export function ProfileImageUpload({
     <div className={`relative ${className}`}>
       {/* Main Image Display */}
       <div
-        className={`relative group ${sizeClasses[size]} rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden transition-all ${
-          isDragging ? 'ring-4 ring-primary ring-offset-2' : ''
-        }`}
+        className={`relative group ${sizeClasses[size]} rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden transition-all duration-300 ring-2 ring-border hover:ring-primary/50 ${isDragging ? 'ring-4 ring-primary ring-offset-2 scale-105' : ''
+          }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -221,9 +220,8 @@ export function ProfileImageUpload({
       <div className="absolute -bottom-1 -right-1 flex gap-1">
         {/* Upload Button */}
         <label
-          className={`bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${
-            uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+          className={`bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
         >
           <Camera className="h-4 w-4" />
           <input
@@ -241,9 +239,8 @@ export function ProfileImageUpload({
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={uploading || deleting}
-            className={`bg-destructive text-white p-2 rounded-full hover:bg-destructive/90 transition-colors shadow-lg ${
-              uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`bg-destructive text-white p-2 rounded-full hover:bg-destructive/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
           >
             <Trash2 className="h-4 w-4" />
           </button>

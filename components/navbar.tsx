@@ -16,38 +16,44 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-14 items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center space-x-2 font-bold text-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-16 items-center justify-between px-6">
+        <div className="flex items-center gap-8">
+          <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary transition-opacity hover:opacity-80">
             <span>Card CRM</span>
           </Link>
-          <nav className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          <nav className="hidden sm:flex items-center gap-6 text-sm font-medium">
             {isAuthenticated && (
-              <Link href="/dashboard" className="transition-colors hover:text-foreground">
+              <Link
+                href="/dashboard"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
                 Dashboard
               </Link>
             )}
-            <Link href="/pricing" className="transition-colors hover:text-foreground">
+            <Link
+              href="/pricing"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
               Pricing
             </Link>
           </nav>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2">
             {!isAuthenticated ? (
               <>
-                <Button variant="ghost" asChild>
+                <Button variant="ghost" className="transition-gentle" asChild>
                   <Link href="/login">Login</Link>
                 </Button>
-                <Button asChild>
+                <Button className="btn-gentle" asChild>
                   <Link href="/signup">Sign up</Link>
                 </Button>
               </>
             ) : (
-                <Button variant="ghost" onClick={handleLogout}>
-                  Logout
-                </Button>
+              <Button variant="ghost" className="transition-gentle" onClick={handleLogout}>
+                Logout
+              </Button>
             )}
           </div>
           <ThemeToggle />
