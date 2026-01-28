@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, User, CreditCard, LogOut, Settings, Users, Menu, X } from 'lucide-react';
+import { LayoutDashboard, User, CreditCard, LogOut, Settings, Menu, X } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 
@@ -26,7 +26,6 @@ export default function DashboardLayout({
 
   const navItems = [
     { href: '/dashboard', icon: User, label: 'Profile', exact: true },
-    { href: '/dashboard/contacts', icon: Users, label: 'Contacts' },
     { href: '/pricing', icon: CreditCard, label: 'Subscription' },
     { href: '#', icon: Settings, label: 'Settings' },
   ];
@@ -63,8 +62,8 @@ export default function DashboardLayout({
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${active
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                 >
                   <item.icon className="h-4 w-4" />

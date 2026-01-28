@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { userService } from '@/lib/services/user.service';
 import { User } from '@/lib/types';
 import { ProfileImageUpload } from '@/components/ui/ProfileImageUpload';
+import { EditProfileModal } from '@/components/dashboard/EditProfileModal';
 import { Button } from '@/components/ui/button';
 import {
   Mail,
@@ -27,6 +28,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -89,11 +91,23 @@ export default function DashboardPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">My Profile</h1>
             <p className="text-muted-foreground mt-1">Manage your account details</p>
           </div>
-          <Button variant="outline" className="hidden md:flex items-center gap-2 transition-gentle">
+          <Button
+            variant="outline"
+            className="hidden md:flex items-center gap-2 transition-gentle"
+            onClick={() => setIsEditModalOpen(true)}
+          >
             <Edit3 className="h-4 w-4" />
             Edit Profile
           </Button>
         </div>
+
+        {/* Edit Profile Modal */}
+        <EditProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          user={user}
+          onUpdate={(updatedUser) => setUser(updatedUser)}
+        />
 
         {/* Profile Card */}
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
