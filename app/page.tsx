@@ -4,127 +4,121 @@ import { CreditCard, Cloud, Shield, ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)]">
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] relative">
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-16 sm:py-24 gradient-bg-subtle">
-        <div className="max-w-4xl mx-auto text-center animate-fade-in">
+      <section className="flex-1 flex flex-col items-center justify-center px-6 py-20 lg:py-32 overflow-hidden">
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          {/* Subtle background glow */}
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -z-10" />
+
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium bg-primary/5 text-primary rounded-full border border-primary/10">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            Now with AI-powered scanning
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-10 text-[10px] tracking-[0.2em] uppercase font-bold text-primary/70 animate-fade-in">
+            <span className="w-8 h-[1px] bg-primary/30" />
+            AI-POWERED RELATIONSHIP MANAGEMENT
+            <span className="w-8 h-[1px] bg-primary/30" />
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
-            Manage your connections{" "}
-            <span className="text-primary">intelligently.</span>
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-display mb-8 leading-[0.9] tracking-tight text-foreground animate-fade-in delay-100">
+            Elevate Your <br />
+            <span className="italic">Connections.</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Card CRM is the modern way to organize business cards and contacts.
-            Scan, save, and sync your professional network across all devices.
+          <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto mb-12 leading-relaxed animate-fade-in delay-200">
+            Card CRM transforms the ephemeral business card into a lasting
+            digital legacy. Organize, sync, and professionalize your network.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="btn-gentle group" asChild>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in delay-300">
+            <Button size="lg" className="rounded-none px-12 h-14 bg-primary hover:bg-primary/90 text-primary-foreground tracking-widest uppercase text-[10px] font-bold transition-gentle" asChild>
               <Link href="/signup">
-                Get Started Free
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Begin Now
+                <ArrowRight className="ml-2 h-3 w-3" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="btn-gentle" asChild>
-              <Link href="/pricing">View Pricing</Link>
+            <Button size="lg" variant="ghost" className="rounded-none px-12 h-14 border border-border tracking-widest uppercase text-[10px] font-bold hover:bg-secondary/50 transition-gentle" asChild>
+              <Link href="/pricing">Principles</Link>
             </Button>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6 bg-secondary/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Everything you need
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Powerful features to help you manage your professional network effortlessly.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="group p-8 rounded-2xl bg-card border border-border card-hover">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 transition-colors group-hover:bg-primary/20">
-                <CreditCard className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Smart Scanning
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Instantly digitize business cards with AI-powered recognition. Just point and capture.
+      <section className="py-32 px-6 border-y border-border/50 bg-secondary/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <div className="animate-fade-in">
+              <h2 className="text-4xl sm:text-5xl font-display mb-8 leading-tight">
+                Crafted for the <br />
+                Most Demanding <br />
+                <span className="text-primary italic">Networks.</span>
+              </h2>
+              <p className="text-muted-foreground text-lg mb-12 max-w-md leading-relaxed">
+                Precision tools designed to handle every nuance of your
+                professional interactions, from first scan to follow-up.
               </p>
+
+              <div className="space-y-8">
+                {[
+                  { icon: CreditCard, title: "Precision Scanning", desc: "Digital clarity from physical cards in seconds." },
+                  { icon: Cloud, title: "Global Synchronicity", desc: "Your network, available anywhere in the world." },
+                  { icon: Shield, title: "Absolute Privacy", desc: "Encrypted storage for your most valuable data." },
+                ].map((f, i) => (
+                  <div key={i} className="flex gap-6 items-start group">
+                    <div className="w-12 h-12 rounded-none border border-border flex items-center justify-center bg-background group-hover:border-primary/50 transition-colors">
+                      <f.icon className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold uppercase tracking-wider mb-2">{f.title}</h3>
+                      <p className="text-sm text-muted-foreground">{f.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Feature 2 */}
-            <div className="group p-8 rounded-2xl bg-card border border-border card-hover">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 transition-colors group-hover:bg-primary/20">
-                <Cloud className="h-6 w-6 text-primary" />
+            <div className="relative animate-fade-in delay-300">
+              {/* Asymmetrical layout element */}
+              <div className="aspect-[4/5] bg-background border border-border shadow-2xl relative overflow-hidden group">
+                {/* Visual placeholder for an app mockup or abstract art */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 text-center">
+                  <div className="h-[1px] w-12 bg-primary/30 mx-auto mb-6" />
+                  <p className="font-display italic text-2xl text-foreground/80 lowercase">Simplicity is the <br /> ultimate sophistication.</p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Cloud Sync
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Access your contacts from anywhere, on any device. Always up to date, always accessible.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="group p-8 rounded-2xl bg-card border border-border card-hover">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 transition-colors group-hover:bg-primary/20">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Secure Storage
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Your data is encrypted and stored safely. Privacy and security are our top priorities.
-              </p>
+              <div className="absolute -bottom-12 -left-12 w-48 h-48 border border-primary/20 -z-10 hidden lg:block" />
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Ready to get started?
+      <section className="py-32 px-6">
+        <div className="max-w-3xl mx-auto text-center animate-fade-in">
+          <h2 className="text-4xl sm:text-5xl font-display mb-8 leading-tight">
+            Ready to <span className="italic">Redefine</span> <br /> Your Network?
           </h2>
-          <p className="text-muted-foreground text-lg mb-8">
-            Join thousands of professionals who trust Card CRM for their networking needs.
-          </p>
-          <Button size="lg" className="btn-gentle" asChild>
-            <Link href="/signup">Create Free Account</Link>
+          <Button size="lg" className="rounded-none px-16 h-16 bg-primary hover:bg-primary/90 text-primary-foreground tracking-widest uppercase text-[10px] font-bold transition-gentle" asChild>
+            <Link href="/signup">Establish Credentials</Link>
           </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-border">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © 2026 Card CRM. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+      <footer className="py-12 px-6 border-t border-border/50">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-8">
+          <div className="flex flex-col items-center sm:items-start">
+            <span className="font-display text-xl tracking-tighter mb-2">Card CRM</span>
+            <p className="text-[10px] tracking-widest uppercase text-muted-foreground">© 2026 Architectural Excellence</p>
+          </div>
+          <div className="flex gap-12 font-bold uppercase text-[10px] tracking-[0.3em]">
+            <Link href="/pricing" className="text-muted-foreground hover:text-primary transition-colors">
               Pricing
             </Link>
-            <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/login" className="text-muted-foreground hover:text-primary transition-colors">
               Sign In
             </Link>
           </div>
