@@ -1,6 +1,6 @@
 # CRM Next (Web)
 
-A modern web dashboard for the Card CRM system, built with Next.js 15 (React 19).
+A modern web dashboard for the Lukewarm system, built with Next.js 15 (React 19).
 
 ## Features
 
