@@ -88,18 +88,17 @@ function LoginForm() {
     setGoogleLoading(true);
     setError(null);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
-      const callbackURL = window.location.origin + '/dashboard';
-      const res = await fetch(`${apiBase}/api/better-auth/sign-in/social`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider: 'google', callbackURL})
+      const callbackURL = window.location.origin + '/callback';
+      // Use the proxy-enabled api client
+      const response = await api.post('/better-auth/sign-in/social', {
+        provider: 'google',
+        callbackURL
       });
-      if (!res.ok) throw new Error('Failed to initiate social sign-in');
-      const data = await res.json();
-      const redirectUrl = data.url;
+      
+      const redirectUrl = response.data.url;
       if (redirectUrl) window.location.href = redirectUrl;
     } catch (err: any) {
+      console.error('Google Sign-in error:', err);
       setError('Failed to initiate Google sign-in.');
       setGoogleLoading(false);
     }

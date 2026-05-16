@@ -79,18 +79,16 @@ export default function SignupPage() {
     setGoogleLoading(true);
     setError(null);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:4000";
-      const callbackURL = window.location.origin + "/auth/callback";
-      const res = await fetch(`${apiBase}/api/better-auth/sign-in/social`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider: "google", callbackURL }),
+      const callbackURL = window.location.origin + "/callback";
+      const response = await api.post("/better-auth/sign-in/social", {
+        provider: "google",
+        callbackURL,
       });
-      if (!res.ok) throw new Error("Failed to initiate social sign-up");
-      const data = await res.json();
-      const redirectUrl = data.url || res.headers.get("Location");
+
+      const redirectUrl = response.data.url;
       if (redirectUrl) window.location.href = redirectUrl;
     } catch (err: any) {
+      console.error("Google Sign-up error:", err);
       setError("Failed to initiate Google sign-up.");
       setGoogleLoading(false);
     }

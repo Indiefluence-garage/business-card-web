@@ -50,11 +50,23 @@ function CallbackHandler() {
     // Case 2: Better Auth session cookie flow — fetch the session
     const fetchSession = async () => {
       try {
+        // We use the api client which has withCredentials enabled
         const response = await api.get('/auth/me');
         const { user } = response.data;
 
         if (user) {
           localStorage.setItem('user', JSON.stringify(user));
+          
+          // Try to see if we can get a JWT token from the session for non-cookie components
+          try {
+            const tokenRes = await api.get('/auth/token');
+            if (tokenRes.data?.token) {
+               localStorage.setItem('token', tokenRes.data.token);
+            }
+          } catch (e) {
+            // Silently ignore if token endpoint doesn't exist
+          }
+
           window.dispatchEvent(new Event('auth-change'));
           router.replace('/dashboard');
         } else {
