@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL; // Adjust if backend port differs
+// Use the Next.js `/api` rewrite so browser auth flows stay on the web app origin.
+// This avoids cross-site OAuth state/cookie issues between Vercel and Render.
+const API_URL = '/api';
 
 const api = axios.create({
   baseURL: API_URL,
