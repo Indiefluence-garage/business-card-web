@@ -121,6 +121,7 @@ export default function DashboardPage() {
                 onUploadSuccess={handleImageUpload}
                 onDeleteSuccess={handleImageDelete}
                 size="lg"
+                showHelperText={false}
               />
             </div>
           </div>

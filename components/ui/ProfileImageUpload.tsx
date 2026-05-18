@@ -12,6 +12,7 @@ interface ProfileImageUploadProps {
   onDeleteSuccess?: () => void;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  showHelperText?: boolean;
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -25,6 +26,7 @@ export function ProfileImageUpload({
   onDeleteSuccess,
   className = '',
   size = 'md',
+  showHelperText = true,
 }: ProfileImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -220,8 +222,9 @@ export function ProfileImageUpload({
       <div className="absolute -bottom-1 -right-1 flex gap-1">
         {/* Upload Button */}
         <label
-          className={`bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+          className={`flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
             }`}
+          aria-label="Upload profile image"
         >
           <Camera className="h-4 w-4" />
           <input
@@ -239,8 +242,9 @@ export function ProfileImageUpload({
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={uploading || deleting}
-            className={`bg-destructive text-white p-2 rounded-full hover:bg-destructive/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+            className={`flex h-9 w-9 items-center justify-center rounded-full bg-destructive text-white hover:bg-destructive/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
               }`}
+            aria-label="Delete profile image"
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -292,12 +296,12 @@ export function ProfileImageUpload({
       )}
 
       {/* Helper Text */}
-      <p className="text-xs text-muted-foreground text-center mt-2">
-        {isDragging ? 'Drop to upload' : 'Click or drag to upload'}
-      </p>
-      <p className="text-xs text-muted-foreground text-center">
-        Max 5MB • JPG, PNG, WebP
-      </p>
+      {showHelperText && (
+        <div className="mt-2 text-center text-xs leading-5 text-muted-foreground">
+          <p>{isDragging ? 'Drop to upload' : 'Click or drag to upload'}</p>
+          <p>Max 5MB • JPG, PNG, WebP</p>
+        </div>
+      )}
     </div>
   );
 }
