@@ -3,7 +3,7 @@
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:where(.dark, .dark *));
-
+/*dcd*/
 :root {
   --background: #ffffff;
   --foreground: #171717;
