@@ -107,15 +107,15 @@ export default function PrivacyPolicyPage() {
           <section className="bg-card/50 border border-border/70 rounded-2xl p-6 sm:p-8">
             <h2 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">3</span>
-              Third-Party Services & AI Processing
+              Third-Party AI Processing & Service Providers
             </h2>
             <p className="mb-4">
-              We partner with trusted service providers to run our infrastructure:
+              To deliver intelligent business card scanning, OCR, contact extraction, and voice memo transcription, we transmit data to trusted third-party service providers via encrypted channels:
             </p>
             <ul className="list-disc pl-5 space-y-2">
-              <li><strong>OpenAI / Vision Models:</strong> Used strictly for multimodal OCR and audio transcription processing. Your data is not used to train public foundation models.</li>
-              <li><strong>Google Cloud / OAuth:</strong> Used for secure authentication and optional Google Calendar sync.</li>
-              <li><strong>Stripe:</strong> Used for secure payment processing on our web portal. We do not store raw credit card numbers on our servers.</li>
+              <li><strong>OpenAI (Vision & Audio AI):</strong> Used strictly for multimodal OCR (optical character recognition) and speech-to-text transcription. Uploaded photos, extracted contacts, and audio notes are processed ephemerally and are strictly <em>not</em> used by OpenAI or Lukewarm to train public foundation models.</li>
+              <li><strong>Google Cloud & OAuth:</strong> Used for secure authentication, push notification delivery, and optional Google Calendar synchronization.</li>
+              <li><strong>Stripe:</strong> Used for secure payment processing on our web portal. We do not store raw credit card credentials on our servers.</li>
             </ul>
           </section>
 
