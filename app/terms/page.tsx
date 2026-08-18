@@ -1,0 +1,123 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { FileText, Scale, ArrowLeft, Mail, AlertCircle, CheckCircle2 } from 'lucide-react';
+
+export default function TermsOfServicePage() {
+  return (
+    <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Back Link */}
+        <Link
+          href="/"
+          className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground mb-8 transition-colors"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Home
+        </Link>
+
+        {/* Header */}
+        <div className="mb-10 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+            <Scale className="h-3.5 w-3.5" />
+            Terms of Service
+          </div>
+          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3">
+            Terms & Conditions
+          </h1>
+          <p className="text-sm text-muted-foreground mb-2">
+            Effective Date: August 18, 2026 · Last Updated: August 18, 2026
+          </p>
+          <p className="text-xs text-muted-foreground border-l-2 border-primary/40 pl-3 py-1 bg-card/40 rounded-r-lg">
+            <strong>Issued by:</strong> NEXEL PLATFORMS PRIVATE LIMITED — owner of the <strong>Lukewarm</strong> brand (incorporated under the Companies Act, 2013; principal office: Plot 151, Sector 2, Kurukshetra, Haryana 136118)
+          </p>
+        </div>
+
+        {/* Terms Content */}
+        <div className="space-y-8 text-sm md:text-base leading-relaxed text-muted-foreground">
+          {/* Section 1 */}
+          <section className="bg-card/50 border border-border/70 rounded-2xl p-6 sm:p-8">
+            <h2 className="font-display text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">1</span>
+              Acceptance of Terms
+            </h2>
+            <p>
+              By accessing or using the Lukewarm mobile application, website, and related APIs (collectively, the &ldquo;Service&rdquo;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.
+            </p>
+          </section>
+
+          {/* Section 2 */}
+          <section className="bg-card/50 border border-border/70 rounded-2xl p-6 sm:p-8">
+            <h2 className="font-display text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">2</span>
+              User Accounts & Security
+            </h2>
+            <p className="mb-3">
+              You must register for an account using a valid email address or authenticated Google account. You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.
+            </p>
+            <p>
+              You agree to notify us immediately at <a href="mailto:support@cardcrm.com" className="text-primary hover:underline font-medium">support@cardcrm.com</a> of any unauthorized access to your account.
+            </p>
+          </section>
+
+          {/* Section 3 */}
+          <section className="bg-card/50 border border-border/70 rounded-2xl p-6 sm:p-8">
+            <h2 className="font-display text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">3</span>
+              AI Scanning & Accuracy Disclaimer
+            </h2>
+            <p className="mb-3">
+              Lukewarm utilizes advanced Optical Character Recognition (OCR) and Artificial Intelligence models to extract text from business cards and audio recordings.
+            </p>
+            <p>
+              While we strive for high accuracy, we do not warrant that all extracted contact fields, phone numbers, or transcripts will be 100% error-free. Users are advised to review and verify scanned contact cards.
+            </p>
+          </section>
+
+          {/* Section 4 */}
+          <section className="bg-card/50 border border-border/70 rounded-2xl p-6 sm:p-8">
+            <h2 className="font-display text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">4</span>
+              Subscriptions, Billing & Cancellations
+            </h2>
+            <p className="mb-3">
+              Lukewarm offers Free, Starter, Standard, and Premium subscription tiers. Paid plans provide unlimited business card scanning, Flash Scan mode, voice notes transcription, and ad-free experience for the specified validity period (30, 90, or 365 days).
+            </p>
+            <p>
+              Subscriptions are managed via our web portal. You can cancel or upgrade your plan at any time.
+            </p>
+          </section>
+
+          {/* Section 5 */}
+          <section className="bg-card/50 border border-border/70 rounded-2xl p-6 sm:p-8">
+            <h2 className="font-display text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">5</span>
+              Termination & Account Deletion
+            </h2>
+            <p className="mb-3">
+              You may terminate your account at any time using the in-app Deactivate Account screen or through our online data deletion request form. Upon account deletion, your personal records and business cards will be permanently erased.
+            </p>
+          </section>
+
+          {/* Contact Section */}
+          <section className="bg-card/50 border border-border/70 rounded-2xl p-6 sm:p-8">
+            <h2 className="font-display text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">6</span>
+              Questions & Contact
+            </h2>
+            <p className="mb-3">
+              For legal inquiries or questions concerning these Terms, contact us:
+            </p>
+            <div className="flex items-center gap-2 text-foreground font-medium">
+              <Mail className="h-4 w-4 text-primary" />
+              <a href="mailto:support@cardcrm.com" className="hover:underline text-primary">
+                support@cardcrm.com
+              </a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}

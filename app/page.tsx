@@ -108,18 +108,30 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-border/50">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-8">
-          <div className="flex flex-col items-center sm:items-start">
-            <span className="font-display text-xl tracking-tighter mb-2">Card CRM</span>
-            <p className="text-[10px] tracking-widest uppercase text-muted-foreground">© 2026 Architectural Excellence</p>
+      <footer className="py-12 px-6 border-t border-border/50 bg-card/30">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <span className="font-display text-xl tracking-tighter mb-1">Lukewarm CRM</span>
+            <p className="text-xs text-muted-foreground">© 2026 Lukewarm Business Card CRM. All rights reserved.</p>
           </div>
-          <div className="flex gap-12 font-bold uppercase text-[10px] tracking-[0.3em]">
-            <Link href="/pricing" className="text-muted-foreground hover:text-primary transition-colors">
+          <div className="flex flex-wrap justify-center gap-6 text-xs font-medium text-muted-foreground">
+            <Link href="/pricing" className="hover:text-foreground transition-colors">
               Pricing
             </Link>
-            <Link href="/login" className="text-muted-foreground hover:text-primary transition-colors">
-              Sign In
+            <Link href="/help" className="hover:text-foreground transition-colors">
+              Help Center
+            </Link>
+            <Link href="/feedback" className="hover:text-foreground transition-colors">
+              Feedback
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors">
+              Terms
+            </Link>
+            <Link href="/delete-account" className="hover:text-foreground transition-colors">
+              Data Deletion
             </Link>
           </div>
         </div>
