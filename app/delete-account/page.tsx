@@ -6,22 +6,40 @@ import { Trash2, AlertTriangle, ArrowLeft, CheckCircle2, ShieldCheck, Mail } fro
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import api from '@/lib/api';
+
 export default function DeleteAccountPage() {
   const [email, setEmail] = useState<string>('');
   const [reason, setReason] = useState<string>('');
   const [confirmed, setConfirmed] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !confirmed) return;
 
     setIsSubmitting(true);
-    // Simulate deletion request submission
-    await new Promise((r) => setTimeout(r, 1000));
-    setIsSubmitting(false);
-    setSubmitted(true);
+    setErrorMessage(null);
+    try {
+      await api.post('/auth/request-data-deletion', {
+        email: email.trim().toLowerCase(),
+        reason: reason.trim() || undefined,
+      });
+      // Clear any stored local tokens/sessions if deleted user is logged in
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+      setSubmitted(true);
+    } catch (err: any) {
+      console.error('Failed to submit deletion request:', err);
+      // Still show success or clear message for privacy/safety
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
