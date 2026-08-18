@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Check, X, AlertCircle, Loader2 } from 'lucide-react';
 import { paymentService } from '@/lib/services/payment.service';
+import { StatusModal, StatusModalType } from '@/components/ui/StatusModal';
 
 function CheckoutContent() {
   const router = useRouter();
@@ -14,6 +15,20 @@ function CheckoutContent() {
 
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: StatusModalType;
+    title: string;
+    message: string;
+    details?: string;
+    actionLabel?: string;
+    actionUrl?: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
 
   const simulateSuccess = async () => {
     setLoading(true);
@@ -27,15 +42,28 @@ function CheckoutContent() {
         message: `${planId} plan activated successfully`,
         data: response.data
       });
-
-      // Redirect after 3 seconds
-      setTimeout(() => router.push('/dashboard'), 3000);
+      setModalState({
+        isOpen: true,
+        type: 'success',
+        title: 'Payment Successful! 🎉',
+        message: `Your ${planId} subscription has been activated successfully.`,
+        actionLabel: 'Go to Dashboard',
+        actionUrl: '/dashboard'
+      });
     } catch (error: any) {
+      const errorData = error.response?.data;
       setResult({
         type: 'error',
         title: 'Unexpected Error',
         message: error.message,
-        data: error.response?.data
+        data: errorData
+      });
+      setModalState({
+        isOpen: true,
+        type: 'error',
+        title: 'Payment Failed',
+        message: errorData?.message || error.message || 'Payment simulation failed.',
+        details: JSON.stringify(errorData, null, 2)
       });
     } finally {
       setLoading(false);
@@ -47,13 +75,18 @@ function CheckoutContent() {
     setResult(null);
 
     try {
-      // This should trigger the duplicate error if user already has a plan
       const response = await paymentService.createPayment(planId);
       setResult({
         type: 'success',
         title: 'Payment Successful!',
         message: 'Plan activated (no duplicate detected)',
         data: response.data
+      });
+      setModalState({
+        isOpen: true,
+        type: 'success',
+        title: 'Payment Successful',
+        message: 'Plan activated (no duplicate detected)',
       });
     } catch (error: any) {
       const errorData = error.response?.data;
@@ -62,6 +95,13 @@ function CheckoutContent() {
         title: errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS' ? 'Duplicate Subscription Detected' : 'Error',
         message: errorData?.message || error.message,
         data: errorData
+      });
+      setModalState({
+        isOpen: true,
+        type: errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS' ? 'warning' : 'error',
+        title: errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS' ? 'Active Subscription Exists' : 'Duplicate Purchase Error',
+        message: errorData?.message || 'You already have an active subscription.',
+        details: JSON.stringify(errorData, null, 2)
       });
     } finally {
       setLoading(false);
@@ -88,6 +128,13 @@ function CheckoutContent() {
         message: errorData?.message || error.message,
         data: errorData
       });
+      setModalState({
+        isOpen: true,
+        type: 'error',
+        title: 'Invalid Plan Error',
+        message: errorData?.message || 'Selected plan ID does not exist in the database.',
+        details: JSON.stringify(errorData, null, 2)
+      });
     } finally {
       setLoading(false);
     }
@@ -104,8 +151,14 @@ function CheckoutContent() {
         message: 'Failed to connect to server (simulated)',
         data: { error: 'NETWORK_ERROR', details: 'Connection timeout' }
       });
+      setModalState({
+        isOpen: true,
+        type: 'error',
+        title: 'Network Connection Timeout',
+        message: 'Failed to connect to server. Please check your internet connection and retry.',
+      });
       setLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   return (
@@ -235,6 +288,25 @@ function CheckoutContent() {
           <li>• <strong>Simulate Network Error</strong>: Client-side simulated network failure</li>
         </ul>
       </div>
+
+      <StatusModal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+        type={modalState.type}
+        title={modalState.title}
+        message={modalState.message}
+        details={modalState.details}
+        actionLabel={modalState.actionLabel}
+        onAction={
+          modalState.actionUrl
+            ? () => {
+                const url = modalState.actionUrl!;
+                setModalState(prev => ({ ...prev, isOpen: false }));
+                router.push(url);
+              }
+            : undefined
+        }
+      />
     </div>
   );
 }

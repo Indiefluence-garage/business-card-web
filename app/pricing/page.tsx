@@ -9,12 +9,30 @@ import { userService } from '@/lib/services/user.service';
 import { Plan, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 
+import { StatusModal, StatusModalType } from '@/components/ui/StatusModal';
+
+interface StatusModalState {
+  isOpen: boolean;
+  type: StatusModalType;
+  title: string;
+  message: string;
+  details?: string;
+  actionLabel?: string;
+  actionUrl?: string;
+}
+
 export default function PricingPage() {
   const router = useRouter();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [statusModal, setStatusModal] = useState<StatusModalState>({
+    isOpen: false,
+    type: 'error',
+    title: '',
+    message: '',
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,27 +83,73 @@ export default function PricingPage() {
       setProcessingId(plan.id);
       const token = localStorage.getItem('token');
       if (!token) {
-        router.push('/login');
+        setStatusModal({
+          isOpen: true,
+          type: 'auth',
+          title: 'Account Sign In Required',
+          message: 'Please sign in or create your Lukewarm account with your email to link and activate your subscription.',
+          actionLabel: 'Sign In to Account',
+          actionUrl: '/login?redirect=/pricing',
+        });
         return;
       }
 
       const response = await paymentService.createPayment(plan.id);
       if (response.success) {
-        alert(`✓ Success! ${plan.name} plan activated.\nExpires: ${new Date(response.data.expiresAt).toLocaleDateString()}\nCredits: ${response.data.credits === 999999 ? 'Unlimited' : response.data.credits}`);
-        router.push('/dashboard');
+        setStatusModal({
+          isOpen: true,
+          type: 'success',
+          title: 'Subscription Activated! 🎉',
+          message: `Your ${plan.name} plan has been activated successfully and is valid until ${new Date(response.data.expiresAt).toLocaleDateString()}. You have unlimited card scanning and AI features!`,
+          actionLabel: 'Go to Dashboard',
+          actionUrl: '/dashboard',
+        });
       } else {
-        alert('Payment failed: ' + response.message);
+        setStatusModal({
+          isOpen: true,
+          type: 'error',
+          title: 'Payment Processing Failed',
+          message: response.message || 'Unable to complete the payment transaction. Please try again.',
+        });
       }
     } catch (error: any) {
       console.error('Payment error', error);
       const errorData = error.response?.data;
 
       if (errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS') {
-        alert(`⚠️ You already have an active ${errorData.data?.currentPlan || 'subscription'}!\n\nExpires: ${errorData.data?.expiresAt ? new Date(errorData.data.expiresAt).toLocaleDateString() : 'N/A'}\nCredits: ${errorData.data?.creditsRemaining || 0}\n\nPlease wait for your current plan to expire before purchasing a new one.`);
+        const planName = (errorData.data?.currentPlan || 'an active').toUpperCase();
+        const expiry = errorData.data?.expiresAt ? new Date(errorData.data.expiresAt).toLocaleDateString() : 'N/A';
+        setStatusModal({
+          isOpen: true,
+          type: 'warning',
+          title: 'Active Subscription Exists',
+          message: `You currently have an active ${planName} plan that expires on ${expiry}. You already have full access to all features!`,
+          actionLabel: 'View Dashboard',
+          actionUrl: '/dashboard',
+        });
       } else if (errorData?.error === 'INVALID_PLAN_ID') {
-        alert('❌ Invalid plan selected. Please try again.');
+        setStatusModal({
+          isOpen: true,
+          type: 'error',
+          title: 'Invalid Plan Selection',
+          message: 'The selected subscription plan is no longer available. Please select another plan.',
+        });
+      } else if (error.response?.status === 401 || errorData?.error === 'UNAUTHORIZED') {
+        setStatusModal({
+          isOpen: true,
+          type: 'auth',
+          title: 'Authentication Required',
+          message: 'Your session has expired. Please sign in again to activate your plan.',
+          actionLabel: 'Sign In Again',
+          actionUrl: '/login?redirect=/pricing',
+        });
       } else {
-        alert('❌ Payment failed. Please try again.');
+        setStatusModal({
+          isOpen: true,
+          type: 'error',
+          title: 'Payment Request Error',
+          message: errorData?.message || error.message || 'Unable to process payment at this moment. Please try again later.',
+        });
       }
     } finally {
       setProcessingId(null);
@@ -291,6 +355,26 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      {/* Themed Interactive Status Modal */}
+      <StatusModal
+        isOpen={statusModal.isOpen}
+        onClose={() => setStatusModal(prev => ({ ...prev, isOpen: false }))}
+        type={statusModal.type}
+        title={statusModal.title}
+        message={statusModal.message}
+        details={statusModal.details}
+        actionLabel={statusModal.actionLabel}
+        onAction={
+          statusModal.actionUrl
+            ? () => {
+                const url = statusModal.actionUrl!;
+                setStatusModal(prev => ({ ...prev, isOpen: false }));
+                router.push(url);
+              }
+            : undefined
+        }
+      />
     </div>
   );
 }

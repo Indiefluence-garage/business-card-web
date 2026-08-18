@@ -39,7 +39,8 @@ function CallbackHandler() {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         window.dispatchEvent(new Event('auth-change'));
-        router.replace('/dashboard');
+        const redirectTarget = searchParams.get('redirect') || '/dashboard';
+        router.replace(redirectTarget);
       } catch (e) {
         console.error('Failed to parse user from callback:', e);
         router.replace('/login?error=oauth_failed');

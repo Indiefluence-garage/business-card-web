@@ -54,7 +54,8 @@ function LoginForm() {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       window.dispatchEvent(new Event('auth-change'));
-      router.push('/dashboard');
+      const target = searchParams.get('redirect') || '/dashboard';
+      router.push(target);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to login. Please check your credentials.');
     } finally {
