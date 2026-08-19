@@ -5,11 +5,19 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Mail, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { 
+  Loader2, 
+  Mail, 
+  AlertCircle, 
+  CheckCircle2, 
+  Clock, 
+  KeyRound, 
+  ArrowLeft,
+  ShieldCheck
+} from 'lucide-react';
 import { authService } from '@/lib/services/auth.service';
-
 import { Button } from '@/components/ui/button';
-import { Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/form-elements';
+import { Input, Label } from '@/components/ui/form-elements';
 import Link from 'next/link';
 
 const otpSchema = z.object({
@@ -42,12 +50,10 @@ export default function VerifyOTPPage() {
     resolver: zodResolver(otpSchema),
   });
 
-  // Security: Check for valid verification session
   useEffect(() => {
     const pendingVerification = sessionStorage.getItem('pendingVerification');
 
     if (!pendingVerification) {
-      // No pending verification session, redirect to signup
       router.push('/signup?error=no_session');
       return;
     }
@@ -56,7 +62,6 @@ export default function VerifyOTPPage() {
       const { email: storedEmail, timestamp } = JSON.parse(pendingVerification);
       const elapsed = Date.now() - timestamp;
 
-      // Check if session expired
       if (elapsed > SESSION_TIMEOUT) {
         sessionStorage.removeItem('pendingVerification');
         router.push('/signup?error=session_expired');
@@ -66,18 +71,16 @@ export default function VerifyOTPPage() {
       setEmail(storedEmail);
       setTimeRemaining(Math.floor((SESSION_TIMEOUT - elapsed) / 1000));
     } catch (err) {
-      // Invalid session data
       sessionStorage.removeItem('pendingVerification');
       router.push('/signup?error=invalid_session');
     }
   }, [router]);
 
-  // Countdown timer
   useEffect(() => {
     if (timeRemaining <= 0) return;
 
     const timer = setInterval(() => {
-      setTimeRemaining(prev => {
+      setTimeRemaining((prev) => {
         if (prev <= 1) {
           sessionStorage.removeItem('pendingVerification');
           router.push('/signup?error=session_expired');
@@ -100,12 +103,11 @@ export default function VerifyOTPPage() {
     setError(null);
 
     try {
-      const response = await authService.verifyEmail({
+      await authService.verifyEmail({
         email,
         otp: data.otp,
       });
 
-      // Success! Clear session and redirect
       sessionStorage.removeItem('pendingVerification');
       router.push('/login?verified=true');
     } catch (err: any) {
@@ -126,7 +128,7 @@ export default function VerifyOTPPage() {
         );
       }
 
-      reset(); // Clear OTP input
+      reset();
     } finally {
       setIsLoading(false);
     }
@@ -140,12 +142,10 @@ export default function VerifyOTPPage() {
     try {
       await authService.resendOtp({ email });
 
-      // Reset attempt counter and unlock
       setAttemptCount(0);
       setIsLocked(false);
       setResendSuccess(true);
 
-      // Update timestamp in session
       const pendingVerification = sessionStorage.getItem('pendingVerification');
       if (pendingVerification) {
         const data = JSON.parse(pendingVerification);
@@ -171,102 +171,112 @@ export default function VerifyOTPPage() {
 
   if (!email) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-4">
-            <div className="rounded-full bg-primary/10 p-3">
-              <Mail className="h-6 w-6 text-primary" />
-            </div>
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-background">
+      <div className="w-full max-w-md space-y-6 animate-fade-in rounded-3xl glass-panel p-8 border border-border shadow-2xl">
+        
+        <div className="text-center space-y-2">
+          <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center mb-4">
+            <Mail className="h-6 w-6" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight text-center text-primary">
+          <h1 className="text-2xl font-display font-bold text-foreground">
             Verify Your Email
-          </CardTitle>
-          <CardDescription className="text-center">
-            We've sent a 6-digit verification code to
-            <br />
-            <span className="font-medium text-foreground">{email}</span>
-          </CardDescription>
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            We sent a 6-digit security code to <strong className="text-foreground font-mono">{email}</strong>
+          </p>
+
           {timeRemaining > 0 && (
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-2">
-              <Clock className="h-4 w-4" />
-              <span>Session expires in {formatTime(timeRemaining)}</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-xs font-mono text-muted-foreground mt-2">
+              <Clock className="h-3.5 w-3.5" />
+              <span>Expires in {formatTime(timeRemaining)}</span>
             </div>
           )}
-        </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            {error && (
-              <div className="flex items-center gap-2 rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800">
-                <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <p>{error}</p>
-              </div>
+        </div>
+
+        {error && (
+          <div className="flex items-center gap-2 rounded-2xl bg-destructive/10 p-3.5 text-xs font-semibold text-destructive border border-destructive/20">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+
+        {resendSuccess && (
+          <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 p-3.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <p>New OTP dispatched to your inbox!</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="otp" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-center block">
+              Enter 6-Digit Code
+            </Label>
+            <Input
+              id="otp"
+              placeholder="000000"
+              maxLength={6}
+              className="text-center text-2xl tracking-[0.3em] font-mono font-bold rounded-2xl h-14"
+              {...register('otp')}
+              autoComplete="one-time-code"
+              disabled={isLocked}
+            />
+            {errors.otp && <p className="text-xs text-destructive text-center">{errors.otp.message}</p>}
+            {attemptCount > 0 && !isLocked && (
+              <p className="text-xs text-amber-500 font-medium text-center">
+                Attempts remaining: {MAX_ATTEMPTS - attemptCount}/{MAX_ATTEMPTS}
+              </p>
             )}
+          </div>
 
-            {resendSuccess && (
-              <div className="flex items-center gap-2 rounded-md bg-green-50 dark:bg-green-900/20 p-3 text-sm text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800">
-                <CheckCircle className="h-4 w-4 flex-shrink-0" />
-                <p>OTP resent successfully! Check your email.</p>
-              </div>
+          <Button
+            type="submit"
+            className="w-full btn-primary-glow rounded-2xl h-12 font-bold text-xs"
+            disabled={isLoading || isLocked}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Verifying...
+              </>
+            ) : isLocked ? (
+              'Locked — Request New OTP'
+            ) : (
+              'Confirm & Activate Account'
             )}
+          </Button>
 
-            <div className="space-y-2">
-              <Label htmlFor="otp">Enter OTP</Label>
-              <Input
-                id="otp"
-                placeholder="000000"
-                maxLength={6}
-                className="text-center text-2xl tracking-widest font-mono"
-                {...register('otp')}
-                autoComplete="one-time-code"
-                disabled={isLocked}
-              />
-              {errors.otp && (
-                <p className="text-xs text-red-500">{errors.otp.message}</p>
-              )}
-              {attemptCount > 0 && !isLocked && (
-                <p className="text-xs text-orange-600 dark:text-orange-400">
-                  Failed attempts: {attemptCount}/{MAX_ATTEMPTS}
-                </p>
-              )}
-            </div>
-
-            <div className="text-center text-sm text-muted-foreground">
-              Didn't receive the code?{' '}
-              <button
-                type="button"
-                onClick={handleResendOTP}
-                disabled={isResending || isLoading}
-                className="font-medium text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isResending ? 'Resending...' : 'Resend OTP'}
-              </button>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-4">
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading || isLocked}
+          <div className="text-center text-xs text-muted-foreground">
+            Didn&apos;t receive the code?{' '}
+            <button
+              type="button"
+              onClick={handleResendOTP}
+              disabled={isResending || isLoading}
+              className="font-bold text-primary hover:underline disabled:opacity-50"
             >
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLocked ? 'Locked - Request New OTP' : 'Verify Email'}
-            </Button>
-            <div className="text-center text-sm text-muted-foreground">
-              <Link href="/signup" className="font-medium text-primary hover:underline">
-                Back to Sign Up
-              </Link>
-            </div>
-          </CardFooter>
+              {isResending ? 'Resending...' : 'Resend Code'}
+            </button>
+          </div>
         </form>
-      </Card>
+
+        <div className="pt-2 text-center border-t border-border">
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to Sign Up
+          </Link>
+        </div>
+
+      </div>
     </div>
   );
 }

@@ -6,21 +6,30 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, KeyRound, AlertCircle, ArrowLeft, CheckCircle } from 'lucide-react';
+import { 
+  Loader2, 
+  KeyRound, 
+  AlertCircle, 
+  ArrowLeft, 
+  CheckCircle2, 
+  CreditCard, 
+  ShieldCheck 
+} from 'lucide-react';
 import { authService } from '@/lib/services/auth.service';
-
 import { Button } from '@/components/ui/button';
-import { Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/form-elements';
+import { Input, Label } from '@/components/ui/form-elements';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 
-const resetPasswordSchema = z.object({
-  otp: z.string().min(6, 'OTP must be at least 6 characters'),
-  newPassword: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const resetPasswordSchema = z
+  .object({
+    otp: z.string().min(6, 'OTP must be at least 6 characters'),
+    newPassword: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
@@ -43,18 +52,14 @@ function ResetPasswordForm() {
 
   if (!email) {
     return (
-      <Card className="w-full max-w-md">
-        <CardContent className="pt-6 text-center space-y-4">
-          <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
-          <h2 className="text-xl font-bold">Missing Information</h2>
-          <p className="text-muted-foreground">No email address provided for password reset.</p>
-          <Button asChild className="w-full">
-            <Link href="/forgot-password">
-              Go to Forgot Password
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="rounded-3xl glass-panel p-8 text-center space-y-4 max-w-md mx-auto">
+        <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
+        <h2 className="text-xl font-bold font-display">Missing Email Parameter</h2>
+        <p className="text-sm text-muted-foreground">No email address was provided for password reset.</p>
+        <Button asChild className="w-full rounded-2xl btn-primary-glow">
+          <Link href="/forgot-password">Go to Forgot Password</Link>
+        </Button>
+      </div>
     );
   }
 
@@ -78,103 +83,114 @@ function ResetPasswordForm() {
 
   if (isSuccess) {
     return (
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6 text-center space-y-4">
-            <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
-            <h2 className="text-2xl font-bold">Password Reset Successful!</h2>
-            <p className="text-muted-foreground">Your password has been updated. You can now log in with your new password.</p>
-            <Button asChild className="w-full">
-              <Link href="/login">
-                Go to Login
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="rounded-3xl glass-panel p-8 text-center space-y-6 max-w-md mx-auto shadow-2xl">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
+          <CheckCircle2 className="h-8 w-8" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-display font-bold text-foreground">Password Reset Successfully!</h2>
+          <p className="text-sm text-muted-foreground mt-2">
+            Your credentials have been securely updated. You can now log in with your new password.
+          </p>
+        </div>
+        <Button asChild className="w-full btn-primary-glow rounded-2xl h-12 font-bold text-xs">
+          <Link href="/login">Go to Login</Link>
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold tracking-tight text-center text-primary">Reset Password</CardTitle>
-        <CardDescription className="text-center">
-          Verifying for <strong>{email}</strong>
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="space-y-4">
-          {error && (
-            <div className="flex items-center gap-2 rounded-md bg-destructive/15 p-3 text-sm text-destructive bg-red-50 text-red-600 border border-red-200">
-              <AlertCircle className="h-4 w-4" />
-              <p>{error}</p>
-            </div>
+    <div className="w-full max-w-md mx-auto space-y-6 animate-fade-in">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+          Set New Password
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Verifying security code for <strong className="text-foreground">{email}</strong>
+        </p>
+      </div>
+
+      {error && (
+        <div className="flex items-center gap-2 rounded-2xl bg-destructive/10 p-4 text-xs font-semibold text-destructive border border-destructive/20">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <p>{error}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="otp" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <KeyRound className="h-3.5 w-3.5" />
+            6-Digit One-Time Password (OTP)
+          </Label>
+          <Input
+            id="otp"
+            placeholder="000000"
+            maxLength={6}
+            className="rounded-2xl h-11 text-center font-mono tracking-widest text-lg font-bold"
+            {...register('otp')}
+          />
+          {errors.otp && <p className="text-xs text-destructive">{errors.otp.message}</p>}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="newPassword" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            New Password
+          </Label>
+          <PasswordInput
+            id="newPassword"
+            className="rounded-2xl h-11"
+            {...register('newPassword')}
+          />
+          {errors.newPassword && <p className="text-xs text-destructive">{errors.newPassword.message}</p>}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="confirmPassword" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Confirm New Password
+          </Label>
+          <PasswordInput
+            id="confirmPassword"
+            className="rounded-2xl h-11"
+            {...register('confirmPassword')}
+          />
+          {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full btn-primary-glow rounded-2xl h-12 font-bold text-xs"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Resetting Password...
+            </>
+          ) : (
+            'Update Password & Sign In'
           )}
-
-          <div className="space-y-2">
-            <Label htmlFor="otp">One-Time Password (OTP)</Label>
-            <div className="relative">
-              <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="otp"
-                placeholder="Enter 6-digit OTP"
-                className="pl-9"
-                {...register('otp')}
-              />
-            </div>
-            {errors.otp && (
-              <p className="text-xs text-red-500">{errors.otp.message}</p>
-            )}
-            <p className="text-xs text-muted-foreground">Check your email for the code.</p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="newPassword">New Password</Label>
-            <PasswordInput
-              id="newPassword"
-              placeholder="Enter new password"
-              {...register('newPassword')}
-            />
-            {errors.newPassword && (
-              <p className="text-xs text-red-500">{errors.newPassword.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
-            <PasswordInput
-              id="confirmPassword"
-              placeholder="Confirm new password"
-              {...register('confirmPassword')}
-            />
-            {errors.confirmPassword && (
-              <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>
-            )}
-          </div>
-
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Reset Password
-          </Button>
-          <div className="text-center">
-             <Button variant="link" className="text-sm text-muted-foreground hover:text-primary gap-2" asChild>
-               <Link href="/login">
-                 <ArrowLeft className="h-3 w-3" />
-                 Back to login
-               </Link>
-             </Button>
-          </div>
-        </CardFooter>
+        </Button>
       </form>
-    </Card>
+
+      <div className="text-center pt-2">
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to login
+        </Link>
+      </div>
+    </div>
   );
 }
 
 export default function ResetPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8">
-      <Suspense fallback={<div className="flex justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-background">
+      <Suspense fallback={<div className="flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
         <ResetPasswordForm />
       </Suspense>
     </div>

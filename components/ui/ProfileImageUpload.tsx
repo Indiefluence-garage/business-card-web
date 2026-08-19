@@ -36,7 +36,6 @@ export function ProfileImageUpload({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Size configurations
   const sizeClasses = {
     sm: 'h-16 w-16 text-xl',
     md: 'h-24 w-24 text-3xl',
@@ -44,17 +43,14 @@ export function ProfileImageUpload({
   };
 
   const validateFile = (file: File): string | null => {
-    // Check file size
     if (file.size > MAX_FILE_SIZE) {
       return `File size exceeds 5MB limit. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB.`;
     }
 
-    // Check file type
     if (!ALLOWED_TYPES.includes(file.type)) {
       return 'Only JPG, PNG, and WebP images are allowed.';
     }
 
-    // Check file extension
     const extension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!ALLOWED_EXTENSIONS.includes(extension)) {
       return 'Invalid file extension. Use .jpg, .jpeg, .png, or .webp';
@@ -66,35 +62,32 @@ export function ProfileImageUpload({
   const handleFileSelect = async (file: File) => {
     setError(null);
 
-    // Validate file
     const validationError = validateFile(file);
     if (validationError) {
       setError(validationError);
       return;
     }
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Upload file
     try {
       setUploading(true);
-      console.log('🖼️ [PROFILE IMAGE] Uploading:', file.name);
-
       const response = await userService.uploadProfileImage(file);
-      console.log('✅ [PROFILE IMAGE] Upload success:', response);
 
-      // Extract imageUrl from response
       let imageUrl: string | null = null;
       if (response?.data && typeof response.data === 'object') {
-        if ('imageUrl' in response.data) {
-          imageUrl = (response.data as any).imageUrl;
-        } else if ('user' in response.data && (response.data as any).user?.imageUrl) {
-          imageUrl = (response.data as any).user.imageUrl;
+        const dataObj = response.data as Record<string, unknown>;
+        if ('imageUrl' in dataObj && typeof dataObj.imageUrl === 'string') {
+          imageUrl = dataObj.imageUrl;
+        } else if ('user' in dataObj && dataObj.user && typeof dataObj.user === 'object') {
+          const userObj = dataObj.user as Record<string, unknown>;
+          if (typeof userObj.imageUrl === 'string') {
+            imageUrl = userObj.imageUrl;
+          }
         }
       }
 
@@ -104,9 +97,9 @@ export function ProfileImageUpload({
 
       setPreview(null);
       setError(null);
-    } catch (err: any) {
-      console.error('❌ [PROFILE IMAGE] Upload failed:', err);
-      setError(err.response?.data?.error || err.message || 'Failed to upload image. Please try again.');
+    } catch (err: unknown) {
+      const apiErr = err as { response?: { data?: { error?: string } }; message?: string };
+      setError(apiErr.response?.data?.error || apiErr.message || 'Failed to upload image. Please try again.');
       setPreview(null);
     } finally {
       setUploading(false);
@@ -143,10 +136,7 @@ export function ProfileImageUpload({
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      console.log('🗑️ [PROFILE IMAGE] Deleting...');
-
       await userService.deleteProfileImage();
-      console.log('✅ [PROFILE IMAGE] Delete success');
 
       if (onDeleteSuccess) {
         onDeleteSuccess();
@@ -154,9 +144,9 @@ export function ProfileImageUpload({
 
       setShowDeleteConfirm(false);
       setError(null);
-    } catch (err: any) {
-      console.error('❌ [PROFILE IMAGE] Delete failed:', err);
-      setError(err.response?.data?.error || err.message || 'Failed to delete image. Please try again.');
+    } catch (err: unknown) {
+      const apiErr = err as { response?: { data?: { error?: string } }; message?: string };
+      setError(apiErr.response?.data?.error || apiErr.message || 'Failed to delete image. Please try again.');
     } finally {
       setDeleting(false);
     }
@@ -176,27 +166,26 @@ export function ProfileImageUpload({
     <div className={`relative ${className}`}>
       {/* Main Image Display */}
       <div
-        className={`relative group ${sizeClasses[size]} rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden transition-all duration-300 ring-2 ring-border hover:ring-primary/50 ${isDragging ? 'ring-4 ring-primary ring-offset-2 scale-105' : ''
-          }`}
+        className={`relative group ${sizeClasses[size]} rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden transition-all duration-300 ring-2 ring-border hover:ring-primary/50 ${
+          isDragging ? 'ring-4 ring-primary ring-offset-2 scale-105' : ''
+        }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {/* Image or Initials */}
         {displayImage ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
           <img src={displayImage} alt="Profile" className="h-full w-full object-cover" />
         ) : (
           <span>{userInitials}</span>
         )}
 
-        {/* Loading Overlay */}
         {(uploading || deleting) && (
           <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         )}
 
-        {/* Preview Overlay */}
         {preview && !uploading && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <Button
@@ -210,7 +199,6 @@ export function ProfileImageUpload({
           </div>
         )}
 
-        {/* Drag & Drop Hint */}
         {isDragging && (
           <div className="absolute inset-0 bg-primary/90 flex items-center justify-center">
             <Upload className="h-8 w-8 text-white" />
@@ -220,10 +208,10 @@ export function ProfileImageUpload({
 
       {/* Action Buttons */}
       <div className="absolute -bottom-1 -right-1 flex gap-1">
-        {/* Upload Button */}
         <label
-          className={`flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+          className={`flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${
+            uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
           aria-label="Upload profile image"
         >
           <Camera className="h-4 w-4" />
@@ -237,13 +225,13 @@ export function ProfileImageUpload({
           />
         </label>
 
-        {/* Delete Button */}
         {currentImageUrl && !preview && (
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={uploading || deleting}
-            className={`flex h-9 w-9 items-center justify-center rounded-full bg-destructive text-white hover:bg-destructive/90 transition-colors shadow-lg ${uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+            className={`flex h-9 w-9 items-center justify-center rounded-full bg-destructive text-white hover:bg-destructive/90 transition-colors shadow-lg ${
+              uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
             aria-label="Delete profile image"
           >
             <Trash2 className="h-4 w-4" />
@@ -251,20 +239,18 @@ export function ProfileImageUpload({
         )}
       </div>
 
-      {/* Error Message */}
       {error && (
-        <div className="absolute top-full mt-2 left-0 right-0 bg-destructive/10 border border-destructive/20 rounded-md p-2 text-xs text-destructive">
+        <div className="absolute top-full mt-2 left-0 right-0 bg-destructive/10 border border-destructive/20 rounded-xl p-2 text-xs text-destructive">
           {error}
         </div>
       )}
 
-      {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-background border rounded-lg p-6 max-w-sm mx-4 shadow-xl">
-            <h3 className="text-lg font-semibold mb-2">Delete Profile Image?</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Are you sure you want to delete your profile image? This action cannot be undone.
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-card border border-border rounded-3xl p-6 max-w-sm w-full shadow-2xl animate-fade-in">
+            <h3 className="text-lg font-bold font-display text-foreground mb-2">Delete Profile Photo?</h3>
+            <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+              Are you sure you want to remove your profile photo? Your avatar will revert to your initials.
             </p>
             <div className="flex gap-2 justify-end">
               <Button
@@ -272,6 +258,7 @@ export function ProfileImageUpload({
                 size="sm"
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleting}
+                className="rounded-xl text-xs"
               >
                 Cancel
               </Button>
@@ -280,14 +267,15 @@ export function ProfileImageUpload({
                 size="sm"
                 onClick={handleDelete}
                 disabled={deleting}
+                className="rounded-xl text-xs font-bold"
               >
                 {deleting ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
                     Deleting...
                   </>
                 ) : (
-                  'Delete'
+                  'Delete Photo'
                 )}
               </Button>
             </div>
@@ -295,11 +283,10 @@ export function ProfileImageUpload({
         </div>
       )}
 
-      {/* Helper Text */}
       {showHelperText && (
         <div className="mt-2 text-center text-xs leading-5 text-muted-foreground">
           <p>{isDragging ? 'Drop to upload' : 'Click or drag to upload'}</p>
-          <p>Max 5MB • JPG, PNG, WebP</p>
+          <p className="text-[10px]">Max 5MB • JPG, PNG, WebP</p>
         </div>
       )}
     </div>

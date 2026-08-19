@@ -11,7 +11,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Building2,
   Globe,
   Calendar,
   CreditCard,
@@ -21,7 +20,16 @@ import {
   Linkedin,
   Facebook,
   Twitter,
-  Loader2
+  Loader2,
+  Share2,
+  CheckCircle2,
+  ShieldCheck,
+  Zap,
+  ArrowRight,
+  Copy,
+  QrCode,
+  Layers,
+  Clock
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -29,6 +37,8 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,12 +70,24 @@ export default function DashboardPage() {
     }
   };
 
+  const handleCopyProfileLink = () => {
+    if (typeof window !== 'undefined') {
+      const shareUrl = `${window.location.origin}/contact/${user?.id || 'me'}`;
+      navigator.clipboard.writeText(shareUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[70vh]">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading profile...</p>
+          <div className="relative flex h-12 w-12 items-center justify-center">
+            <div className="animate-ping absolute h-full w-full rounded-full bg-primary/20" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary relative" />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">Loading executive command center...</p>
         </div>
       </div>
     );
@@ -76,29 +98,60 @@ export default function DashboardPage() {
   }
 
   const socialLinks = [
-    { key: 'instagram', icon: Instagram, url: user.socialLinks?.instagram, color: 'hover:text-pink-500' },
-    { key: 'linkedin', icon: Linkedin, url: user.socialLinks?.linkedin, color: 'hover:text-blue-600' },
-    { key: 'facebook', icon: Facebook, url: user.socialLinks?.facebook, color: 'hover:text-blue-500' },
-    { key: 'x', icon: Twitter, url: user.socialLinks?.x, color: 'hover:text-gray-800 dark:hover:text-gray-200' },
+    { key: 'linkedin', label: 'LinkedIn', icon: Linkedin, url: user.socialLinks?.linkedin, color: 'hover:text-blue-500 hover:border-blue-500/40' },
+    { key: 'x', label: 'X (Twitter)', icon: Twitter, url: user.socialLinks?.x, color: 'hover:text-cyan-400 hover:border-cyan-400/40' },
+    { key: 'instagram', label: 'Instagram', icon: Instagram, url: user.socialLinks?.instagram, color: 'hover:text-pink-500 hover:border-pink-500/40' },
+    { key: 'facebook', label: 'Facebook', icon: Facebook, url: user.socialLinks?.facebook, color: 'hover:text-blue-600 hover:border-blue-600/40' },
   ].filter(link => link.url);
 
+  const isPro = user.subscriptionStatus === 'active';
+
   return (
-    <div className="min-h-screen gradient-bg-subtle p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        
+        {/* Header Ribbon */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">My Profile</h1>
-            <p className="text-muted-foreground mt-1">Manage your account details</p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-2 border border-primary/20">
+              <Sparkles className="h-3.5 w-3.5" />
+              Executive Command Center
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+              Welcome back, {user.firstName || 'Executive'}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Manage your personal digital business card, subscription entitlements, and synced connections.
+            </p>
           </div>
-          <Button
-            variant="outline"
-            className="hidden md:flex items-center gap-2 transition-gentle"
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            <Edit3 className="h-4 w-4" />
-            Edit Profile
-          </Button>
+
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={handleCopyProfileLink}
+              className="rounded-xl flex items-center gap-2 text-xs font-semibold"
+            >
+              {copiedLink ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                  <span>Link Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="h-4 w-4 text-muted-foreground" />
+                  <span>Share Digital Card</span>
+                </>
+              )}
+            </Button>
+
+            <Button
+              onClick={() => setIsEditModalOpen(true)}
+              className="btn-primary-glow rounded-xl flex items-center gap-2 text-xs font-semibold"
+            >
+              <Edit3 className="h-4 w-4" />
+              <span>Edit Profile</span>
+            </Button>
+          </div>
         </div>
 
         {/* Edit Profile Modal */}
@@ -109,159 +162,204 @@ export default function DashboardPage() {
           onUpdate={(updatedUser) => setUser(updatedUser)}
         />
 
-        {/* Profile Card */}
-        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
-          {/* Cover + Avatar Section */}
-          <div className="relative bg-gradient-to-r from-primary/20 via-primary/10 to-primary/5 h-32 md:h-40">
-            {/* Avatar positioned at bottom */}
-            <div className="absolute -bottom-12 left-6 md:left-8">
-              <ProfileImageUpload
-                currentImageUrl={user.imageUrl}
-                userInitials={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
-                onUploadSuccess={handleImageUpload}
-                onDeleteSuccess={handleImageDelete}
-                size="lg"
-                showHelperText={false}
-              />
+        {/* Main Profile Hero Card */}
+        <div className="rounded-3xl glass-panel border border-border overflow-hidden shadow-xl">
+          
+          {/* Dynamic Ambient Cover Banner */}
+          <div className="relative h-40 sm:h-48 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/10 overflow-hidden border-b border-border/60">
+            <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 backdrop-blur-md ${
+                isPro 
+                  ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' 
+                  : 'bg-secondary/80 text-muted-foreground border-border'
+              }`}>
+                <span className={`h-2 w-2 rounded-full ${isPro ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground'}`} />
+                {isPro ? 'Pro Member' : 'Free Tier'}
+              </span>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="pt-16 pb-6 px-6 md:px-8">
-            {/* Name & Email */}
-            <div className="mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground">
-                {user.firstName} {user.lastName}
-              </h2>
-              <p className="text-muted-foreground flex items-center gap-2 mt-1">
-                <Mail className="h-4 w-4" />
-                {user.email}
-              </p>
+          {/* User Profile Header Content */}
+          <div className="px-6 sm:px-10 pb-8 relative">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-16 sm:-mt-20 mb-6">
+              
+              {/* Avatar upload */}
+              <div className="relative inline-block">
+                <div className="p-1 rounded-full bg-background ring-4 ring-background shadow-xl">
+                  <ProfileImageUpload
+                    currentImageUrl={user.imageUrl}
+                    userInitials={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
+                    onUploadSuccess={handleImageUpload}
+                    onDeleteSuccess={handleImageDelete}
+                    size="lg"
+                    showHelperText={false}
+                  />
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push('/pricing')}
+                  className="rounded-xl text-xs font-semibold"
+                >
+                  <CreditCard className="h-3.5 w-3.5 mr-1.5 text-primary" />
+                  {isPro ? 'Manage Subscription' : 'Upgrade to Unlimited'}
+                </Button>
+              </div>
             </div>
 
-            {/* Bio */}
-            {user.bio && (
-              <p className="text-muted-foreground mb-6 max-w-2xl">
-                {user.bio}
-              </p>
-            )}
-
-            {/* Info Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              {user.phoneNumber && (
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Phone className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Phone</p>
-                    <p className="text-sm font-medium text-foreground">{user.phoneNumber}</p>
-                  </div>
+            {/* Name, Email & Bio */}
+            <div className="space-y-3 max-w-3xl">
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+                  {user.firstName} {user.lastName}
+                </h2>
+                <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-foreground font-mono">
+                    <Mail className="h-4 w-4 text-primary" />
+                    {user.email}
+                  </span>
+                  {user.phoneNumber && (
+                    <span className="flex items-center gap-1.5 font-mono">
+                      <Phone className="h-4 w-4 text-primary" />
+                      {user.phoneNumber}
+                    </span>
+                  )}
+                  {user.country && (
+                    <span className="flex items-center gap-1.5">
+                      <Globe className="h-4 w-4 text-primary" />
+                      {user.country}
+                    </span>
+                  )}
                 </div>
-              )}
+              </div>
 
-              {user.country && (
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Globe className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Country</p>
-                    <p className="text-sm font-medium text-foreground">{user.country}</p>
-                  </div>
+              {user.bio ? (
+                <div className="p-4 rounded-2xl bg-secondary/40 border border-border text-sm text-foreground/90 leading-relaxed italic">
+                  &ldquo;{user.bio}&rdquo;
                 </div>
-              )}
-
-              {user.address && (
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Address</p>
-                    <p className="text-sm font-medium text-foreground truncate">{user.address}</p>
-                  </div>
-                </div>
-              )}
-
-              {user.createdAt && (
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Calendar className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Member Since</p>
-                    <p className="text-sm font-medium text-foreground">
-                      {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                    </p>
-                  </div>
-                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground italic">
+                  No bio added yet. Click &ldquo;Edit Profile&rdquo; to add your executive summary.
+                </p>
               )}
             </div>
 
-            {/* Social Links */}
+            {/* Contact Details Grid */}
+            <div className="mt-8 pt-8 border-t border-border grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-4 rounded-2xl bg-card border border-border/70">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
+                  <MapPin className="h-3.5 w-3.5 text-primary" />
+                  Office Location
+                </span>
+                <p className="text-sm font-semibold text-foreground truncate">
+                  {user.address || 'Not specified'}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-card border border-border/70">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
+                  <Calendar className="h-3.5 w-3.5 text-primary" />
+                  Member Since
+                </span>
+                <p className="text-sm font-semibold text-foreground">
+                  {user.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    : 'Recently joined'}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-card border border-border/70">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                  Cloud Sync Status
+                </span>
+                <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <CheckCircle2 className="h-4 w-4" /> Active & Protected
+                </p>
+              </div>
+            </div>
+
+            {/* Social Presence Links */}
             {socialLinks.length > 0 && (
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">Social</span>
-                <div className="flex gap-2">
-                  {socialLinks.map((link) => (
-                    <a
-                      key={link.key}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`w-9 h-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground transition-colors ${link.color}`}
-                    >
-                      <link.icon className="h-4 w-4" />
-                    </a>
-                  ))}
-                </div>
+              <div className="mt-6 pt-6 border-t border-border flex flex-wrap items-center gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground mr-2">
+                  Social Presence:
+                </span>
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.key}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-semibold transition-all ${link.color}`}
+                  >
+                    <link.icon className="h-3.5 w-3.5" />
+                    <span>{link.label}</span>
+                  </a>
+                ))}
               </div>
             )}
           </div>
         </div>
 
-        {/* Subscription Card */}
-        <div className="mt-6 bg-card border border-border rounded-2xl p-6 md:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-primary" />
+        {/* Subscription & Entitlements Section */}
+        <div className="rounded-3xl glass-panel-glow border border-primary/20 p-6 sm:p-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Zap className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Subscription</h3>
-                <p className="text-sm text-muted-foreground">
-                  {user.subscriptionStatus === 'active' ? (
+                <div className="flex items-center gap-2">
+                  <h3 className="font-display text-xl font-bold text-foreground">
+                    Subscription & Vision Credits
+                  </h3>
+                  {isPro && (
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+                      Unlimited Plan
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {isPro ? (
                     <>
-                      <span className="text-green-600 dark:text-green-400 font-medium">Active</span>
-                      {user.planEndsAt && ` • Expires ${new Date(user.planEndsAt).toLocaleDateString()}`}
+                      Active until{' '}
+                      <strong>
+                        {user.planEndsAt ? new Date(user.planEndsAt).toLocaleDateString() : 'Active subscription'}
+                      </strong>
+                      . Continuous Flash Scan and AI Voice notes enabled.
                     </>
                   ) : (
-                    <span className="text-muted-foreground">Free Plan</span>
+                    'You are on the free tier. Upgrade for unlimited continuous flash scans and Google Calendar sync.'
                   )}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {user.creditsRemaining !== undefined && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/5 rounded-full">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-primary">
-                    {user.creditsRemaining === 999999 ? 'Unlimited' : user.creditsRemaining} credits
-                  </span>
+
+            <div className="flex items-center gap-4 shrink-0">
+              <div className="text-right">
+                <div className="text-xs font-mono font-semibold text-muted-foreground">Remaining Credits</div>
+                <div className="text-xl font-display font-extrabold text-primary">
+                  {user.creditsRemaining === 999999 || isPro ? 'Unlimited' : user.creditsRemaining || 0}
                 </div>
-              )}
+              </div>
+
               <Button
-                variant="outline"
-                size="sm"
                 onClick={() => router.push('/pricing')}
-                className="transition-gentle"
+                className="btn-primary-glow rounded-xl font-semibold text-xs h-11 px-5"
               >
-                {user.subscriptionStatus === 'active' ? 'Manage' : 'Upgrade'}
+                {isPro ? 'Manage Plan' : 'Upgrade to Pro'}
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

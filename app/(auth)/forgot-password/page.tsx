@@ -6,9 +6,18 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Mail, ArrowLeft, CheckCircle, AlertCircle, KeyRound } from 'lucide-react';
+import { 
+  Loader2, 
+  Mail, 
+  ArrowLeft, 
+  CheckCircle2, 
+  AlertCircle, 
+  KeyRound,
+  CreditCard,
+  Sparkles,
+  ShieldCheck
+} from 'lucide-react';
 import { authService } from '@/lib/services/auth.service';
-
 import { Button } from '@/components/ui/button';
 import { Input, Label } from '@/components/ui/form-elements';
 
@@ -49,119 +58,143 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen flex">
-        {/* Left Panel - Branding */}
-        <div className="hidden lg:flex lg:w-1/2 gradient-bg items-center justify-center p-12">
-          <div className="max-w-md text-white">
-            <h1 className="text-4xl font-bold mb-6">Check your inbox</h1>
-            <p className="text-lg opacity-90">
-              We&apos;ve sent you a one-time password to reset your account.
-            </p>
-          </div>
-        </div>
-
-        {/* Right Panel */}
-        <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background">
-          <div className="w-full max-w-md animate-fade-in text-center">
-            <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Email sent!</h2>
-            <p className="text-muted-foreground mb-6">
-              We&apos;ve sent a password reset OTP to <strong className="text-foreground">{email}</strong>
-            </p>
-            <p className="text-sm text-muted-foreground mb-8">
-              Please check your inbox and spam folder. The OTP expires in 15 minutes.
-            </p>
-            <div className="space-y-3">
-              <Button
-                className="w-full btn-gentle"
-                onClick={() => router.push(`/reset-password?email=${encodeURIComponent(email)}`)}
-              >
-                Enter OTP to Reset Password
-              </Button>
-              <Button variant="outline" className="w-full transition-gentle" asChild>
-                <Link href="/login">Back to Login</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-bg items-center justify-center p-12">
-        <div className="max-w-md text-white">
-          <h1 className="text-4xl font-bold mb-6">Reset your password</h1>
-          <p className="text-lg opacity-90 mb-8">
-            Don&apos;t worry, it happens to the best of us. We&apos;ll help you get back into your account.
-          </p>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <KeyRound className="h-5 w-5" />
-            </div>
-            <span className="text-sm">Secure password recovery</span>
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
+      
+      {/* Left Pane - Brand Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 p-12 flex-col justify-between text-white overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="relative z-10 flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-lg">
+            <CreditCard className="h-5 w-5" />
           </div>
+          <span className="font-display text-xl font-bold tracking-tight">Lukewarm</span>
+        </div>
+
+        <div className="relative z-10 max-w-md space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-cyan-300 text-xs font-mono font-semibold border border-white/10">
+            <KeyRound className="h-3.5 w-3.5" />
+            Zero-Trust Password Recovery
+          </div>
+
+          <h2 className="font-display text-3xl sm:text-4xl font-extrabold leading-tight">
+            Account recovery made fast, simple, and secure.
+          </h2>
+
+          <p className="text-sm text-slate-300 leading-relaxed">
+            We will send a high-entropy 6-digit One-Time Password (OTP) to your registered email address. Your contacts and encryption keys remain protected.
+          </p>
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between text-xs text-slate-400 pt-6 border-t border-white/10">
+          <span className="flex items-center gap-1.5 font-mono">
+            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            15-Minute Expiry Window
+          </span>
+          <span>© 2026 Lukewarm CRM</span>
         </div>
       </div>
 
-      {/* Right Panel - Form */}
+      {/* Right Pane - Form */}
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background">
-        <div className="w-full max-w-md animate-fade-in">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Forgot password?</h2>
-            <p className="text-muted-foreground">
-              Enter your email and we&apos;ll send you a One-Time Password (OTP)
-            </p>
-          </div>
+        <div className="w-full max-w-md animate-fade-in space-y-6">
+          
+          {isSubmitted ? (
+            <div className="text-center space-y-6 rounded-3xl glass-panel p-8 border border-border">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
+                <CheckCircle2 className="h-8 w-8" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-display font-bold text-foreground">One-Time Code Sent!</h2>
+                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                  We have dispatched a 6-digit OTP to <strong className="text-foreground">{email}</strong>.
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Please check your inbox or spam folder. The code expires in 15 minutes.
+                </p>
+              </div>
 
-          {error && (
-            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-4 text-sm text-destructive mb-6 border border-destructive/20">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              <p>{error}</p>
+              <div className="space-y-3 pt-2">
+                <Button
+                  className="w-full btn-primary-glow rounded-2xl h-12 font-bold text-xs"
+                  onClick={() => router.push(`/reset-password?email=${encodeURIComponent(email)}`)}
+                >
+                  Enter OTP to Reset Password
+                </Button>
+                <Button variant="ghost" className="w-full rounded-2xl text-xs" asChild>
+                  <Link href="/login">Back to Login</Link>
+                </Button>
+              </div>
             </div>
+          ) : (
+            <>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+                  Reset Your Password
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Enter your email address to receive a secure password recovery code.
+                </p>
+              </div>
+
+              {error && (
+                <div className="flex items-center gap-2 rounded-2xl bg-destructive/10 p-4 text-xs font-semibold text-destructive border border-destructive/20">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <p>{error}</p>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Registered Email Address
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      placeholder="name@company.com"
+                      type="email"
+                      className="pl-10 rounded-2xl h-11"
+                      {...register('email')}
+                    />
+                  </div>
+                  {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full btn-primary-glow rounded-2xl h-12 font-bold text-xs"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending OTP...
+                    </>
+                  ) : (
+                    'Send One-Time Password'
+                  )}
+                </Button>
+              </form>
+
+              <div className="pt-2 text-center">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  Back to login
+                </Link>
+              </div>
+            </>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  placeholder="name@example.com"
-                  type="email"
-                  className="pl-10 input-focus"
-                  {...register('email')}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
-              )}
-            </div>
-
-            <Button type="submit" className="w-full btn-gentle" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Send OTP
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-3 w-3" />
-              Back to login
-            </Link>
-          </div>
         </div>
       </div>
+
     </div>
   );
 }

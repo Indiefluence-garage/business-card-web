@@ -1,12 +1,12 @@
 import api from '../api';
-import { AuthResponse } from '../types';
+import { AuthResponse, User } from '../types';
 
 export const authService = {
-  register: async (data: any) => {
+  register: async (data: Record<string, unknown>) => {
     const response = await api.post<AuthResponse>('/auth/register', data);
     return response.data;
   },
-  login: async (data: any) => {
+  login: async (data: Record<string, unknown>) => {
     const response = await api.post<AuthResponse & { message: string }>('/auth/login', data);
     return response.data;
   },
@@ -39,7 +39,7 @@ export const authService = {
     return response.data;
   },
   getMe: async () => {
-    const response = await api.get<{ user: any }>('/auth/me'); // User type is in response.data.user
+    const response = await api.get<{ user: User }>('/auth/me');
     return response.data;
   },
 };

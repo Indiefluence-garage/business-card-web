@@ -2,11 +2,11 @@
 
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/form-elements';
 import { Button } from '@/components/ui/button';
-import { Check, X, AlertCircle, Loader2 } from 'lucide-react';
+import { Check, X, AlertCircle, Loader2, CreditCard, ArrowLeft, Zap, ShieldCheck } from 'lucide-react';
 import { paymentService } from '@/lib/services/payment.service';
 import { StatusModal, StatusModalType } from '@/components/ui/StatusModal';
+import Link from 'next/link';
 
 function CheckoutContent() {
   const router = useRouter();
@@ -40,7 +40,7 @@ function CheckoutContent() {
         type: 'success',
         title: 'Payment Successful!',
         message: `${planId} plan activated successfully`,
-        data: response.data
+        data: response.data,
       });
       setModalState({
         isOpen: true,
@@ -48,22 +48,22 @@ function CheckoutContent() {
         title: 'Payment Successful! 🎉',
         message: `Your ${planId} subscription has been activated successfully.`,
         actionLabel: 'Go to Dashboard',
-        actionUrl: '/dashboard'
+        actionUrl: '/dashboard',
       });
     } catch (error: any) {
       const errorData = error.response?.data;
       setResult({
         type: 'error',
-        title: 'Unexpected Error',
+        title: 'Payment Error',
         message: error.message,
-        data: errorData
+        data: errorData,
       });
       setModalState({
         isOpen: true,
         type: 'error',
         title: 'Payment Failed',
         message: errorData?.message || error.message || 'Payment simulation failed.',
-        details: JSON.stringify(errorData, null, 2)
+        details: JSON.stringify(errorData, null, 2),
       });
     } finally {
       setLoading(false);
@@ -80,7 +80,7 @@ function CheckoutContent() {
         type: 'success',
         title: 'Payment Successful!',
         message: 'Plan activated (no duplicate detected)',
-        data: response.data
+        data: response.data,
       });
       setModalState({
         isOpen: true,
@@ -94,14 +94,14 @@ function CheckoutContent() {
         type: errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS' ? 'warning' : 'error',
         title: errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS' ? 'Duplicate Subscription Detected' : 'Error',
         message: errorData?.message || error.message,
-        data: errorData
+        data: errorData,
       });
       setModalState({
         isOpen: true,
         type: errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS' ? 'warning' : 'error',
         title: errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS' ? 'Active Subscription Exists' : 'Duplicate Purchase Error',
         message: errorData?.message || 'You already have an active subscription.',
-        details: JSON.stringify(errorData, null, 2)
+        details: JSON.stringify(errorData, null, 2),
       });
     } finally {
       setLoading(false);
@@ -118,7 +118,7 @@ function CheckoutContent() {
         type: 'success',
         title: 'Unexpected Success',
         message: 'Invalid plan was accepted (this should not happen)',
-        data: response.data
+        data: response.data,
       });
     } catch (error: any) {
       const errorData = error.response?.data;
@@ -126,14 +126,14 @@ function CheckoutContent() {
         type: 'error',
         title: 'Invalid Plan Error',
         message: errorData?.message || error.message,
-        data: errorData
+        data: errorData,
       });
       setModalState({
         isOpen: true,
         type: 'error',
         title: 'Invalid Plan Error',
         message: errorData?.message || 'Selected plan ID does not exist in the database.',
-        details: JSON.stringify(errorData, null, 2)
+        details: JSON.stringify(errorData, null, 2),
       });
     } finally {
       setLoading(false);
@@ -149,7 +149,7 @@ function CheckoutContent() {
         type: 'error',
         title: 'Network Error',
         message: 'Failed to connect to server (simulated)',
-        data: { error: 'NETWORK_ERROR', details: 'Connection timeout' }
+        data: { error: 'NETWORK_ERROR', details: 'Connection timeout' },
       });
       setModalState({
         isOpen: true,
@@ -162,136 +162,126 @@ function CheckoutContent() {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto py-12 px-4">
+    <div className="container max-w-4xl mx-auto py-12 px-4 sm:px-6">
+      
+      <Link
+        href="/pricing"
+        className="inline-flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground mb-8 transition-colors"
+      >
+        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+        Back to Pricing
+      </Link>
+
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Test Checkout Page</h1>
-        <p className="text-muted-foreground">
-          Test different payment scenarios and error conditions
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3 border border-primary/20">
+          <CreditCard className="h-3.5 w-3.5" />
+          Checkout & Integration Workbench
+        </div>
+        <h1 className="font-display text-3xl font-bold text-foreground">
+          Subscription Checkout Simulator
+        </h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+          Verify transactional states, duplicate subscription protection, and server exception handling.
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Selected Plan</CardTitle>
-            <CardDescription>Plan to test purchase</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-2xl font-bold capitalize">{planId.replace('tier', 'Tier ')}</p>
-              <p className="text-sm text-muted-foreground">
-                Change plan by adding ?planId=tier1, tier2, or tier3 to the URL
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="rounded-3xl glass-panel p-6 border border-border flex flex-col justify-between">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+              Selected Subscription
+            </span>
+            <p className="text-3xl font-display font-extrabold text-foreground capitalize">
+              {planId.replace('tier', 'Tier ')}
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Pass parameter <code className="px-1.5 py-0.5 rounded bg-secondary text-primary font-mono font-bold">?planId=tier1 | tier2 | tier3</code> in URL.
+            </p>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Test Scenarios</CardTitle>
-            <CardDescription>Click to simulate different outcomes</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Button
-              onClick={simulateSuccess}
-              disabled={loading}
-              className="w-full"
-              variant="default"
-            >
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
-              Simulate Success
-            </Button>
+          <div className="mt-6 pt-4 border-t border-border flex items-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="h-4 w-4 text-emerald-500" />
+            <span>Encrypted Webhook Verification Active</span>
+          </div>
+        </div>
 
-            <Button
-              onClick={simulateDuplicate}
-              disabled={loading}
-              className="w-full"
-              variant="outline"
-            >
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <AlertCircle className="h-4 w-4 mr-2" />}
-              Test Duplicate Purchase
-            </Button>
+        <div className="rounded-3xl glass-panel p-6 border border-border space-y-2.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-2">
+            Execution Scenarios
+          </span>
 
-            <Button
-              onClick={simulateInvalidPlan}
-              disabled={loading}
-              className="w-full"
-              variant="outline"
-            >
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <X className="h-4 w-4 mr-2" />}
-              Test Invalid Plan
-            </Button>
+          <Button
+            onClick={simulateSuccess}
+            disabled={loading}
+            className="w-full btn-primary-glow rounded-2xl h-11 text-xs font-bold"
+          >
+            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
+            Simulate Legitimate Purchase
+          </Button>
 
-            <Button
-              onClick={simulateNetworkError}
-              disabled={loading}
-              className="w-full"
-              variant="outline"
-            >
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <X className="h-4 w-4 mr-2" />}
-              Simulate Network Error
-            </Button>
-          </CardContent>
-        </Card>
+          <Button
+            onClick={simulateDuplicate}
+            disabled={loading}
+            className="w-full rounded-2xl h-11 text-xs font-semibold"
+            variant="outline"
+          >
+            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <AlertCircle className="h-4 w-4 mr-2" />}
+            Test Duplicate Purchase Guard
+          </Button>
+
+          <Button
+            onClick={simulateInvalidPlan}
+            disabled={loading}
+            className="w-full rounded-2xl h-11 text-xs font-semibold"
+            variant="outline"
+          >
+            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <X className="h-4 w-4 mr-2" />}
+            Test Invalid Plan Exception
+          </Button>
+
+          <Button
+            onClick={simulateNetworkError}
+            disabled={loading}
+            className="w-full rounded-2xl h-11 text-xs font-semibold"
+            variant="outline"
+          >
+            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <X className="h-4 w-4 mr-2" />}
+            Simulate Network Latency Timeout
+          </Button>
+        </div>
       </div>
 
       {/* Result Display */}
       {result && (
-        <Card className={`${result.type === 'success' ? 'border-green-500 bg-green-50 dark:bg-green-950/20' :
-          result.type === 'warning' ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20' :
-            'border-red-500 bg-red-50 dark:bg-red-950/20'
-          }`}>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              {result.type === 'success' && <Check className="h-6 w-6 text-green-600" />}
-              {result.type === 'warning' && <AlertCircle className="h-6 w-6 text-yellow-600" />}
-              {result.type === 'error' && <X className="h-6 w-6 text-red-600" />}
-              <CardTitle className={
-                result.type === 'success' ? 'text-green-900 dark:text-green-100' :
-                  result.type === 'warning' ? 'text-yellow-900 dark:text-yellow-100' :
-                    'text-red-900 dark:text-red-100'
-              }>
-                {result.title}
-              </CardTitle>
-            </div>
-            <CardDescription className={
-              result.type === 'success' ? 'text-green-700 dark:text-green-300' :
-                result.type === 'warning' ? 'text-yellow-700 dark:text-yellow-300' :
-                  'text-red-700 dark:text-red-300'
-            }>
-              {result.message}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background/50 p-4 rounded-lg">
-              <p className="text-xs font-mono mb-2 text-muted-foreground">Response Data:</p>
-              <pre className="text-xs overflow-auto max-h-64">
-                {JSON.stringify(result.data, null, 2)}
-              </pre>
-            </div>
+        <div
+          className={`rounded-3xl p-6 border mb-8 transition-all ${
+            result.type === 'success'
+              ? 'border-emerald-500/30 bg-emerald-500/5'
+              : result.type === 'warning'
+              ? 'border-amber-500/30 bg-amber-500/5'
+              : 'border-destructive/30 bg-destructive/5'
+          }`}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            {result.type === 'success' && <Check className="h-5 w-5 text-emerald-500" />}
+            {result.type === 'warning' && <AlertCircle className="h-5 w-5 text-amber-500" />}
+            {result.type === 'error' && <X className="h-5 w-5 text-destructive" />}
+            <h3 className="font-display font-bold text-foreground text-lg">{result.title}</h3>
+          </div>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-4">{result.message}</p>
 
-            {result.type === 'success' && (
-              <p className="mt-4 text-sm text-muted-foreground">
-                Redirecting to dashboard in 3 seconds...
-              </p>
-            )}
-          </CardContent>
-        </Card>
+          <div className="p-4 rounded-2xl bg-card border border-border">
+            <p className="text-[10px] font-mono text-muted-foreground mb-2 uppercase font-bold">API Payload / Response:</p>
+            <pre className="text-xs font-mono overflow-auto max-h-48 text-foreground/80">
+              {JSON.stringify(result.data, null, 2)}
+            </pre>
+          </div>
+        </div>
       )}
-
-      <div className="mt-8 p-4 bg-muted rounded-lg">
-        <h3 className="font-semibold mb-2">Testing Guide:</h3>
-        <ul className="text-sm space-y-1 text-muted-foreground">
-          <li>• <strong>Simulate Success</strong>: Attempts real purchase (will fail if you already have active plan)</li>
-          <li>• <strong>Test Duplicate Purchase</strong>: Same as success, but specifically to test duplicate prevention</li>
-          <li>• <strong>Test Invalid Plan</strong>: Sends invalid plan ID to test error handling</li>
-          <li>• <strong>Simulate Network Error</strong>: Client-side simulated network failure</li>
-        </ul>
-      </div>
 
       <StatusModal
         isOpen={modalState.isOpen}
-        onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+        onClose={() => setModalState((prev) => ({ ...prev, isOpen: false }))}
         type={modalState.type}
         title={modalState.title}
         message={modalState.message}
@@ -301,7 +291,7 @@ function CheckoutContent() {
           modalState.actionUrl
             ? () => {
                 const url = modalState.actionUrl!;
-                setModalState(prev => ({ ...prev, isOpen: false }));
+                setModalState((prev) => ({ ...prev, isOpen: false }));
                 router.push(url);
               }
             : undefined
@@ -313,12 +303,14 @@ function CheckoutContent() {
 
 export default function CheckoutTestPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2">Loading checkout...</span>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="ml-2 text-xs text-muted-foreground">Loading checkout...</span>
+        </div>
+      }
+    >
       <CheckoutContent />
     </Suspense>
   );

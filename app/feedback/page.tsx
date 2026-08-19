@@ -2,7 +2,18 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { MessageSquarePlus, ArrowLeft, Send, CheckCircle2, Star, Sparkles } from 'lucide-react';
+import { 
+  MessageSquarePlus, 
+  ArrowLeft, 
+  Send, 
+  CheckCircle2, 
+  Star, 
+  Sparkles,
+  Lightbulb,
+  Camera,
+  Bug,
+  MessageSquare
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -19,8 +30,7 @@ export default function FeedbackPage() {
     if (!message.trim()) return;
 
     setIsSubmitting(true);
-    // Simulate feedback submission
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 700));
     setIsSubmitting(false);
     setSubmitted(true);
   };
@@ -28,66 +38,68 @@ export default function FeedbackPage() {
   return (
     <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
+        
         {/* Back Link */}
         <Link
           href="/"
-          className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground mb-8 transition-colors"
+          className="inline-flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground mb-8 transition-colors"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
           Back to Home
         </Link>
 
         {submitted ? (
-          <div className="rounded-3xl bg-card border border-border p-8 sm:p-12 text-center shadow-lg">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center mb-6">
+          <div className="rounded-3xl glass-panel border border-border p-8 sm:p-12 text-center shadow-2xl animate-fade-in">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center mb-6">
               <CheckCircle2 className="h-8 w-8" />
             </div>
-            <h2 className="font-display text-3xl font-bold text-foreground mb-3">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3">
               Thank You for Your Feedback!
             </h2>
-            <p className="text-muted-foreground max-w-md mx-auto mb-8 text-sm sm:text-base">
-              Your feedback directly shapes our product roadmap. If you provided an email, our team may reach out with updates.
+            <p className="text-muted-foreground max-w-md mx-auto mb-8 text-xs sm:text-sm leading-relaxed">
+              Your insights directly guide our engineering and design priorities. If you provided an email, our product team may reach out with updates.
             </p>
-            <div className="flex justify-center gap-4">
-              <Button onClick={() => setSubmitted(false)} variant="outline" className="rounded-xl">
+            <div className="flex justify-center gap-3">
+              <Button onClick={() => setSubmitted(false)} variant="outline" className="rounded-xl text-xs">
                 Submit Another Response
               </Button>
               <Link href="/">
-                <Button className="rounded-xl btn-gentle">Return Home</Button>
+                <Button className="rounded-xl btn-primary-glow text-xs font-bold">Return Home</Button>
               </Link>
             </div>
           </div>
         ) : (
-          <div className="rounded-3xl bg-card border border-border p-6 sm:p-10 shadow-lg">
+          <div className="rounded-3xl glass-panel border border-border p-6 sm:p-10 shadow-2xl animate-fade-in">
             <div className="mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
                 <Sparkles className="h-3.5 w-3.5" />
-                Product Improvement
+                Continuous Product Improvement
               </div>
-              <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-                Share Your Feedback
+              <h1 className="font-display text-2xl sm:text-4xl font-bold text-foreground mb-2">
+                Share Your Thoughts & Ideas
               </h1>
-              <p className="text-sm text-muted-foreground">
-                Help us make Lukewarm CRM better. Let us know what you love or what we should build next.
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Help us make Lukewarm CRM faster, smarter, and more indispensable for your workflow.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              
               {/* Rating */}
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  How would you rate your experience with Lukewarm?
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  How would you rate your overall experience with Lukewarm?
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pt-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       type="button"
                       key={star}
                       onClick={() => setRating(star)}
-                      className="p-1.5 focus:outline-none transition-transform hover:scale-110"
+                      className="p-1.5 focus:outline-none transition-transform hover:scale-125"
                     >
                       <Star
-                        className={`h-8 w-8 ${
+                        className={`h-7 w-7 transition-colors ${
                           star <= rating
                             ? 'fill-amber-400 text-amber-400'
                             : 'text-muted-foreground/30'
@@ -98,73 +110,75 @@ export default function FeedbackPage() {
                 </div>
               </div>
 
-              {/* Feedback Category */}
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  Topic
+              {/* Topic */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Feedback Category
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { id: 'feature', label: '💡 Feature Idea' },
-                    { id: 'scanning', label: '📸 OCR & Scan' },
-                    { id: 'bug', label: '🐛 Bug Report' },
-                    { id: 'other', label: '💬 General' },
+                    { id: 'feature', label: 'Feature Idea', icon: Lightbulb },
+                    { id: 'scanning', label: 'Vision & OCR', icon: Camera },
+                    { id: 'bug', label: 'Bug Report', icon: Bug },
+                    { id: 'other', label: 'General Thoughts', icon: MessageSquare },
                   ].map((cat) => (
                     <button
                       type="button"
                       key={cat.id}
                       onClick={() => setCategory(cat.id)}
-                      className={`p-3 rounded-xl text-xs font-bold border text-center transition-all ${
+                      className={`p-3 rounded-2xl text-xs font-semibold border text-center transition-all flex flex-col items-center gap-1.5 ${
                         category === cat.id
-                          ? 'border-primary bg-primary/10 text-primary'
+                          ? 'border-primary bg-primary/10 text-primary shadow-sm'
                           : 'border-border bg-card text-muted-foreground hover:text-foreground'
                       }`}
                     >
-                      {cat.label}
+                      <cat.icon className="h-4 w-4" />
+                      <span>{cat.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Email (Optional) */}
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  Your Email (optional)
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Your Email (Optional, for follow-up)
                 </label>
                 <Input
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="rounded-xl"
+                  className="rounded-2xl h-11"
                 />
               </div>
 
               {/* Message */}
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  Your Thoughts & Suggestions *
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Your Feedback / Suggestions *
                 </label>
                 <textarea
                   required
                   rows={4}
-                  placeholder="Tell us what went well or what we can improve..."
+                  placeholder="Tell us what you love or what we could improve..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full p-4 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  className="w-full p-4 rounded-2xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm leading-relaxed"
                 />
               </div>
 
               <Button
                 type="submit"
                 disabled={isSubmitting || !message.trim()}
-                className="w-full py-3.5 rounded-xl font-bold btn-gentle"
+                className="w-full btn-primary-glow rounded-2xl h-12 font-bold text-xs"
               >
-                {isSubmitting ? 'Submitting...' : 'Send Feedback'}
+                {isSubmitting ? 'Submitting...' : 'Send Feedback to Team'}
               </Button>
             </form>
           </div>
         )}
+
       </div>
     </div>
   );

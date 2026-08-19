@@ -6,12 +6,22 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Mail, AlertCircle, CheckCircle } from 'lucide-react';
+import { 
+  Loader2, 
+  Mail, 
+  AlertCircle, 
+  CheckCircle2, 
+  Lock, 
+  ArrowRight, 
+  Sparkles, 
+  ShieldCheck, 
+  CreditCard,
+  Zap
+} from 'lucide-react';
 import api from '@/lib/api';
-
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/PasswordInput';
-import { Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/form-elements';
+import { Input, Label } from '@/components/ui/form-elements';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -63,39 +73,16 @@ function LoginForm() {
     }
   };
 
-  // const handleGoogleSignIn = async () => {
-  //   setGoogleLoading(true);
-  //   setError(null);
-  //   try {
-  //     // Better Auth social sign-in: POST to the endpoint and follow returned URL
-  //     const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
-  //     const callbackURL = window.location.origin + '/auth/callback';
-  //     const res = await fetch(`${apiBase}/api/better-auth/sign-in/social`, {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ provider: 'google', callbackURL })
-  //     });
-  //     if (!res.ok) throw new Error('Failed to initiate social sign-in');
-  //     const data = await res.json();
-  //     const redirectUrl = data.url || res.headers.get('Location');
-  //     if (redirectUrl) window.location.href = redirectUrl;
-  //   } catch (err: any) {
-  //     setError('Failed to initiate Google sign-in.');
-  //     setGoogleLoading(false);
-  //   }
-  // };
-
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     setError(null);
     try {
       const callbackURL = window.location.origin + '/callback';
-      // Use the proxy-enabled api client
       const response = await api.post('/better-auth/sign-in/social', {
         provider: 'google',
-        callbackURL
+        callbackURL,
       });
-      
+
       const redirectUrl = response.data.url;
       if (redirectUrl) window.location.href = redirectUrl;
     } catch (err: any) {
@@ -106,66 +93,91 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-bg items-center justify-center p-12">
-        <div className="max-w-md text-white">
-          <h1 className="text-4xl font-bold mb-6">Welcome back</h1>
-          <p className="text-lg opacity-90 mb-8">
-            Access your professional network and manage your connections with ease.
-          </p>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <CheckCircle className="h-5 w-5" />
-              </div>
-              <span className="text-sm">Sync across all devices</span>
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
+      
+      {/* Left Pane - Brand Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 p-12 flex-col justify-between text-white overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Top brand */}
+        <div className="relative z-10 flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-lg">
+            <CreditCard className="h-5 w-5" />
+          </div>
+          <span className="font-display text-xl font-bold tracking-tight">Lukewarm</span>
+        </div>
+
+        {/* Center quote / feature badge */}
+        <div className="relative z-10 max-w-md space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-cyan-300 text-xs font-mono font-semibold border border-white/10">
+            <Sparkles className="h-3.5 w-3.5" />
+            Executive Contact Intelligence
+          </div>
+
+          <h2 className="font-display text-3xl sm:text-4xl font-extrabold leading-tight">
+            &ldquo;The fastest way to turn conference handshakes into closed deals.&rdquo;
+          </h2>
+
+          <div className="space-y-3 text-sm text-slate-300">
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="h-4 w-4 text-cyan-400" />
+              <span>Sub-second continuous flash scanning</span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <CheckCircle className="h-5 w-5" />
-              </div>
-              <span className="text-sm">Secure cloud storage</span>
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="h-4 w-4 text-cyan-400" />
+              <span>AI voice memos linked to contact records</span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <CheckCircle className="h-5 w-5" />
-              </div>
-              <span className="text-sm">AI-powered scanning</span>
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="h-4 w-4 text-cyan-400" />
+              <span>Bi-directional Google Calendar meeting sync</span>
             </div>
           </div>
         </div>
+
+        {/* Bottom footer badge */}
+        <div className="relative z-10 flex items-center justify-between text-xs text-slate-400 pt-6 border-t border-white/10">
+          <span className="flex items-center gap-1.5 font-mono">
+            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            AES-256 Encrypted Storage
+          </span>
+          <span>© 2026 Lukewarm CRM</span>
+        </div>
       </div>
 
-      {/* Right Panel - Form */}
+      {/* Right Pane - Form */}
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background">
-        <div className="w-full max-w-md animate-fade-in">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Sign in to Card CRM</h2>
-            <p className="text-muted-foreground">
-              Enter your credentials to access your account
+        <div className="w-full max-w-md animate-fade-in space-y-6">
+          
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+              Sign In to Your Account
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Access your digital card CRM, active events, and synced contacts.
             </p>
           </div>
 
+          {/* Feedback messages */}
           {error && (
-            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-4 text-sm text-destructive mb-6 border border-destructive/20">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <div className="flex items-center gap-2 rounded-2xl bg-destructive/10 p-4 text-xs font-semibold text-destructive border border-destructive/20">
+              <AlertCircle className="h-4 w-4 shrink-0" />
               <p>{error}</p>
             </div>
           )}
 
           {successMessage && (
-            <div className="flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-900/20 p-4 text-sm text-green-600 dark:text-green-400 mb-6 border border-green-200 dark:border-green-800">
-              <CheckCircle className="h-4 w-4 flex-shrink-0" />
+            <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 p-4 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
               <p>{successMessage}</p>
             </div>
           )}
 
-          {/* Google Sign-In */}
+          {/* Google 1-Click OAuth */}
           <Button
             type="button"
             variant="outline"
-            className="w-full mb-4 flex items-center gap-2"
+            className="w-full h-12 rounded-2xl flex items-center justify-center gap-3 font-semibold text-xs border-border hover:bg-secondary transition-all"
             onClick={handleGoogleSignIn}
             disabled={googleLoading || isLoading}
           >
@@ -179,73 +191,87 @@ function LoginForm() {
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
             )}
-            Continue with Google
+            <span>Continue with Google</span>
           </Button>
 
-          <div className="relative mb-4">
+          {/* Divider */}
+          <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-border" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+            <div className="relative flex justify-center text-[10px] uppercase font-mono">
+              <span className="bg-background px-3 text-muted-foreground">Or sign in with email</span>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+          {/* Email / Password Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Email Address
+              </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
-                  placeholder="name@example.com"
+                  placeholder="name@company.com"
                   type="email"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  autoCorrect="off"
-                  className="pl-10 input-focus"
+                  className="pl-10 rounded-2xl h-11"
                   {...register('email')}
                 />
               </div>
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Password
+                </Label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm font-medium text-primary hover:underline"
+                  className="text-xs font-medium text-primary hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
               <PasswordInput
                 id="password"
-                className="input-focus"
+                className="rounded-2xl h-11"
                 {...register('password')}
               />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
-              )}
+              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
             </div>
 
-            <Button type="submit" className="w-full btn-gentle" disabled={isLoading || googleLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+            <Button
+              type="submit"
+              className="w-full btn-primary-glow rounded-2xl h-12 font-bold text-xs"
+              disabled={isLoading || googleLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                <span className="flex items-center gap-1.5">
+                  <span>Sign In</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </span>
+              )}
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          {/* Signup link */}
+          <div className="pt-2 text-center text-xs text-muted-foreground">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="font-medium text-primary hover:underline">
-              Sign up
+            <Link href="/signup" className="font-bold text-primary hover:underline">
+              Create free account
             </Link>
-          </p>
+          </div>
         </div>
       </div>
+
     </div>
   );
 }

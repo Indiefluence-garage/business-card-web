@@ -2,13 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Sparkles, Zap, Crown, Star, CheckCircle } from 'lucide-react';
+import { 
+  Check, 
+  Sparkles, 
+  Zap, 
+  Crown, 
+  Star, 
+  CheckCircle2, 
+  ArrowRight, 
+  ShieldCheck
+} from 'lucide-react';
 import { subscriptionService } from '@/lib/services/subscription.service';
 import { paymentService } from '@/lib/services/payment.service';
 import { userService } from '@/lib/services/user.service';
 import { Plan, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-
 import { StatusModal, StatusModalType } from '@/components/ui/StatusModal';
 
 interface StatusModalState {
@@ -37,13 +45,11 @@ export default function PricingPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch plans
         const plansData = await subscriptionService.getPlans();
         if (plansData.plans) {
           setPlans(plansData.plans);
         }
 
-        // Try to fetch current user (might not be logged in)
         const token = localStorage.getItem('token');
         if (token) {
           try {
@@ -53,8 +59,7 @@ export default function PricingPage() {
             } else {
               setCurrentUser(profileData as unknown as User);
             }
-          } catch (e) {
-            // User not logged in or token expired
+          } catch {
             console.log('User not authenticated');
           }
         }
@@ -74,9 +79,8 @@ export default function PricingPage() {
       return;
     }
 
-    // Check if this is the current plan
-    if (currentUser?.planId === plan.id) {
-      return; // Already subscribed
+    if (currentUser?.planId === plan.id && currentUser?.subscriptionStatus === 'active') {
+      return;
     }
 
     try {
@@ -87,7 +91,7 @@ export default function PricingPage() {
           isOpen: true,
           type: 'auth',
           title: 'Account Sign In Required',
-          message: 'Please sign in or create your Lukewarm account with your email to link and activate your subscription.',
+          message: 'Please sign in or create your Lukewarm account to link and activate your subscription.',
           actionLabel: 'Sign In to Account',
           actionUrl: '/login?redirect=/pricing',
         });
@@ -100,7 +104,9 @@ export default function PricingPage() {
           isOpen: true,
           type: 'success',
           title: 'Subscription Activated! 🎉',
-          message: `Your ${plan.name} plan has been activated successfully and is valid until ${new Date(response.data.expiresAt).toLocaleDateString()}. You have unlimited card scanning and AI features!`,
+          message: `Your ${plan.name} plan has been activated successfully and is valid until ${new Date(
+            response.data.expiresAt
+          ).toLocaleDateString()}. You have unlimited card scanning and AI features!`,
           actionLabel: 'Go to Dashboard',
           actionUrl: '/dashboard',
         });
@@ -112,9 +118,10 @@ export default function PricingPage() {
           message: response.message || 'Unable to complete the payment transaction. Please try again.',
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Payment error', error);
-      const errorData = error.response?.data;
+      const err = error as { response?: { status?: number; data?: { error?: string; message?: string; data?: { currentPlan?: string; expiresAt?: string } } }; message?: string };
+      const errorData = err.response?.data;
 
       if (errorData?.error === 'ACTIVE_SUBSCRIPTION_EXISTS') {
         const planName = (errorData.data?.currentPlan || 'an active').toUpperCase();
@@ -134,7 +141,7 @@ export default function PricingPage() {
           title: 'Invalid Plan Selection',
           message: 'The selected subscription plan is no longer available. Please select another plan.',
         });
-      } else if (error.response?.status === 401 || errorData?.error === 'UNAUTHORIZED') {
+      } else if (err.response?.status === 401 || errorData?.error === 'UNAUTHORIZED') {
         setStatusModal({
           isOpen: true,
           type: 'auth',
@@ -148,7 +155,7 @@ export default function PricingPage() {
           isOpen: true,
           type: 'error',
           title: 'Payment Request Error',
-          message: errorData?.message || error.message || 'Unable to process payment at this moment. Please try again later.',
+          message: errorData?.message || err.message || 'Unable to process payment at this moment. Please try again later.',
         });
       }
     } finally {
@@ -156,210 +163,247 @@ export default function PricingPage() {
     }
   };
 
-  const getPlanIcon = (index: number) => {
-    const icons = [Star, Zap, Crown, Sparkles];
-    const Icon = icons[index % icons.length];
-    return <Icon className="h-6 w-6" />;
+  const getPlanBadge = (index: number) => {
+    if (index === 1) return { label: 'Starter', icon: Zap };
+    if (index === 2) return { label: 'Most Popular', icon: Crown };
+    if (index === 3) return { label: 'Best Value', icon: Sparkles };
+    return { label: 'Free Tier', icon: Star };
   };
 
   const isCurrentPlan = (planId: string) => {
     if (!currentUser) return false;
-
-    // Handle free plan
     if (planId === 'free' && (!currentUser.planId || currentUser.subscriptionStatus === 'free')) {
       return true;
     }
-
     return currentUser.planId === planId && currentUser.subscriptionStatus === 'active';
   };
 
   return (
-    <div className="min-h-screen gradient-bg-subtle">
-      {/* Hero Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium bg-primary/5 text-primary rounded-full border border-primary/10">
-              <Sparkles className="h-4 w-4" />
-              Simple, transparent pricing
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4">
-              Choose Your Perfect Plan
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Unlock powerful features to manage your professional network effortlessly.
-              No hidden fees, cancel anytime.
-            </p>
+    <div className="min-h-screen bg-background py-16 px-4 sm:px-6 lg:px-8">
+      
+      {/* Hero Header */}
+      <div className="max-w-4xl mx-auto text-center mb-16">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
+          <Sparkles className="h-3.5 w-3.5" />
+          Simple, Transparent Pricing
+        </div>
+        <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-4">
+          Invest in Your <span className="text-gradient">Professional Network.</span>
+        </h1>
+        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+          Every paid tier includes full unrestricted access to continuous flash scan, voice memo AI, and Google Calendar sync. Choose your preferred duration.
+        </p>
 
-            {/* Current plan indicator */}
-            {currentUser && currentUser.planId && (
-              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm font-medium">
-                <CheckCircle className="h-4 w-4" />
-                You're on the {currentUser.planId.replace('tier', 'Tier ')} plan
-                {currentUser.planEndsAt && (
-                  <span className="text-green-600 dark:text-green-500">
-                    • Expires {new Date(currentUser.planEndsAt).toLocaleDateString()}
-                  </span>
-                )}
-              </div>
+        {/* Current Plan Indicator Banner */}
+        {currentUser && currentUser.planId && currentUser.subscriptionStatus === 'active' && (
+          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-semibold">
+            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <span>
+              You have an active <strong>{currentUser.planId.replace('tier', 'Tier ')}</strong> subscription
+            </span>
+            {currentUser.planEndsAt && (
+              <span className="text-muted-foreground font-normal">
+                • Valid until {new Date(currentUser.planEndsAt).toLocaleDateString()}
+              </span>
             )}
           </div>
-        </div>
-      </section>
+        )}
+      </div>
 
-      {/* Pricing Cards */}
-      <section className="pb-24">
-        <div className="container mx-auto px-6">
-          {loading ? (
-            <div className="flex items-center justify-center py-24">
-              <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <p className="text-muted-foreground">Loading plans...</p>
-              </div>
-            </div>
-          ) : (
-            <div className="grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-4 mx-auto">
-              {plans.length > 0 ? (
-                plans.map((plan, index) => {
-                  const isCurrent = isCurrentPlan(plan.id);
-
-                  return (
-                    <div
-                      key={plan.id}
-                      className={`relative flex flex-col rounded-2xl border bg-card p-6 card-hover ${isCurrent
-                          ? 'border-green-500 ring-2 ring-green-500/20'
-                          : plan.isPopular
-                            ? 'border-primary shadow-lg ring-2 ring-primary/20 scale-[1.02]'
-                            : 'border-border'
-                        }`}
-                    >
-                      {/* Current Plan Badge */}
-                      {isCurrent && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold bg-green-500 text-white rounded-full">
-                            <CheckCircle className="h-3 w-3" />
-                            Your Plan
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Popular Badge (only if not current) */}
-                      {plan.isPopular && !isCurrent && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
-                            <Crown className="h-3 w-3" />
-                            Most Popular
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Plan Header */}
-                      <div className="mb-6">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${isCurrent
-                            ? 'bg-green-500 text-white'
-                            : plan.isPopular
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-primary/10 text-primary'
-                          }`}>
-                          {getPlanIcon(index)}
-                        </div>
-                        <h3 className="text-xl font-semibold text-foreground mb-2">{plan.name}</h3>
-                        <div className="flex items-baseline gap-1">
-                          {plan.price === 0 ? (
-                            <span className="text-4xl font-bold text-foreground">Free</span>
-                          ) : (
-                            <>
-                              <span className="text-4xl font-bold text-foreground">
-                                ${(plan.price / 100).toFixed(0)}
-                              </span>
-                              <span className="text-muted-foreground capitalize">/{plan.interval}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Features */}
-                      <ul className="space-y-3 flex-1 mb-6">
-                        {plan.features.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-3">
-                            <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${isCurrent ? 'bg-green-500/10' : 'bg-primary/10'
-                              }`}>
-                              <Check className={`h-3 w-3 ${isCurrent ? 'text-green-500' : 'text-primary'}`} />
-                            </div>
-                            <span className="text-sm text-muted-foreground">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      {/* CTA Button */}
-                      <Button
-                        className={`w-full ${isCurrent
-                            ? 'bg-green-500 hover:bg-green-600 text-white'
-                            : plan.isPopular
-                              ? 'btn-gentle'
-                              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                          }`}
-                        variant={isCurrent ? 'default' : plan.isPopular ? 'default' : 'secondary'}
-                        onClick={() => handleSubscribe(plan)}
-                        disabled={!!processingId || isCurrent}
-                      >
-                        {isCurrent
-                          ? 'Current Plan'
-                          : processingId === plan.id
-                            ? 'Processing...'
-                            : plan.price === 0
-                              ? 'Get Started Free'
-                              : 'Subscribe Now'
-                        }
-                      </Button>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="col-span-4 text-center py-12">
-                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <p className="text-muted-foreground">No plans available at the moment.</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 border-t border-border">
-        <div className="container mx-auto px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">Questions?</h2>
-            <p className="text-muted-foreground mb-8">
-              Contact us at <a href="mailto:support@cardcrm.com" className="text-primary hover:underline">support@cardcrm.com</a>
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {!currentUser ? (
-                <>
-                  <Button variant="outline" className="transition-gentle" onClick={() => router.push('/login')}>
-                    Sign In
-                  </Button>
-                  <Button className="btn-gentle" onClick={() => router.push('/signup')}>
-                    Get Started Free
-                  </Button>
-                </>
-              ) : (
-                <Button className="btn-gentle" onClick={() => router.push('/dashboard')}>
-                  Go to Dashboard
-                </Button>
-              )}
+      {/* Pricing Cards Grid */}
+      <div className="max-w-7xl mx-auto">
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <div className="flex flex-col items-center gap-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+              <p className="text-sm text-muted-foreground">Loading subscription plans...</p>
             </div>
           </div>
-        </div>
-      </section>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {plans.map((plan, index) => {
+              const isCurrent = isCurrentPlan(plan.id);
+              const isRecommended = plan.isPopular || plan.id === 'tier2';
+              const badge = getPlanBadge(index);
+              const Icon = badge.icon;
 
-      {/* Themed Interactive Status Modal */}
+              return (
+                <div
+                  key={plan.id}
+                  className={`relative flex flex-col rounded-3xl p-6 sm:p-7 transition-all duration-300 ${
+                    isCurrent
+                      ? 'bg-card border-2 border-emerald-500 shadow-lg'
+                      : isRecommended
+                      ? 'glass-panel-glow border-2 border-primary shadow-xl scale-[1.02] z-10'
+                      : 'glass-panel card-hover'
+                  }`}
+                >
+                  {/* Badge */}
+                  {isCurrent ? (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="inline-flex items-center gap-1 px-3 py-0.5 text-xs font-bold bg-emerald-500 text-white rounded-full shadow-sm">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Current Plan
+                      </span>
+                    </div>
+                  ) : isRecommended ? (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="inline-flex items-center gap-1 px-3 py-0.5 text-xs font-bold bg-primary text-white rounded-full shadow-md">
+                        <Crown className="h-3 w-3" />
+                        Recommended
+                      </span>
+                    </div>
+                  ) : null}
+
+                  {/* Plan Name & Icon */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="h-10 w-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                      {plan.id.toUpperCase()}
+                    </span>
+                  </div>
+
+                  <h3 className="font-display text-xl font-bold text-foreground mb-1">{plan.name}</h3>
+                  <p className="text-xs text-muted-foreground mb-6 min-h-[32px]">
+                    {plan.price === 0
+                      ? 'Free essential business card scanner to get started.'
+                      : `Full AI suite access with continuous updates for ${plan.interval || 'period'}.`}
+                  </p>
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-1 pb-6 mb-6 border-b border-border">
+                    {plan.price === 0 ? (
+                      <span className="text-4xl font-extrabold font-display text-foreground">$0</span>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-extrabold font-display text-foreground">
+                          ${(plan.price / 100).toFixed(0)}
+                        </span>
+                        <span className="text-xs text-muted-foreground font-mono">
+                          / {plan.interval || 'month'}
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Features Checklist */}
+                  <div className="flex-1 space-y-3 mb-8">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                      Included Capabilities:
+                    </span>
+                    {plan.features.map((feat, i) => (
+                      <div key={i} className="flex items-start gap-2.5 text-xs text-foreground/90">
+                        <div className="h-4 w-4 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                          <Check className="h-3 w-3" />
+                        </div>
+                        <span className="leading-relaxed">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA Subscribe Button */}
+                  <Button
+                    onClick={() => handleSubscribe(plan)}
+                    disabled={!!processingId || isCurrent}
+                    className={`w-full rounded-2xl h-12 font-bold text-xs ${
+                      isCurrent
+                        ? 'bg-emerald-500 text-white cursor-default'
+                        : isRecommended
+                        ? 'btn-primary-glow'
+                        : 'btn-gentle'
+                    }`}
+                    variant={isCurrent ? 'default' : isRecommended ? 'default' : 'secondary'}
+                  >
+                    {isCurrent ? (
+                      <span className="flex items-center gap-1.5">
+                        <CheckCircle2 className="h-4 w-4" /> Active Plan
+                      </span>
+                    ) : processingId === plan.id ? (
+                      'Activating...'
+                    ) : plan.price === 0 ? (
+                      'Get Started Free'
+                    ) : (
+                      <span className="flex items-center gap-1.5">
+                        <span>Subscribe for ${(plan.price / 100).toFixed(0)}</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Feature Comparison Matrix */}
+      <div className="max-w-5xl mx-auto mt-24">
+        <div className="text-center mb-10">
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">
+            Detailed Capability Matrix
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Compare all features across free and paid subscriptions.
+          </p>
+        </div>
+
+        <div className="rounded-3xl glass-panel border border-border overflow-hidden shadow-lg">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-secondary/40">
+                  <th className="p-4 font-bold text-foreground">Feature</th>
+                  <th className="p-4 font-bold text-center text-muted-foreground">Free Tier</th>
+                  <th className="p-4 font-bold text-center text-primary">All Paid Tiers</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {[
+                  { name: 'Vision OCR Scanning', free: '10 Cards Total', pro: 'Unlimited 4K OCR' },
+                  { name: 'Continuous Flash Scan (Burst Mode)', free: 'Manual only', pro: 'Full Continuous Speed' },
+                  { name: 'AI Voice Memo Transcription', free: 'Unavailable', pro: 'Unlimited Voice Memos' },
+                  { name: 'Google Calendar Auto-Sync', free: 'Unavailable', pro: 'Automatic Action Sync' },
+                  { name: 'Contextual Selfie Attachments', free: 'Limited (3)', pro: 'Unlimited Context Photos' },
+                  { name: 'Conference / Live Event Tagging', free: '1 Event', pro: 'Unlimited Events' },
+                  { name: 'vCard (.vcf) & CSV Export', free: 'Basic vCard', pro: 'Full CRM & CSV Export' },
+                  { name: 'Customer Support Priority', free: 'Standard', pro: 'Priority Engineering SLA' },
+                ].map((row, idx) => (
+                  <tr key={idx} className="hover:bg-secondary/20 transition-colors">
+                    <td className="p-4 font-medium text-foreground">{row.name}</td>
+                    <td className="p-4 text-center text-muted-foreground">{row.free}</td>
+                    <td className="p-4 text-center font-bold text-emerald-600 dark:text-emerald-400">
+                      {row.pro}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Trust & Guarantee Banner */}
+      <div className="max-w-4xl mx-auto mt-16 p-8 rounded-3xl glass-panel border border-border/70 text-center flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-3 text-left">
+          <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+          <div>
+            <h4 className="font-display font-bold text-foreground text-sm">Safe & Instant Activation</h4>
+            <p className="text-xs text-muted-foreground">Instant entitlement unlocking. Secure Stripe processing.</p>
+          </div>
+        </div>
+        <Button variant="outline" className="rounded-xl text-xs" asChild>
+          <a href="mailto:support@cardcrm.com">Contact Sales for Enterprise Teams</a>
+        </Button>
+      </div>
+
+      {/* Interactive Status Modal */}
       <StatusModal
         isOpen={statusModal.isOpen}
-        onClose={() => setStatusModal(prev => ({ ...prev, isOpen: false }))}
+        onClose={() => setStatusModal((prev) => ({ ...prev, isOpen: false }))}
         type={statusModal.type}
         title={statusModal.title}
         message={statusModal.message}
@@ -369,12 +413,13 @@ export default function PricingPage() {
           statusModal.actionUrl
             ? () => {
                 const url = statusModal.actionUrl!;
-                setStatusModal(prev => ({ ...prev, isOpen: false }));
+                setStatusModal((prev) => ({ ...prev, isOpen: false }));
                 router.push(url);
               }
             : undefined
         }
       />
+
     </div>
   );
 }
