@@ -195,7 +195,7 @@ export default function HelpCenterPage() {
                 Send Feedback
               </Button>
             </Link>
-            <a href="mailto:support@cardcrm.com">
+            <a href="mailto:support@lukewarm.app">
               <Button className="btn-primary-glow rounded-xl text-xs font-semibold">
                 <Mail className="mr-1.5 h-3.5 w-3.5" />
                 Contact Support

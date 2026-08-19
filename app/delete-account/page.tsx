@@ -166,8 +166,8 @@ export default function DeleteAccountPage() {
 
             <div className="mt-8 text-center text-xs text-muted-foreground">
               Questions? Contact our data protection officer at{' '}
-              <a href="mailto:support@cardcrm.com" className="text-primary underline">
-                support@cardcrm.com
+              <a href="mailto:support@lukewarm.app" className="text-primary underline">
+                support@lukewarm.app
               </a>
             </div>
           </div>

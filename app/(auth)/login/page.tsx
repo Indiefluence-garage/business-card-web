@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -96,17 +97,19 @@ function LoginForm() {
     <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
       
       {/* Left Pane - Brand Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 p-12 flex-col justify-between text-white overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-12 flex-col justify-between text-white overflow-hidden">
 
         {/* Top brand */}
-        <div className="relative z-10 flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-lg">
-            <CreditCard className="h-5 w-5" />
-          </div>
-          <span className="font-display text-xl font-bold tracking-tight">Lukewarm</span>
-        </div>
+        <Link href="/" className="relative z-10 flex items-center gap-2.5">
+          <Image
+            src="/logo.png"
+            alt="Lukewarm Logo"
+            width={38}
+            height={31}
+            className="h-8 w-auto object-contain"
+          />
+          <span className="font-display text-xl font-bold tracking-tight text-white">Lukewarm</span>
+        </Link>
 
         {/* Center quote / feature badge */}
         <div className="relative z-10 max-w-md space-y-6">
@@ -141,7 +144,7 @@ function LoginForm() {
             <ShieldCheck className="h-4 w-4 text-emerald-400" />
             AES-256 Encrypted Storage
           </span>
-          <span>© 2026 Lukewarm CRM</span>
+          <span>© 2026 Lukewarm</span>
         </div>
       </div>
 
@@ -154,7 +157,7 @@ function LoginForm() {
               Sign In to Your Account
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Access your digital card CRM, active events, and synced contacts.
+              Access your account, active events, and synced contacts.
             </p>
           </div>
 

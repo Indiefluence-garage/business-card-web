@@ -165,9 +165,8 @@ export default function DashboardPage() {
         {/* Main Profile Hero Card */}
         <div className="rounded-3xl glass-panel border border-border overflow-hidden shadow-xl">
           
-          {/* Dynamic Ambient Cover Banner */}
-          <div className="relative h-40 sm:h-48 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/10 overflow-hidden border-b border-border/60">
-            <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+          {/* Executive Cover Banner */}
+          <div className="relative h-32 sm:h-36 bg-secondary overflow-hidden border-b border-border">
             <div className="absolute top-4 right-4 flex items-center gap-2">
               <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 backdrop-blur-md ${
                 isPro 

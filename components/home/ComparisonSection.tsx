@@ -1,87 +1,85 @@
 'use client';
 
-import { XCircle, CheckCircle2, Zap, ArrowRight } from 'lucide-react';
+import { XCircle, CheckCircle2, ArrowRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export function ComparisonSection() {
   const painPoints = [
-    'Stacks of paper cards sitting forgotten on desks or in bags',
-    '30+ minutes spent manually typing names, phones, and emails',
-    'Forgetting the conversation context and who introduced whom',
-    'Missed follow-up meetings and lost multi-thousand dollar deals',
-    'No sync across devices or company address books',
+    'Stacks of physical business cards sitting forgotten on desks',
+    '30+ minutes spent manually typing contact details into phones',
+    'Forgetting conversation context and mutual action promises',
+    'Missed follow-up windows resulting in lost business deals',
+    'Siloed contacts that never sync to team or calendar systems',
   ];
 
   const superpowers = [
     'Sub-second continuous flash scan digitizes cards in real time',
-    'Zero manual typing — AI extracts and cleans all contact fields',
-    'Voice memos capture meeting context and generate follow-up tasks',
-    'Auto-schedules Google Calendar meetings from transcribed speech',
+    'Zero manual data entry — AI extracts, formats, and cleans fields',
+    '5-second voice memos capture conversation context & follow-up tasks',
+    'Auto-schedules Google Calendar meetings directly from voice transcripts',
     'Encrypted cloud sync across iOS, Android, and Web instantly',
   ];
 
   return (
     <div className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-3">
-          Why Top Executives & Founders Switch to Lukewarm
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">
+          Why Executives & Founders Use Lukewarm
         </h2>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          Never lose a critical conference connection again. Experience effortless contact intelligence.
+        <p className="text-sm text-muted-foreground">
+          Replace tedious manual contact entry with automated optical OCR and voice intelligence.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        
         {/* The Old Way */}
-        <div className="rounded-3xl bg-secondary/40 border border-border p-6 sm:p-8 flex flex-col justify-between">
+        <div className="rounded-xl bg-card border border-border p-6 sm:p-8 flex flex-col justify-between">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-destructive/10 text-destructive text-xs font-bold uppercase tracking-wider mb-6">
-              The Outdated Way
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-destructive/10 text-destructive text-xs font-bold uppercase tracking-wider mb-4">
+              The Manual Way
             </div>
-            <h3 className="font-display text-2xl font-bold text-foreground mb-4">
-              Paper Chaos & Missed Deals
+            <h3 className="text-lg font-bold text-foreground mb-4">
+              Paper Business Cards & Manual Typing
             </h3>
-            <ul className="space-y-4 text-sm text-muted-foreground">
+            <ul className="space-y-3.5 text-xs sm:text-sm text-muted-foreground">
               {painPoints.map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <XCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                <li key={i} className="flex items-start gap-2.5">
+                  <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-border/60 text-xs text-muted-foreground italic">
-            Average loss: 42% of conference leads go untouched within 72 hours.
+          <div className="mt-6 pt-4 border-t border-border text-xs text-muted-foreground">
+            Statistic: <strong>42%</strong> of physical business cards are discarded or lost within 72 hours.
           </div>
         </div>
 
         {/* The Lukewarm Way */}
-        <div className="rounded-3xl glass-panel-glow p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="rounded-xl bg-card border-2 border-primary p-6 sm:p-8 flex flex-col justify-between shadow-xs">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6 border border-primary/20">
-              <Zap className="h-3.5 w-3.5" />
-              The Lukewarm Advantage
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider mb-4">
+              The Lukewarm System
             </div>
-            <h3 className="font-display text-2xl font-bold text-foreground mb-4">
-              Living Network Intelligence
+            <h3 className="text-lg font-bold text-foreground mb-4">
+              Automated OCR & Voice-Driven CRM
             </h3>
-            <ul className="space-y-4 text-sm text-foreground">
+            <ul className="space-y-3.5 text-xs sm:text-sm text-foreground">
               {superpowers.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 font-medium">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                <li key={i} className="flex items-start gap-2.5 font-medium">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-primary/20 flex items-center justify-between">
-            <span className="text-xs font-bold text-primary">Ready to supercharge your network?</span>
-            <Button size="sm" className="btn-primary-glow rounded-xl font-semibold text-xs" asChild>
+          <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground">Ready to streamline your network?</span>
+            <Button size="sm" className="btn-primary-glow rounded-lg font-semibold text-xs" asChild>
               <Link href="/signup" className="flex items-center gap-1">
                 <span>Start Free</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -89,6 +87,7 @@ export function ComparisonSection() {
             </Button>
           </div>
         </div>
+
       </div>
     </div>
   );

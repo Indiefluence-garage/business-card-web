@@ -5,173 +5,153 @@ import {
   Mic, 
   Play, 
   Pause, 
-  Sparkles, 
   Calendar, 
   Clock, 
   CheckCircle2, 
-  FileText
+  FileText,
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 
 export function VoiceMemoDemo() {
   const [isPlaying, setIsPlaying] = useState(true);
 
   return (
-    <div className="w-full max-w-6xl mx-auto rounded-3xl glass-panel border border-border/80 p-6 sm:p-8 lg:p-10 shadow-2xl relative overflow-hidden">
-      {/* Glow highlight */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
-
+    <div className="w-full max-w-6xl mx-auto rounded-2xl bg-card border border-border p-6 sm:p-8 lg:p-10 shadow-sm">
+      
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
-          <Mic className="h-3.5 w-3.5 text-primary" />
-          AI Voice Memo Intelligence
+      <div className="max-w-3xl mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-secondary text-primary text-xs font-semibold uppercase tracking-wider mb-3 border border-border">
+          <Mic className="h-3.5 w-3.5" />
+          Voice Intelligence Workflow
         </div>
-        <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-3">
-          Speak your notes. Lukewarm handles the follow-up.
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">
+          Speak your notes. Lukewarm creates the tasks & calendar invites.
         </h2>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          Record a 5-second voice memo immediately after meeting someone. Our neural pipeline transcribes the audio, creates actionable tasks, and schedules calendar events automatically.
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Record a brief voice note right after a conversation. The neural audio model transcribes your speech, extracts actionable follow-ups with due dates, and auto-schedules Google Calendar meetings.
         </p>
       </div>
 
-      {/* Interactive Voice Pipeline Visualizer */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      {/* 3-Step Functional Flow Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
-        {/* Left: Interactive Audio Memo Player */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="rounded-2xl bg-card border border-border p-5 sm:p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                  Voice Memo Recording
-                </span>
-              </div>
-              <span className="text-[11px] font-mono text-muted-foreground">0:07 / 0:07</span>
-            </div>
+        {/* Step 1: Voice Recording & Audio Player */}
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              1. Voice Memo Recording
+            </span>
+            <span className="text-[11px] font-mono text-muted-foreground font-semibold">0:07 / 0:07</span>
+          </div>
 
-            {/* Simulated Audio Waveform */}
-            <div className="p-4 rounded-xl bg-secondary/70 border border-border flex items-center gap-4">
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-md hover:bg-primary/90 transition-all hover:scale-105"
-                title={isPlaying ? 'Pause simulation' : 'Play simulation'}
-              >
-                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
-              </button>
+          <div className="p-3.5 rounded-lg bg-secondary flex items-center gap-3 border border-border">
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary text-white hover:opacity-90 transition-opacity"
+              title={isPlaying ? 'Pause' : 'Play'}
+            >
+              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+            </button>
 
-              {/* Animated Waveform Equalizer Bars */}
-              <div className="flex-1 flex items-center justify-between h-8 px-2 gap-1 overflow-hidden">
-                {[
-                  'animate-soundwave-1',
-                  'animate-soundwave-3',
-                  'animate-soundwave-2',
-                  'animate-soundwave-5',
-                  'animate-soundwave-4',
-                  'animate-soundwave-6',
-                  'animate-soundwave-2',
-                  'animate-soundwave-3',
-                  'animate-soundwave-5',
-                  'animate-soundwave-1',
-                  'animate-soundwave-4',
-                  'animate-soundwave-2',
-                  'animate-soundwave-6',
-                  'animate-soundwave-3',
-                  'animate-soundwave-1',
-                ].map((anim, i) => (
-                  <div
-                    key={i}
-                    className={`w-1 rounded-full bg-primary ${
-                      isPlaying ? anim : 'h-1 opacity-40'
-                    }`}
-                  />
-                ))}
-              </div>
+            {/* Clean Audio Waveform */}
+            <div className="flex-1 flex items-center justify-between h-7 px-1 gap-1 overflow-hidden">
+              {[
+                'animate-soundwave-1',
+                'animate-soundwave-3',
+                'animate-soundwave-2',
+                'animate-soundwave-5',
+                'animate-soundwave-4',
+                'animate-soundwave-6',
+                'animate-soundwave-2',
+                'animate-soundwave-3',
+                'animate-soundwave-5',
+                'animate-soundwave-1',
+                'animate-soundwave-4',
+                'animate-soundwave-2',
+              ].map((anim, i) => (
+                <div
+                  key={i}
+                  className={`w-1 rounded-full bg-primary ${
+                    isPlaying ? anim : 'h-1.5 opacity-40'
+                  }`}
+                />
+              ))}
             </div>
+          </div>
 
-            {/* Transcript Text */}
-            <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/10">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-primary block mb-1">
-                AI Transcription
-              </span>
-              <p className="text-xs sm:text-sm text-foreground/90 italic leading-relaxed">
-                &ldquo;Met Marcus at TechCrunch Disrupt in SF. He wants a demo of our continuous flash scan SDK next Tuesday at 3 PM. Send him the enterprise security whitepaper.&rdquo;
-              </p>
-            </div>
+          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs leading-relaxed text-foreground/90">
+            <p className="font-semibold text-muted-foreground text-[10px] uppercase mb-1">Raw Speech Transcript:</p>
+            <p className="italic">
+              &ldquo;Met Marcus at TechCrunch. He wants a demo of our continuous scan SDK next Tuesday at 3 PM. Send him the enterprise whitepaper beforehand.&rdquo;
+            </p>
           </div>
         </div>
 
-        {/* Middle: Conversion Pipeline Arrow */}
-        <div className="lg:col-span-2 flex flex-col items-center justify-center py-2 lg:py-0">
-          <div className="flex lg:flex-col items-center gap-2 text-primary">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
-              <Sparkles className="h-4 w-4 text-primary animate-spin" style={{ animationDuration: '4s' }} />
-            </div>
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground hidden lg:block text-center">
-              Neural Extraction
+        {/* Step 2: Extracted Follow-up Task */}
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              2. Extracted CRM Task
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              High Priority
             </span>
           </div>
+
+          <div className="p-4 rounded-lg bg-secondary border border-border space-y-2">
+            <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
+              <FileText className="h-4 w-4 text-amber-500" />
+              <span>Send Enterprise Whitepaper</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Assigned Contact: <strong className="text-foreground">Marcus Vance (NeuralMesh)</strong>
+            </p>
+            <div className="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground font-mono">
+              <span>Status: Queued for Outreach</span>
+              <span>Due: Prior to Demo</span>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs text-muted-foreground">
+            <p className="flex items-center gap-1.5 text-foreground font-medium">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+              Linked directly to contact profile
+            </p>
+          </div>
         </div>
 
-        {/* Right: Extracted Structured Actions & Calendar Events */}
-        <div className="lg:col-span-5 flex flex-col gap-3">
-          
-          {/* Action Item Card */}
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex items-start gap-3.5 hover:border-primary/40 transition-colors">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500">
-              <FileText className="h-4 w-4" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase text-amber-600 dark:text-amber-400">
-                  CRM Follow-Up Task
-                </span>
-                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                  High Priority
-                </span>
-              </div>
-              <p className="text-sm font-semibold text-foreground mt-0.5">
-                Send Enterprise Security Whitepaper
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Linked to: <strong className="text-foreground">Marcus Vance (NeuralMesh)</strong>
-              </p>
-            </div>
+        {/* Step 3: Auto-Scheduled Calendar Event */}
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              3. Google Calendar Sync
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              Auto-Synced
+            </span>
           </div>
 
-          {/* Calendar Event Card */}
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex items-start gap-3.5 hover:border-primary/40 transition-colors">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
-              <Calendar className="h-4 w-4" />
+          <div className="p-4 rounded-lg bg-secondary border border-border space-y-2">
+            <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
+              <Calendar className="h-4 w-4 text-sky-500" />
+              <span>Lukewarm Scan SDK Demo</span>
             </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase text-blue-600 dark:text-blue-400">
-                  Google Calendar Scheduled
-                </span>
-                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                  Auto-Synced
-                </span>
-              </div>
-              <p className="text-sm font-semibold text-foreground mt-0.5">
-                Lukewarm Continuous Flash Scan Demo
-              </p>
-              <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                <span>Next Tuesday • 3:00 PM - 3:30 PM PST</span>
-              </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" />
+              <span>Next Tuesday · 3:00 PM – 3:30 PM PST</span>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Invited: <span className="font-mono text-foreground">m.vance@neuralmesh.io</span>
+            </p>
           </div>
 
-          {/* Context Selfie & Location Tag */}
-          <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span className="text-foreground font-medium">Event Grouping: TechCrunch SF 2026</span>
-            </div>
-            <span className="text-[11px] font-mono text-muted-foreground">Zero Manual Typing</span>
+          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs text-muted-foreground">
+            <p className="flex items-center gap-1.5 text-foreground font-medium">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+              Includes 15-minute prior reminder alert
+            </p>
           </div>
-
         </div>
 
       </div>

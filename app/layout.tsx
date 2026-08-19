@@ -17,12 +17,12 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Lukewarm — AI Business Card CRM & Executive Contact Intelligence",
+  title: "Lukewarm — Executive Contact Intelligence & Business Card Scanner",
   description: "Transform business cards into living network intelligence. Instant sub-second OCR scanning, AI voice memos, automated follow-up tasks, and Google Calendar sync.",
-  keywords: ["business card scanner", "CRM", "contact management", "OCR", "voice notes", "Google Calendar sync", "Lukewarm"],
-  authors: [{ name: "Lukewarm CRM Team" }],
+  keywords: ["business card scanner", "contact intelligence", "OCR scanner", "voice notes", "Google Calendar sync", "Lukewarm"],
+  authors: [{ name: "Lukewarm Team" }],
   openGraph: {
-    title: "Lukewarm — AI Business Card CRM & Executive Contact Intelligence",
+    title: "Lukewarm — Executive Contact Intelligence & Business Card Scanner",
     description: "Sub-second OCR scanning, AI voice memos, and automated follow-ups for modern professionals.",
     type: "website",
   },
@@ -38,7 +38,6 @@ export default function RootLayout({
       <body
         className={`${jakarta.variable} ${outfit.variable} min-h-screen bg-background font-sans text-foreground antialiased selection:bg-primary/20 selection:text-primary`}
       >
-        <div className="ambient-mesh pointer-events-none fixed inset-0 -z-10 overflow-hidden" />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -54,4 +53,3 @@ export default function RootLayout({
     </html>
   );
 }
-

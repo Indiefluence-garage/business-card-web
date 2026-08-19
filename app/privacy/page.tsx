@@ -43,7 +43,7 @@ export default function PrivacyPolicyPage() {
             Our Privacy Commitment
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            Lukewarm Business Card CRM is committed to safeguarding your privacy. We strictly use camera, audio, and contact information to extract and organize business card data for you. We never sell your personal data or your scanned business contacts to advertisers or third parties.
+            Lukewarm is committed to safeguarding your privacy. We strictly use camera, audio, and contact information to extract and organize business card data for you. We never sell your personal data or your scanned business contacts to advertisers or third parties.
           </p>
         </div>
 
@@ -163,8 +163,8 @@ export default function PrivacyPolicyPage() {
             </p>
             <div className="flex items-center gap-2 text-foreground font-medium text-xs sm:text-sm">
               <Mail className="h-4 w-4 text-primary" />
-              <a href="mailto:support@cardcrm.com" className="hover:underline text-primary">
-                support@cardcrm.com
+              <a href="mailto:support@lukewarm.app" className="hover:underline text-primary">
+                support@lukewarm.app
               </a>
             </div>
           </section>

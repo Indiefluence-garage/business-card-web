@@ -29,9 +29,74 @@ interface StatusModalState {
   actionUrl?: string;
 }
 
+const DEFAULT_PLANS: Plan[] = [
+  {
+    id: 'free',
+    name: 'Free',
+    price: 0,
+    interval: 'one-time',
+    features: [
+      '20 card scans (One-time)',
+      'Basic contact storage',
+      'vCard digital sharing',
+      'Ads displayed'
+    ],
+    isPopular: false,
+    validityDays: -1,
+  },
+  {
+    id: 'tier1',
+    name: 'Starter',
+    price: 299, // $2.99
+    interval: '30 days',
+    features: [
+      'Unlimited card scans',
+      'Continuous Flash Scan (Card + Audio)',
+      'AI Voice Note Transcription',
+      'No ads experience',
+      'Google Calendar & Event Sync',
+      'Valid for 30 days'
+    ],
+    isPopular: false,
+    validityDays: 30,
+  },
+  {
+    id: 'tier2',
+    name: 'Standard',
+    price: 999, // $9.99
+    interval: '90 days',
+    features: [
+      'Unlimited card scans',
+      'Continuous Flash Scan (Card + Audio)',
+      'AI Voice Note Transcription',
+      'No ads experience',
+      'Google Calendar & Event Sync',
+      'Valid for 90 days'
+    ],
+    isPopular: true,
+    validityDays: 90,
+  },
+  {
+    id: 'tier3',
+    name: 'Premium',
+    price: 1999, // $19.99
+    interval: '365 days',
+    features: [
+      'Unlimited card scans',
+      'Continuous Flash Scan (Card + Audio)',
+      'AI Voice Note Transcription',
+      'No ads experience',
+      'Google Calendar & Event Sync',
+      'Valid for 365 days (1 Year)'
+    ],
+    isPopular: false,
+    validityDays: 365,
+  },
+];
+
 export default function PricingPage() {
   const router = useRouter();
-  const [plans, setPlans] = useState<Plan[]>([]);
+  const [plans, setPlans] = useState<Plan[]>(DEFAULT_PLANS);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -46,7 +111,7 @@ export default function PricingPage() {
     const fetchData = async () => {
       try {
         const plansData = await subscriptionService.getPlans();
-        if (plansData.plans) {
+        if (plansData?.plans && plansData.plans.length > 0) {
           setPlans(plansData.plans);
         }
 
@@ -64,7 +129,7 @@ export default function PricingPage() {
           }
         }
       } catch (error) {
-        console.error('Failed to fetch data', error);
+        console.error('Failed to fetch data, using default plans', error);
       } finally {
         setLoading(false);
       }
@@ -178,20 +243,28 @@ export default function PricingPage() {
     return currentUser.planId === planId && currentUser.subscriptionStatus === 'active';
   };
 
+  const formatPrice = (priceInCents: number) => {
+    if (priceInCents === 0) return '$0';
+    if (priceInCents === 299) return '$2.99';
+    if (priceInCents === 999) return '$9.99';
+    if (priceInCents === 1999) return '$19.99';
+    return `$${(priceInCents / 100).toFixed(2)}`;
+  };
+
   return (
     <div className="min-h-screen bg-background py-16 px-4 sm:px-6 lg:px-8">
       
       {/* Hero Header */}
       <div className="max-w-4xl mx-auto text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-secondary text-primary text-xs font-semibold uppercase tracking-wider mb-4 border border-border">
           <Sparkles className="h-3.5 w-3.5" />
-          Simple, Transparent Pricing
+          Subscription Plans & Pricing
         </div>
-        <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-4">
-          Invest in Your <span className="text-gradient">Professional Network.</span>
+        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground mb-3">
+          4 Straightforward Plans for Every Networker
         </h1>
-        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-          Every paid tier includes full unrestricted access to continuous flash scan, voice memo AI, and Google Calendar sync. Choose your preferred duration.
+        <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+          Choose between trial free access or upfront paid validity (30, 90, or 365 days). All paid tiers include unlimited continuous scanning and AI voice note transcription.
         </p>
 
         {/* Current Plan Indicator Banner */}
@@ -199,7 +272,7 @@ export default function PricingPage() {
           <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-semibold">
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
             <span>
-              You have an active <strong>{currentUser.planId.replace('tier', 'Tier ')}</strong> subscription
+              You currently have an active <strong>{currentUser.planId.replace('tier', 'Tier ').toUpperCase()}</strong> subscription
             </span>
             {currentUser.planEndsAt && (
               <span className="text-muted-foreground font-normal">
@@ -210,172 +283,157 @@ export default function PricingPage() {
         )}
       </div>
 
-      {/* Pricing Cards Grid */}
+      {/* 4-Column Pricing Cards Grid */}
       <div className="max-w-7xl mx-auto">
-        {loading ? (
-          <div className="flex items-center justify-center py-24">
-            <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-              <p className="text-sm text-muted-foreground">Loading subscription plans...</p>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan, index) => {
-              const isCurrent = isCurrentPlan(plan.id);
-              const isRecommended = plan.isPopular || plan.id === 'tier2';
-              const badge = getPlanBadge(index);
-              const Icon = badge.icon;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+          {plans.map((plan, index) => {
+            const isCurrent = isCurrentPlan(plan.id);
+            const isRecommended = plan.isPopular || plan.id === 'tier2';
+            const badge = getPlanBadge(index);
+            const Icon = badge.icon;
 
-              return (
-                <div
-                  key={plan.id}
-                  className={`relative flex flex-col rounded-3xl p-6 sm:p-7 transition-all duration-300 ${
-                    isCurrent
-                      ? 'bg-card border-2 border-emerald-500 shadow-lg'
-                      : isRecommended
-                      ? 'glass-panel-glow border-2 border-primary shadow-xl scale-[1.02] z-10'
-                      : 'glass-panel card-hover'
-                  }`}
-                >
-                  {/* Badge */}
-                  {isCurrent ? (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="inline-flex items-center gap-1 px-3 py-0.5 text-xs font-bold bg-emerald-500 text-white rounded-full shadow-sm">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Current Plan
-                      </span>
-                    </div>
-                  ) : isRecommended ? (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="inline-flex items-center gap-1 px-3 py-0.5 text-xs font-bold bg-primary text-white rounded-full shadow-md">
-                        <Crown className="h-3 w-3" />
-                        Recommended
-                      </span>
-                    </div>
-                  ) : null}
-
-                  {/* Plan Name & Icon */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="h-10 w-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
-                      {plan.id.toUpperCase()}
+            return (
+              <div
+                key={plan.id}
+                className={`relative flex flex-col rounded-xl p-6 transition-all duration-200 ${
+                  isCurrent
+                    ? 'bg-card border-2 border-emerald-600 shadow-sm'
+                    : isRecommended
+                    ? 'bg-card border-2 border-primary shadow-md ring-1 ring-primary/20'
+                    : 'bg-card border border-border shadow-xs hover:border-slate-400 dark:hover:border-slate-600'
+                }`}
+              >
+                {/* Badge */}
+                {isCurrent ? (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="inline-flex items-center gap-1 px-3 py-0.5 text-xs font-bold bg-emerald-600 text-white rounded-full shadow-xs">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Current Plan
                     </span>
                   </div>
-
-                  <h3 className="font-display text-xl font-bold text-foreground mb-1">{plan.name}</h3>
-                  <p className="text-xs text-muted-foreground mb-6 min-h-[32px]">
-                    {plan.price === 0
-                      ? 'Free essential business card scanner to get started.'
-                      : `Full AI suite access with continuous updates for ${plan.interval || 'period'}.`}
-                  </p>
-
-                  {/* Price */}
-                  <div className="flex items-baseline gap-1 pb-6 mb-6 border-b border-border">
-                    {plan.price === 0 ? (
-                      <span className="text-4xl font-extrabold font-display text-foreground">$0</span>
-                    ) : (
-                      <>
-                        <span className="text-4xl font-extrabold font-display text-foreground">
-                          ${(plan.price / 100).toFixed(0)}
-                        </span>
-                        <span className="text-xs text-muted-foreground font-mono">
-                          / {plan.interval || 'month'}
-                        </span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Features Checklist */}
-                  <div className="flex-1 space-y-3 mb-8">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
-                      Included Capabilities:
+                ) : isRecommended ? (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="inline-flex items-center gap-1 px-3 py-0.5 text-xs font-bold bg-primary text-primary-foreground rounded-full shadow-xs">
+                      <Crown className="h-3 w-3" />
+                      Most Popular
                     </span>
-                    {plan.features.map((feat, i) => (
-                      <div key={i} className="flex items-start gap-2.5 text-xs text-foreground/90">
-                        <div className="h-4 w-4 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                          <Check className="h-3 w-3" />
-                        </div>
-                        <span className="leading-relaxed">{feat}</span>
-                      </div>
-                    ))}
                   </div>
+                ) : null}
 
-                  {/* CTA Subscribe Button */}
-                  <Button
-                    onClick={() => handleSubscribe(plan)}
-                    disabled={!!processingId || isCurrent}
-                    className={`w-full rounded-2xl h-12 font-bold text-xs ${
-                      isCurrent
-                        ? 'bg-emerald-500 text-white cursor-default'
-                        : isRecommended
-                        ? 'btn-primary-glow'
-                        : 'btn-gentle'
-                    }`}
-                    variant={isCurrent ? 'default' : isRecommended ? 'default' : 'secondary'}
-                  >
-                    {isCurrent ? (
-                      <span className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-4 w-4" /> Active Plan
-                      </span>
-                    ) : processingId === plan.id ? (
-                      'Activating...'
-                    ) : plan.price === 0 ? (
-                      'Get Started Free'
-                    ) : (
-                      <span className="flex items-center gap-1.5">
-                        <span>Subscribe for ${(plan.price / 100).toFixed(0)}</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </span>
-                    )}
-                  </Button>
+                {/* Plan Header */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-9 w-9 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                    {plan.id.toUpperCase()}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        )}
+
+                <h3 className="text-xl font-bold text-foreground mb-1">{plan.name}</h3>
+                <p className="text-xs text-muted-foreground mb-6 min-h-[32px] leading-relaxed">
+                  {plan.price === 0
+                    ? 'Basic access with 20 one-time card scans to try the platform.'
+                    : `Full AI suite access with continuous updates for ${plan.interval || 'period'}.`}
+                </p>
+
+                {/* Price Display */}
+                <div className="flex items-baseline gap-1.5 pb-6 mb-6 border-b border-border">
+                  <span className="text-3xl font-bold text-foreground font-mono">
+                    {formatPrice(plan.price)}
+                  </span>
+                  <span className="text-xs text-muted-foreground font-medium">
+                    / {plan.interval || 'period'}
+                  </span>
+                </div>
+
+                {/* Features Checklist */}
+                <div className="flex-1 space-y-3 mb-6">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block">
+                    Features Included:
+                  </span>
+                  {plan.features.map((feat, i) => (
+                    <div key={i} className="flex items-start gap-2.5 text-xs text-foreground/90">
+                      <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <span className="leading-relaxed">{feat}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA Action Button */}
+                <Button
+                  onClick={() => handleSubscribe(plan)}
+                  disabled={!!processingId || isCurrent}
+                  className={`w-full rounded-lg h-11 font-semibold text-xs ${
+                    isCurrent
+                      ? 'bg-emerald-600 text-white cursor-default hover:bg-emerald-600'
+                      : isRecommended
+                      ? 'btn-primary-glow'
+                      : 'bg-secondary text-foreground hover:bg-secondary/80 border border-border'
+                  }`}
+                  variant={isCurrent ? 'default' : isRecommended ? 'default' : 'secondary'}
+                >
+                  {isCurrent ? (
+                    <span className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-4 w-4" /> Active Subscription
+                    </span>
+                  ) : processingId === plan.id ? (
+                    'Processing Activation...'
+                  ) : plan.price === 0 ? (
+                    'Get Started Free'
+                  ) : (
+                    <span className="flex items-center gap-1.5">
+                      <span>Activate {plan.name} ({formatPrice(plan.price)})</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  )}
+                </Button>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Feature Comparison Matrix */}
-      <div className="max-w-5xl mx-auto mt-24">
+      <div className="max-w-5xl mx-auto mt-20">
         <div className="text-center mb-10">
-          <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">
-            Detailed Capability Matrix
+          <h2 className="text-2xl font-bold text-foreground mb-1">
+            Detailed Capability Comparison Matrix
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Compare all features across free and paid subscriptions.
+            Clear feature breakdown across all 4 plans.
           </p>
         </div>
 
-        <div className="rounded-3xl glass-panel border border-border overflow-hidden shadow-lg">
+        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-border bg-secondary/40">
-                  <th className="p-4 font-bold text-foreground">Feature</th>
-                  <th className="p-4 font-bold text-center text-muted-foreground">Free Tier</th>
-                  <th className="p-4 font-bold text-center text-primary">All Paid Tiers</th>
+                <tr className="border-b border-border bg-secondary">
+                  <th className="p-3.5 font-bold text-foreground">Feature</th>
+                  <th className="p-3.5 font-bold text-center text-muted-foreground">Free ($0)</th>
+                  <th className="p-3.5 font-bold text-center text-foreground">Starter ($2.99)</th>
+                  <th className="p-3.5 font-bold text-center text-primary">Standard ($9.99)</th>
+                  <th className="p-3.5 font-bold text-center text-foreground">Premium ($19.99)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {[
-                  { name: 'Vision OCR Scanning', free: '10 Cards Total', pro: 'Unlimited 4K OCR' },
-                  { name: 'Continuous Flash Scan (Burst Mode)', free: 'Manual only', pro: 'Full Continuous Speed' },
-                  { name: 'AI Voice Memo Transcription', free: 'Unavailable', pro: 'Unlimited Voice Memos' },
-                  { name: 'Google Calendar Auto-Sync', free: 'Unavailable', pro: 'Automatic Action Sync' },
-                  { name: 'Contextual Selfie Attachments', free: 'Limited (3)', pro: 'Unlimited Context Photos' },
-                  { name: 'Conference / Live Event Tagging', free: '1 Event', pro: 'Unlimited Events' },
-                  { name: 'vCard (.vcf) & CSV Export', free: 'Basic vCard', pro: 'Full CRM & CSV Export' },
-                  { name: 'Customer Support Priority', free: 'Standard', pro: 'Priority Engineering SLA' },
+                  { name: 'Card Scan Quota', free: '20 One-time', t1: 'Unlimited', t2: 'Unlimited', t3: 'Unlimited' },
+                  { name: 'Plan Validity', free: 'Perpetual', t1: '30 Days', t2: '90 Days', t3: '365 Days (1 Year)' },
+                  { name: 'Continuous Flash Scan Mode', free: 'Manual only', t1: 'Included', t2: 'Included', t3: 'Included' },
+                  { name: 'AI Voice Memo Transcription', free: '—', t1: 'Included', t2: 'Included', t3: 'Included' },
+                  { name: 'Google Calendar Auto-Sync', free: '—', t1: 'Included', t2: 'Included', t3: 'Included' },
+                  { name: 'Ad-Free Experience', free: 'Ads shown', t1: 'No Ads', t2: 'No Ads', t3: 'No Ads' },
+                  { name: 'vCard (.vcf) & CSV Export', free: 'vCard only', t1: 'Full Export', t2: 'Full Export', t3: 'Full Export' },
+                  { name: 'Customer Support', free: 'Community', t1: 'Standard Email', t2: 'Priority Email', t3: 'Priority SLA' },
                 ].map((row, idx) => (
-                  <tr key={idx} className="hover:bg-secondary/20 transition-colors">
-                    <td className="p-4 font-medium text-foreground">{row.name}</td>
-                    <td className="p-4 text-center text-muted-foreground">{row.free}</td>
-                    <td className="p-4 text-center font-bold text-emerald-600 dark:text-emerald-400">
-                      {row.pro}
-                    </td>
+                  <tr key={idx} className="hover:bg-secondary/30 transition-colors">
+                    <td className="p-3.5 font-medium text-foreground">{row.name}</td>
+                    <td className="p-3.5 text-center text-muted-foreground">{row.free}</td>
+                    <td className="p-3.5 text-center font-semibold text-foreground">{row.t1}</td>
+                    <td className="p-3.5 text-center font-bold text-primary">{row.t2}</td>
+                    <td className="p-3.5 text-center font-semibold text-foreground">{row.t3}</td>
                   </tr>
                 ))}
               </tbody>
@@ -385,18 +443,18 @@ export default function PricingPage() {
       </div>
 
       {/* Trust & Guarantee Banner */}
-      <div className="max-w-4xl mx-auto mt-16 p-8 rounded-3xl glass-panel border border-border/70 text-center flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="max-w-4xl mx-auto mt-14 p-6 rounded-xl bg-card border border-border flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
         <div className="flex items-center gap-3 text-left">
-          <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-lg bg-secondary text-primary flex items-center justify-center shrink-0">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <div>
-            <h4 className="font-display font-bold text-foreground text-sm">Safe & Instant Activation</h4>
-            <p className="text-xs text-muted-foreground">Instant entitlement unlocking. Secure Stripe processing.</p>
+            <h4 className="font-bold text-foreground text-sm">Instant Plan Entitlement</h4>
+            <p className="text-xs text-muted-foreground">7-Day money-back guarantee. Secure Stripe payment gateway.</p>
           </div>
         </div>
-        <Button variant="outline" className="rounded-xl text-xs" asChild>
-          <a href="mailto:support@cardcrm.com">Contact Sales for Enterprise Teams</a>
+        <Button variant="outline" className="rounded-lg text-xs" asChild>
+          <a href="mailto:support@lukewarm.app">Contact for Enterprise Invoices</a>
         </Button>
       </div>
 

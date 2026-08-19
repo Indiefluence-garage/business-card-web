@@ -63,7 +63,7 @@ export default function TermsOfServicePage() {
               You must register for an account using a valid email address or authenticated Google account. You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.
             </p>
             <p>
-              You agree to notify us immediately at <a href="mailto:support@cardcrm.com" className="text-primary hover:underline font-medium">support@cardcrm.com</a> of any unauthorized access to your account.
+              You agree to notify us immediately at <a href="mailto:support@lukewarm.app" className="text-primary hover:underline font-medium">support@lukewarm.app</a> of any unauthorized access to your account.
             </p>
           </section>
 
@@ -125,8 +125,8 @@ export default function TermsOfServicePage() {
             </p>
             <div className="flex items-center gap-2 text-foreground font-medium text-xs sm:text-sm">
               <Mail className="h-4 w-4 text-primary" />
-              <a href="mailto:support@cardcrm.com" className="hover:underline text-primary">
-                support@cardcrm.com
+              <a href="mailto:support@lukewarm.app" className="hover:underline text-primary">
+                support@lukewarm.app
               </a>
             </div>
           </section>

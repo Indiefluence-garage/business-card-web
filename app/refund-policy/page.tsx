@@ -42,7 +42,7 @@ export default function RefundPolicyPage() {
             7-Day Satisfaction Guarantee
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            We want you to be completely satisfied with Lukewarm CRM. If you experience technical difficulties or are unsatisfied with your paid subscription (Starter, Standard, or Premium), you can request a full refund within 7 days of purchase.
+            We want you to be completely satisfied with Lukewarm. If you experience technical difficulties or are unsatisfied with your paid subscription (Starter, Standard, or Premium), you can request a full refund within 7 days of purchase.
           </p>
         </div>
 
@@ -113,8 +113,8 @@ export default function RefundPolicyPage() {
             </p>
             <div className="flex items-center gap-2 text-foreground font-medium mb-4">
               <Mail className="h-4 w-4 text-primary" />
-              <a href="mailto:support@cardcrm.com" className="hover:underline text-primary">
-                support@cardcrm.com
+              <a href="mailto:support@lukewarm.app" className="hover:underline text-primary">
+                support@lukewarm.app
               </a>
             </div>
             <p className="text-xs text-muted-foreground">
