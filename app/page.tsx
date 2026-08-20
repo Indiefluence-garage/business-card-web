@@ -339,10 +339,17 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-muted-foreground">
           <p>© 2026 Lukewarm. All rights reserved.</p>
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="font-mono">All Systems Operational</span>
-          </div>
+          <p>
+            Maintained by{" "}
+            <a
+              href="https://indiefluence.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground font-semibold hover:text-primary transition-colors underline underline-offset-4"
+            >
+              Indiefluence
+            </a>
+          </p>
         </div>
       </footer>
 

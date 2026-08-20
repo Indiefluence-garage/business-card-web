@@ -21,10 +21,18 @@ export const metadata: Metadata = {
   description: "Transform business cards into living network intelligence. Instant sub-second OCR scanning, AI voice memos, automated follow-up tasks, and Google Calendar sync.",
   keywords: ["business card scanner", "contact intelligence", "OCR scanner", "voice notes", "Google Calendar sync", "Lukewarm"],
   authors: [{ name: "Lukewarm Team" }],
+  icons: {
+    icon: [
+      { url: "/logo.png", type: "image/png" },
+    ],
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     title: "Lukewarm — Executive Contact Intelligence & Business Card Scanner",
     description: "Sub-second OCR scanning, AI voice memos, and automated follow-ups for modern professionals.",
     type: "website",
+    images: ["/logo.png"],
   },
 };
 
