@@ -84,9 +84,7 @@ function ResetPasswordForm() {
   if (isSuccess) {
     return (
       <div className="rounded-3xl glass-panel p-8 text-center space-y-6 max-w-md mx-auto shadow-2xl">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
-          <CheckCircle2 className="h-8 w-8" />
-        </div>
+        <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto" />
         <div>
           <h2 className="text-2xl font-display font-bold text-foreground">Password Reset Successfully!</h2>
           <p className="text-sm text-muted-foreground mt-2">

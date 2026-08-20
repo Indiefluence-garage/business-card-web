@@ -1,20 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Check, 
-  Sparkles, 
   Zap, 
-  Crown, 
-  Star, 
+  Layers, 
+  TrendingUp, 
+  Briefcase, 
   CheckCircle2, 
   ArrowRight, 
-  ShieldCheck
+  ShieldCheck,
+  Loader2
 } from 'lucide-react';
 import { subscriptionService } from '@/lib/services/subscription.service';
 import { paymentService } from '@/lib/services/payment.service';
 import { userService } from '@/lib/services/user.service';
+import { launchCashfreeCheckout } from '@/lib/cashfree';
 import { Plan, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { StatusModal, StatusModalType } from '@/components/ui/StatusModal';
@@ -34,6 +36,7 @@ const DEFAULT_PLANS: Plan[] = [
     id: 'free',
     name: 'Free',
     price: 0,
+    currency: 'INR',
     interval: 'one-time',
     features: [
       '20 card scans (One-time)',
@@ -47,7 +50,8 @@ const DEFAULT_PLANS: Plan[] = [
   {
     id: 'tier1',
     name: 'Starter',
-    price: 299, // $2.99
+    price: 299,
+    currency: 'INR',
     interval: '30 days',
     features: [
       'Unlimited card scans',
@@ -63,7 +67,8 @@ const DEFAULT_PLANS: Plan[] = [
   {
     id: 'tier2',
     name: 'Standard',
-    price: 999, // $9.99
+    price: 999,
+    currency: 'INR',
     interval: '90 days',
     features: [
       'Unlimited card scans',
@@ -79,7 +84,8 @@ const DEFAULT_PLANS: Plan[] = [
   {
     id: 'tier3',
     name: 'Premium',
-    price: 1999, // $19.99
+    price: 1999,
+    currency: 'INR',
     interval: '365 days',
     features: [
       'Unlimited card scans',
@@ -94,8 +100,12 @@ const DEFAULT_PLANS: Plan[] = [
   },
 ];
 
-export default function PricingPage() {
+function PricingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnOrderId = searchParams.get('order_id');
+  const targetPlanId = searchParams.get('planId');
+
   const [plans, setPlans] = useState<Plan[]>(DEFAULT_PLANS);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -107,6 +117,22 @@ export default function PricingPage() {
     message: '',
   });
 
+  const loadUserData = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const profileData = await userService.getProfile();
+        if (profileData?.data) {
+          setCurrentUser(profileData.data);
+        } else {
+          setCurrentUser(profileData as unknown as User);
+        }
+      } catch {
+        console.log('User not authenticated');
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -114,20 +140,7 @@ export default function PricingPage() {
         if (plansData?.plans && plansData.plans.length > 0) {
           setPlans(plansData.plans);
         }
-
-        const token = localStorage.getItem('token');
-        if (token) {
-          try {
-            const profileData = await userService.getProfile();
-            if (profileData?.data) {
-              setCurrentUser(profileData.data);
-            } else {
-              setCurrentUser(profileData as unknown as User);
-            }
-          } catch {
-            console.log('User not authenticated');
-          }
-        }
+        await loadUserData();
       } catch (error) {
         console.error('Failed to fetch data, using default plans', error);
       } finally {
@@ -137,6 +150,48 @@ export default function PricingPage() {
 
     fetchData();
   }, []);
+
+  // Handle Cashfree return redirect verification
+  useEffect(() => {
+    if (returnOrderId) {
+      const verifyReturnOrder = async () => {
+        try {
+          setLoading(true);
+          const result = await paymentService.verifyOrder(returnOrderId);
+          if (result.success) {
+            await loadUserData();
+            setStatusModal({
+              isOpen: true,
+              type: 'success',
+              title: 'Payment Successful! 🎉',
+              message: 'Your subscription has been activated successfully. You now have unlimited scans and full AI feature access!',
+              actionLabel: 'Go to Dashboard',
+              actionUrl: '/dashboard',
+            });
+          } else {
+            setStatusModal({
+              isOpen: true,
+              type: 'warning',
+              title: 'Payment Status',
+              message: result.data?.message || 'Payment is being processed. Please verify your transaction.',
+            });
+          }
+        } catch (err: any) {
+          console.error('Failed to verify return order:', err);
+          setStatusModal({
+            isOpen: true,
+            type: 'error',
+            title: 'Verification Failed',
+            message: err.response?.data?.message || 'Unable to verify payment status. Please contact support if amount was deducted.',
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      verifyReturnOrder();
+    }
+  }, [returnOrderId]);
 
   const handleSubscribe = async (plan: Plan) => {
     if (plan.price === 0) {
@@ -158,31 +213,46 @@ export default function PricingPage() {
           title: 'Account Sign In Required',
           message: 'Please sign in or create your Lukewarm account to link and activate your subscription.',
           actionLabel: 'Sign In to Account',
-          actionUrl: '/login?redirect=/pricing',
+          actionUrl: `/login?redirect=/pricing?planId=${plan.id}`,
         });
         return;
       }
 
-      const response = await paymentService.createPayment(plan.id);
-      if (response.success) {
-        setStatusModal({
-          isOpen: true,
-          type: 'success',
-          title: 'Subscription Activated! 🎉',
-          message: `Your ${plan.name} plan has been activated successfully and is valid until ${new Date(
-            response.data.expiresAt
-          ).toLocaleDateString()}. You have unlimited card scanning and AI features!`,
-          actionLabel: 'Go to Dashboard',
-          actionUrl: '/dashboard',
-        });
-      } else {
-        setStatusModal({
-          isOpen: true,
-          type: 'error',
-          title: 'Payment Processing Failed',
-          message: response.message || 'Unable to complete the payment transaction. Please try again.',
-        });
+      // 1. Create Cashfree Order on Backend
+      const response = await paymentService.createOrder(plan.id);
+      
+      if (!response.success || !response.data?.paymentSessionId) {
+        throw new Error(response.message || 'Failed to initialize payment session with Cashfree');
       }
+
+      const orderData = response.data;
+      const mode = (orderData.environment?.toLowerCase() === 'production') ? 'production' : 'sandbox';
+
+      // 2. Launch Cashfree Seamless Modal Checkout
+      await launchCashfreeCheckout({
+        paymentSessionId: orderData.paymentSessionId,
+        mode: mode,
+        redirectTarget: '_modal',
+      });
+
+      // 3. Immediately verify order on modal completion / close
+      try {
+        const verifyRes = await paymentService.verifyOrder(orderData.orderId);
+        if (verifyRes.success) {
+          await loadUserData();
+          setStatusModal({
+            isOpen: true,
+            type: 'success',
+            title: 'Subscription Activated! 🎉',
+            message: `Your ${plan.name} plan has been activated successfully! You now have unlimited card scans and AI features.`,
+            actionLabel: 'Go to Dashboard',
+            actionUrl: '/dashboard',
+          });
+        }
+      } catch {
+        // If verification is still pending or user closed modal before paying, no hard error needed
+      }
+
     } catch (error: unknown) {
       console.error('Payment error', error);
       const err = error as { response?: { status?: number; data?: { error?: string; message?: string; data?: { currentPlan?: string; expiresAt?: string } } }; message?: string };
@@ -213,14 +283,14 @@ export default function PricingPage() {
           title: 'Authentication Required',
           message: 'Your session has expired. Please sign in again to activate your plan.',
           actionLabel: 'Sign In Again',
-          actionUrl: '/login?redirect=/pricing',
+          actionUrl: `/login?redirect=/pricing?planId=${plan.id}`,
         });
       } else {
         setStatusModal({
           isOpen: true,
           type: 'error',
           title: 'Payment Request Error',
-          message: errorData?.message || err.message || 'Unable to process payment at this moment. Please try again later.',
+          message: errorData?.message || err.message || 'Unable to initialize Cashfree payment. Please try again later.',
         });
       }
     } finally {
@@ -230,9 +300,9 @@ export default function PricingPage() {
 
   const getPlanBadge = (index: number) => {
     if (index === 1) return { label: 'Starter', icon: Zap };
-    if (index === 2) return { label: 'Most Popular', icon: Crown };
-    if (index === 3) return { label: 'Best Value', icon: Sparkles };
-    return { label: 'Free Tier', icon: Star };
+    if (index === 2) return { label: 'Most Popular', icon: TrendingUp };
+    if (index === 3) return { label: 'Best Value', icon: Briefcase };
+    return { label: 'Free Tier', icon: Layers };
   };
 
   const isCurrentPlan = (planId: string) => {
@@ -243,12 +313,10 @@ export default function PricingPage() {
     return currentUser.planId === planId && currentUser.subscriptionStatus === 'active';
   };
 
-  const formatPrice = (priceInCents: number) => {
-    if (priceInCents === 0) return '$0';
-    if (priceInCents === 299) return '$2.99';
-    if (priceInCents === 999) return '$9.99';
-    if (priceInCents === 1999) return '$19.99';
-    return `$${(priceInCents / 100).toFixed(2)}`;
+  const formatPrice = (price: number, currency: string = 'INR') => {
+    if (price === 0) return 'Free';
+    const symbol = currency === 'INR' ? '₹' : '$';
+    return `${symbol}${price.toLocaleString()}`;
   };
 
   return (
@@ -256,10 +324,9 @@ export default function PricingPage() {
       
       {/* Hero Header */}
       <div className="max-w-4xl mx-auto text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-secondary text-primary text-xs font-semibold uppercase tracking-wider mb-4 border border-border">
-          <Sparkles className="h-3.5 w-3.5" />
-          Subscription Plans & Pricing
-        </div>
+        <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
+          Pricing & Subscriptions
+        </p>
         <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground mb-3">
           4 Straightforward Plans for Every Networker
         </h1>
@@ -288,9 +355,10 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
           {plans.map((plan, index) => {
             const isCurrent = isCurrentPlan(plan.id);
-            const isRecommended = plan.isPopular || plan.id === 'tier2';
+            const isRecommended = plan.isPopular || plan.id === 'tier2' || plan.id === targetPlanId;
             const badge = getPlanBadge(index);
             const Icon = badge.icon;
+            const planCurrency = plan.currency || 'INR';
 
             return (
               <div
@@ -314,7 +382,7 @@ export default function PricingPage() {
                 ) : isRecommended ? (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <span className="inline-flex items-center gap-1 px-3 py-0.5 text-xs font-bold bg-primary text-primary-foreground rounded-full shadow-xs">
-                      <Crown className="h-3 w-3" />
+                      <TrendingUp className="h-3 w-3" />
                       Most Popular
                     </span>
                   </div>
@@ -322,9 +390,7 @@ export default function PricingPage() {
 
                 {/* Plan Header */}
                 <div className="flex items-center justify-between mb-3">
-                  <div className="h-9 w-9 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
-                    <Icon className="h-4 w-4" />
-                  </div>
+                  <Icon className="h-5 w-5 text-primary" />
                   <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
                     {plan.id.toUpperCase()}
                   </span>
@@ -340,7 +406,7 @@ export default function PricingPage() {
                 {/* Price Display */}
                 <div className="flex items-baseline gap-1.5 pb-6 mb-6 border-b border-border">
                   <span className="text-3xl font-bold text-foreground font-mono">
-                    {formatPrice(plan.price)}
+                    {formatPrice(plan.price, planCurrency)}
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
                     / {plan.interval || 'period'}
@@ -378,12 +444,15 @@ export default function PricingPage() {
                       <CheckCircle2 className="h-4 w-4" /> Active Subscription
                     </span>
                   ) : processingId === plan.id ? (
-                    'Processing Activation...'
+                    <span className="flex items-center gap-1.5">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      <span>Opening Cashfree...</span>
+                    </span>
                   ) : plan.price === 0 ? (
                     'Get Started Free'
                   ) : (
                     <span className="flex items-center gap-1.5">
-                      <span>Activate {plan.name} ({formatPrice(plan.price)})</span>
+                      <span>Activate {plan.name} ({formatPrice(plan.price, planCurrency)})</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </span>
                   )}
@@ -411,10 +480,10 @@ export default function PricingPage() {
               <thead>
                 <tr className="border-b border-border bg-secondary">
                   <th className="p-3.5 font-bold text-foreground">Feature</th>
-                  <th className="p-3.5 font-bold text-center text-muted-foreground">Free ($0)</th>
-                  <th className="p-3.5 font-bold text-center text-foreground">Starter ($2.99)</th>
-                  <th className="p-3.5 font-bold text-center text-primary">Standard ($9.99)</th>
-                  <th className="p-3.5 font-bold text-center text-foreground">Premium ($19.99)</th>
+                  <th className="p-3.5 font-bold text-center text-muted-foreground">Free (₹0)</th>
+                  <th className="p-3.5 font-bold text-center text-foreground">Starter (₹299)</th>
+                  <th className="p-3.5 font-bold text-center text-primary">Standard (₹999)</th>
+                  <th className="p-3.5 font-bold text-center text-foreground">Premium (₹1,999)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -445,12 +514,10 @@ export default function PricingPage() {
       {/* Trust & Guarantee Banner */}
       <div className="max-w-4xl mx-auto mt-14 p-6 rounded-xl bg-card border border-border flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
         <div className="flex items-center gap-3 text-left">
-          <div className="h-10 w-10 rounded-lg bg-secondary text-primary flex items-center justify-center shrink-0">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
+          <ShieldCheck className="h-6 w-6 text-primary shrink-0" />
           <div>
             <h4 className="font-bold text-foreground text-sm">Instant Plan Entitlement</h4>
-            <p className="text-xs text-muted-foreground">7-Day money-back guarantee. Secure Stripe payment gateway.</p>
+            <p className="text-xs text-muted-foreground">Secure Cashfree Payment Gateway • Supports UPI, Cards, Netbanking & Wallets.</p>
           </div>
         </div>
         <Button variant="outline" className="rounded-lg text-xs" asChild>
@@ -479,5 +546,20 @@ export default function PricingPage() {
       />
 
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="ml-2 text-xs text-muted-foreground">Loading pricing...</span>
+        </div>
+      }
+    >
+      <PricingContent />
+    </Suspense>
   );
 }

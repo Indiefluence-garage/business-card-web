@@ -21,10 +21,9 @@ export default function PrivacyPolicyPage() {
 
         {/* Header */}
         <div className="mb-10 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
-            <Shield className="h-3.5 w-3.5" />
+          <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
             Legal Documentation
-          </div>
+          </p>
           <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-foreground mb-3">
             Privacy Policy
           </h1>

@@ -2,6 +2,7 @@ export interface User {
   // Identity
   id: string;
   email: string;
+  name?: string | null;
   authProvider?: 'email' | 'google';
   isEmailVerified: boolean;
 
@@ -32,6 +33,7 @@ export interface User {
 
   // Subscription fields
   planId?: string | null;
+  planName?: string | null;
   subscriptionStatus?: 'free' | 'active' | 'expired' | 'cancelled';
   creditsRemaining?: number;
   planEndsAt?: string | null;
@@ -48,6 +50,7 @@ export interface AuthResponse {
 export interface ErrorResponse {
   error: string;
   success?: boolean;
+  message?: string;
 }
 
 export interface ProfileResponse<T> {
@@ -59,7 +62,9 @@ export interface ProfileResponse<T> {
 export interface Plan {
   id: string; // 'free' | 'tier1' | 'tier2' | 'tier3'
   name: string;
-  price: number; // in cents
+  description?: string;
+  price: number; // e.g. 299, 999, 1999
+  currency?: string; // 'INR' or 'USD'
   interval: string; // '30 days' | '90 days' | '365 days'
   features: string[];
   isPopular: boolean;
@@ -70,15 +75,37 @@ export interface SubscriptionResponse {
   plans: Plan[];
 }
 
-export interface PaymentData {
-  transactionId: string;
-  planId: string;
-  expiresAt: string;
-  credits: number;
+export interface CashfreeOrderData {
+  orderId: string;
+  cfOrderId?: string;
+  paymentSessionId: string;
+  transactionId?: string;
+  amount: string | number;
+  currency: string;
+  planName: string;
+  environment: 'SANDBOX' | 'PRODUCTION';
 }
 
-export interface PaymentResponse {
-  success: true;
-  message: string;
-  data: PaymentData;
+export interface CreateOrderResponse {
+  success: boolean;
+  data: CashfreeOrderData;
+  error?: string;
+  message?: string;
+}
+
+export interface VerifyOrderResponse {
+  success: boolean;
+  data?: {
+    status: string;
+    message: string;
+    alreadyProcessed?: boolean;
+    data?: {
+      subscriptionId: string;
+      planId: string;
+      expiresAt: string;
+      credits: number;
+    };
+  };
+  error?: string;
+  message?: string;
 }

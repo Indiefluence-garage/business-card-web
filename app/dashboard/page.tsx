@@ -113,10 +113,9 @@ export default function DashboardPage() {
         {/* Header Ribbon */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-2 border border-primary/20">
-              <Sparkles className="h-3.5 w-3.5" />
+            <p className="text-xs font-bold text-primary tracking-wider uppercase mb-1">
               Executive Command Center
-            </div>
+            </p>
             <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
               Welcome back, {user.firstName || 'Executive'}
             </h1>

@@ -21,10 +21,9 @@ export function VoiceMemoDemo() {
       
       {/* Header */}
       <div className="max-w-3xl mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-secondary text-primary text-xs font-semibold uppercase tracking-wider mb-3 border border-border">
-          <Mic className="h-3.5 w-3.5" />
+        <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
           Voice Intelligence Workflow
-        </div>
+        </p>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">
           Speak your notes. Lukewarm creates the tasks & calendar invites.
         </h2>

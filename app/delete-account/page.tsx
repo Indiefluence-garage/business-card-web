@@ -61,9 +61,7 @@ export default function DeleteAccountPage() {
 
         {submitted ? (
           <div className="rounded-3xl glass-panel border border-border p-8 sm:p-12 text-center shadow-2xl animate-fade-in">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center mb-6">
-              <CheckCircle2 className="h-8 w-8" />
-            </div>
+            <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto mb-4" />
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3">
               Account Deletion Request Received
             </h2>
@@ -80,10 +78,9 @@ export default function DeleteAccountPage() {
         ) : (
           <div className="rounded-3xl glass-panel border border-border p-6 sm:p-10 shadow-2xl animate-fade-in">
             <div className="mb-8">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-destructive/10 text-destructive text-xs font-bold uppercase tracking-wider mb-4 border border-destructive/20">
-                <Trash2 className="h-3.5 w-3.5" />
+              <p className="text-xs font-bold text-destructive tracking-wider uppercase mb-2">
                 Data & Privacy Rights
-              </div>
+              </p>
               <h1 className="font-display text-2xl sm:text-4xl font-bold text-foreground mb-2">
                 Request Account & Data Deletion
               </h1>

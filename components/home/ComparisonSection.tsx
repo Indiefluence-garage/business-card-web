@@ -37,9 +37,9 @@ export function ComparisonSection() {
         {/* The Old Way */}
         <div className="rounded-xl bg-card border border-border p-6 sm:p-8 flex flex-col justify-between">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-destructive/10 text-destructive text-xs font-bold uppercase tracking-wider mb-4">
+            <p className="text-xs font-bold text-destructive tracking-wider uppercase mb-2">
               The Manual Way
-            </div>
+            </p>
             <h3 className="text-lg font-bold text-foreground mb-4">
               Paper Business Cards & Manual Typing
             </h3>
@@ -61,9 +61,9 @@ export function ComparisonSection() {
         {/* The Lukewarm Way */}
         <div className="rounded-xl bg-card border-2 border-primary p-6 sm:p-8 flex flex-col justify-between shadow-xs">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider mb-4">
+            <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
               The Lukewarm System
-            </div>
+            </p>
             <h3 className="text-lg font-bold text-foreground mb-4">
               Automated OCR & Voice-Driven CRM
             </h3>

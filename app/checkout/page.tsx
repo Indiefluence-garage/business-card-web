@@ -1,15 +1,15 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Check, X, AlertCircle, Loader2, CreditCard, ArrowLeft, Zap, ShieldCheck } from 'lucide-react';
+import { Check, X, AlertCircle, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { paymentService } from '@/lib/services/payment.service';
+import { launchCashfreeCheckout } from '@/lib/cashfree';
 import { StatusModal, StatusModalType } from '@/components/ui/StatusModal';
 import Link from 'next/link';
 
 function CheckoutContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const planId = searchParams.get('planId') || 'tier1';
 
@@ -30,26 +30,26 @@ function CheckoutContent() {
     message: '',
   });
 
-  const simulateSuccess = async () => {
+  const handleCashfreeCheckout = async () => {
     setLoading(true);
     setResult(null);
 
     try {
-      const response = await paymentService.createPayment(planId);
+      const response = await paymentService.createOrder(planId);
       setResult({
         type: 'success',
-        title: 'Payment Successful!',
-        message: `${planId} plan activated successfully`,
+        title: 'Cashfree Order Created',
+        message: `Order for ${planId} created with Cashfree`,
         data: response.data,
       });
-      setModalState({
-        isOpen: true,
-        type: 'success',
-        title: 'Payment Successful! 🎉',
-        message: `Your ${planId} subscription has been activated successfully.`,
-        actionLabel: 'Go to Dashboard',
-        actionUrl: '/dashboard',
-      });
+
+      if (response.data?.paymentSessionId) {
+        await launchCashfreeCheckout({
+          paymentSessionId: response.data.paymentSessionId,
+          mode: response.data.environment?.toLowerCase() === 'production' ? 'production' : 'sandbox',
+          redirectTarget: '_modal',
+        });
+      }
     } catch (error: any) {
       const errorData = error.response?.data;
       setResult({
@@ -62,7 +62,7 @@ function CheckoutContent() {
         isOpen: true,
         type: 'error',
         title: 'Payment Failed',
-        message: errorData?.message || error.message || 'Payment simulation failed.',
+        message: errorData?.message || error.message || 'Payment initiation failed.',
         details: JSON.stringify(errorData, null, 2),
       });
     } finally {
@@ -75,18 +75,18 @@ function CheckoutContent() {
     setResult(null);
 
     try {
-      const response = await paymentService.createPayment(planId);
+      const response = await paymentService.createOrder(planId);
       setResult({
         type: 'success',
-        title: 'Payment Successful!',
-        message: 'Plan activated (no duplicate detected)',
+        title: 'Order Created',
+        message: 'Order created (no duplicate active subscription detected)',
         data: response.data,
       });
       setModalState({
         isOpen: true,
         type: 'success',
-        title: 'Payment Successful',
-        message: 'Plan activated (no duplicate detected)',
+        title: 'Order Created',
+        message: 'Order created successfully with Cashfree.',
       });
     } catch (error: any) {
       const errorData = error.response?.data;
@@ -113,7 +113,7 @@ function CheckoutContent() {
     setResult(null);
 
     try {
-      const response = await paymentService.createPayment('invalid-plan-id');
+      const response = await paymentService.createOrder('invalid-plan-id');
       setResult({
         type: 'success',
         title: 'Unexpected Success',
@@ -140,27 +140,6 @@ function CheckoutContent() {
     }
   };
 
-  const simulateNetworkError = () => {
-    setLoading(true);
-    setResult(null);
-
-    setTimeout(() => {
-      setResult({
-        type: 'error',
-        title: 'Network Error',
-        message: 'Failed to connect to server (simulated)',
-        data: { error: 'NETWORK_ERROR', details: 'Connection timeout' },
-      });
-      setModalState({
-        isOpen: true,
-        type: 'error',
-        title: 'Network Connection Timeout',
-        message: 'Failed to connect to server. Please check your internet connection and retry.',
-      });
-      setLoading(false);
-    }, 1000);
-  };
-
   return (
     <div className="container max-w-4xl mx-auto py-12 px-4 sm:px-6">
       
@@ -173,15 +152,14 @@ function CheckoutContent() {
       </Link>
 
       <div className="mb-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3 border border-primary/20">
-          <CreditCard className="h-3.5 w-3.5" />
-          Checkout & Integration Workbench
-        </div>
+        <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
+          Checkout & Cashfree Gateway
+        </p>
         <h1 className="font-display text-3xl font-bold text-foreground">
-          Subscription Checkout Simulator
+          Cashfree Subscription Checkout
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-          Verify transactional states, duplicate subscription protection, and server exception handling.
+          Test Cashfree order generation, modal checkout, and subscription validations.
         </p>
       </div>
 
@@ -201,7 +179,7 @@ function CheckoutContent() {
 
           <div className="mt-6 pt-4 border-t border-border flex items-center gap-2 text-xs text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-emerald-500" />
-            <span>Encrypted Webhook Verification Active</span>
+            <span>Cashfree Payment Gateway Integration</span>
           </div>
         </div>
 
@@ -211,12 +189,12 @@ function CheckoutContent() {
           </span>
 
           <Button
-            onClick={simulateSuccess}
+            onClick={handleCashfreeCheckout}
             disabled={loading}
             className="w-full btn-primary-glow rounded-2xl h-11 text-xs font-bold"
           >
             {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
-            Simulate Legitimate Purchase
+            Launch Cashfree Checkout
           </Button>
 
           <Button
@@ -237,16 +215,6 @@ function CheckoutContent() {
           >
             {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <X className="h-4 w-4 mr-2" />}
             Test Invalid Plan Exception
-          </Button>
-
-          <Button
-            onClick={simulateNetworkError}
-            disabled={loading}
-            className="w-full rounded-2xl h-11 text-xs font-semibold"
-            variant="outline"
-          >
-            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <X className="h-4 w-4 mr-2" />}
-            Simulate Network Latency Timeout
           </Button>
         </div>
       </div>
@@ -287,15 +255,6 @@ function CheckoutContent() {
         message={modalState.message}
         details={modalState.details}
         actionLabel={modalState.actionLabel}
-        onAction={
-          modalState.actionUrl
-            ? () => {
-                const url = modalState.actionUrl!;
-                setModalState((prev) => ({ ...prev, isOpen: false }));
-                router.push(url);
-              }
-            : undefined
-        }
       />
     </div>
   );

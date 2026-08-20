@@ -53,11 +53,10 @@ export default function Home() {
       <section className="pt-12 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
         <div className="max-w-4xl mx-auto text-center">
           
-          {/* Executive Sub-badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary text-primary text-xs font-semibold mb-6 border border-border">
-            <span className="h-2 w-2 rounded-full bg-emerald-600 dark:text-emerald-400" />
-            <span>Executive Contact Intelligence & Meeting Automation</span>
-          </div>
+          {/* Executive Section Eyebrow */}
+          <p className="text-xs font-bold text-primary tracking-wider uppercase mb-3">
+            Executive Contact Intelligence & Meeting Automation
+          </p>
 
           {/* Clear High-Contrast Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
@@ -140,9 +139,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             <div className="p-6 rounded-xl bg-card border border-border space-y-3">
-              <div className="h-10 w-10 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
-                <Camera className="h-5 w-5" />
-              </div>
+              <Camera className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Continuous Flash Scan</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Scan 20+ cards in 1 minute. The app automatically queues and processes cards asynchronously in the background.
@@ -150,9 +147,7 @@ export default function Home() {
             </div>
 
             <div className="p-6 rounded-xl bg-card border border-border space-y-3">
-              <div className="h-10 w-10 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
-                <Users className="h-5 w-5" />
-              </div>
+              <Users className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Contextual Photos</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Snap a quick photo with the person you met to attach visual context directly to their digital card profile.
@@ -160,9 +155,7 @@ export default function Home() {
             </div>
 
             <div className="p-6 rounded-xl bg-card border border-border space-y-3">
-              <div className="h-10 w-10 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
-                <Calendar className="h-5 w-5" />
-              </div>
+              <Calendar className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Google Calendar Auto-Sync</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Dictate meeting dates in voice notes. Lukewarm automatically schedules the event on your connected Google Calendar.
@@ -170,9 +163,7 @@ export default function Home() {
             </div>
 
             <div className="p-6 rounded-xl bg-card border border-border space-y-3">
-              <div className="h-10 w-10 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
-                <Globe className="h-5 w-5" />
-              </div>
+              <Globe className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Event Tagging & Export</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Group cards by event name (e.g. &ldquo;TechCrunch SF 2026&rdquo;) and export to CSV or vCard with a single click.
@@ -192,9 +183,9 @@ export default function Home() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-secondary text-primary text-xs font-semibold mb-2">
-              <Lock className="h-3.5 w-3.5" /> Enterprise Security
-            </div>
+            <p className="text-xs font-bold text-primary tracking-wider uppercase mb-1">
+              Enterprise Security & Privacy
+            </p>
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
               Your Contacts Are Private & Secure
             </h2>

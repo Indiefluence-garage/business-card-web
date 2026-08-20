@@ -50,9 +50,7 @@ export default function FeedbackPage() {
 
         {submitted ? (
           <div className="rounded-3xl glass-panel border border-border p-8 sm:p-12 text-center shadow-2xl animate-fade-in">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center mb-6">
-              <CheckCircle2 className="h-8 w-8" />
-            </div>
+            <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto mb-4" />
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3">
               Thank You for Your Feedback!
             </h2>
@@ -71,15 +69,14 @@ export default function FeedbackPage() {
         ) : (
           <div className="rounded-3xl glass-panel border border-border p-6 sm:p-10 shadow-2xl animate-fade-in">
             <div className="mb-8">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
-                <Sparkles className="h-3.5 w-3.5" />
-                Continuous Product Improvement
-              </div>
+              <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
+                Product Feedback & Improvement
+              </p>
               <h1 className="font-display text-2xl sm:text-4xl font-bold text-foreground mb-2">
                 Share Your Thoughts & Ideas
               </h1>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Help us make Lukewarm CRM faster, smarter, and more indispensable for your workflow.
+                Help us make Lukewarm faster, smarter, and more indispensable for your workflow.
               </p>
             </div>
 
