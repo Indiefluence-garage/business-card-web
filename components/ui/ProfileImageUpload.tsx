@@ -163,10 +163,10 @@ export function ProfileImageUpload({
   const displayImage = preview || currentImageUrl;
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative inline-block w-fit shrink-0 ${className}`}>
       {/* Main Image Display */}
       <div
-        className={`relative group ${sizeClasses[size]} rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden transition-all duration-300 ring-2 ring-border hover:ring-primary/50 ${
+        className={`relative group ${sizeClasses[size]} rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden transition-all duration-300 ring-2 ring-border hover:ring-primary/50 shrink-0 ${
           isDragging ? 'ring-4 ring-primary ring-offset-2 scale-105' : ''
         }`}
         onDragOver={handleDragOver}

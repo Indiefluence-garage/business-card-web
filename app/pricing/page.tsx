@@ -209,7 +209,7 @@ function PricingContent() {
         isOpen: true,
         type: 'warning',
         title: 'Active Subscription Running',
-        message: `You currently have an active ${currentUser.planId.replace('tier', 'Tier ').toUpperCase()} subscription valid until ${currentUser.planEndsAt ? new Date(currentUser.planEndsAt).toLocaleDateString() : 'expiry'}. You cannot purchase another plan while an active subscription exists.`,
+        message: `You currently have an active ${(currentUser.planId || 'paid').replace('tier', 'Tier ').toUpperCase()} subscription valid until ${currentUser.planEndsAt ? new Date(currentUser.planEndsAt).toLocaleDateString() : 'expiry'}. You cannot purchase another plan while an active subscription exists.`,
         actionLabel: 'Go to Dashboard',
         actionUrl: '/dashboard',
       });
