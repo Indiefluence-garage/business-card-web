@@ -89,42 +89,22 @@ export default function DashboardLayout({
   );
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
-      {/* Mobile Header */}
-      <div className="fixed top-16 left-0 right-0 z-40 flex items-center justify-between bg-background border-b border-border/50 px-4 py-3 md:hidden">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setSidebarOpen(true)}
-          className="p-2"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
-        <span className="font-semibold text-foreground">Dashboard</span>
-        <div className="w-9" /> {/* Spacer for centering */}
-      </div>
-
+    <div className="flex min-h-[calc(100vh-4rem)]">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 md:hidden"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
-      <aside className={`
-        fixed md:static inset-y-0 left-0 z-50
-        w-64 flex-col bg-background border-r border-border/50
-        transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0 md:flex
-      `}>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-64 flex-col bg-card border-r border-border/60 shrink-0">
         <NavContent />
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pt-14 md:pt-0">
+      {/* Main Content Area */}
+      <main className="flex-1 overflow-y-auto w-full">
         {children}
       </main>
     </div>

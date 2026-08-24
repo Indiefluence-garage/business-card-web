@@ -107,47 +107,47 @@ export default function DashboardPage() {
   const isPro = user.subscriptionStatus === 'active';
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-background py-6 sm:py-8 px-3.5 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
         
         {/* Header Ribbon */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-bold text-primary tracking-wider uppercase mb-1">
+            <p className="text-[11px] sm:text-xs font-bold text-primary tracking-wider uppercase mb-1">
               Executive Command Center
             </p>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+            <h1 className="text-xl sm:text-3xl font-display font-bold text-foreground">
               Welcome back, {user.firstName || 'Executive'}
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
               Manage your personal digital business card, subscription entitlements, and synced connections.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3">
             <Button
               variant="outline"
               onClick={handleCopyProfileLink}
-              className="rounded-xl flex items-center gap-2 text-xs font-semibold"
+              className="rounded-xl flex items-center justify-center gap-1.5 text-xs font-semibold h-10 px-3"
             >
               {copiedLink ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                   <span>Link Copied!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="h-4 w-4 text-muted-foreground" />
-                  <span>Share Digital Card</span>
+                  <Share2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <span>Share Card</span>
                 </>
               )}
             </Button>
 
             <Button
               onClick={() => setIsEditModalOpen(true)}
-              className="btn-primary-glow rounded-xl flex items-center gap-2 text-xs font-semibold"
+              className="btn-primary-glow rounded-xl flex items-center justify-center gap-1.5 text-xs font-semibold h-10 px-3"
             >
-              <Edit3 className="h-4 w-4" />
+              <Edit3 className="h-4 w-4 shrink-0" />
               <span>Edit Profile</span>
             </Button>
           </div>
@@ -162,12 +162,12 @@ export default function DashboardPage() {
         />
 
         {/* Main Profile Hero Card */}
-        <div className="rounded-3xl glass-panel border border-border overflow-hidden shadow-xl">
+        <div className="rounded-2xl sm:rounded-3xl glass-panel border border-border overflow-hidden shadow-xl">
           
           {/* Executive Cover Banner */}
-          <div className="relative h-32 sm:h-36 bg-secondary overflow-hidden border-b border-border">
-            <div className="absolute top-4 right-4 flex items-center gap-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 backdrop-blur-md ${
+          <div className="relative h-28 sm:h-36 bg-secondary overflow-hidden border-b border-border">
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex items-center gap-2">
+              <span className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold border flex items-center gap-1.5 backdrop-blur-md ${
                 isPro 
                   ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' 
                   : 'bg-secondary/80 text-muted-foreground border-border'
@@ -179,12 +179,12 @@ export default function DashboardPage() {
           </div>
 
           {/* User Profile Header Content */}
-          <div className="px-6 sm:px-10 pb-8 relative">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-16 sm:-mt-20 mb-6">
+          <div className="px-4 sm:px-10 pb-6 sm:pb-8 relative">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 -mt-14 sm:-mt-20 mb-4 sm:mb-6">
               
               {/* Avatar upload */}
-              <div className="relative inline-block">
-                <div className="p-1 rounded-full bg-background ring-4 ring-background shadow-xl">
+              <div className="relative inline-flex w-fit shrink-0">
+                <div className="p-1 rounded-full bg-background ring-4 ring-background shadow-xl w-fit shrink-0 inline-flex">
                   <ProfileImageUpload
                     currentImageUrl={user.imageUrl}
                     userInitials={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
@@ -197,12 +197,12 @@ export default function DashboardPage() {
               </div>
 
               {/* Quick Actions */}
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => router.push('/pricing')}
-                  className="rounded-xl text-xs font-semibold"
+                  className="rounded-xl text-xs font-semibold h-9 px-3.5"
                 >
                   <CreditCard className="h-3.5 w-3.5 mr-1.5 text-primary" />
                   {isPro ? 'Manage Subscription' : 'Upgrade to Unlimited'}
@@ -213,23 +213,23 @@ export default function DashboardPage() {
             {/* Name, Email & Bio */}
             <div className="space-y-3 max-w-3xl">
               <div>
-                <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+                <h2 className="text-xl sm:text-3xl font-display font-bold text-foreground">
                   {user.firstName} {user.lastName}
                 </h2>
-                <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1.5 text-foreground font-mono">
-                    <Mail className="h-4 w-4 text-primary" />
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-1.5 text-xs sm:text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-foreground font-mono break-all">
+                    <Mail className="h-3.5 w-3.5 text-primary shrink-0" />
                     {user.email}
                   </span>
                   {user.phoneNumber && (
                     <span className="flex items-center gap-1.5 font-mono">
-                      <Phone className="h-4 w-4 text-primary" />
+                      <Phone className="h-3.5 w-3.5 text-primary shrink-0" />
                       {user.phoneNumber}
                     </span>
                   )}
                   {user.country && (
                     <span className="flex items-center gap-1.5">
-                      <Globe className="h-4 w-4 text-primary" />
+                      <Globe className="h-3.5 w-3.5 text-primary shrink-0" />
                       {user.country}
                     </span>
                   )}
@@ -237,7 +237,7 @@ export default function DashboardPage() {
               </div>
 
               {user.bio ? (
-                <div className="p-4 rounded-2xl bg-secondary/40 border border-border text-sm text-foreground/90 leading-relaxed italic">
+                <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-secondary/40 border border-border text-xs sm:text-sm text-foreground/90 leading-relaxed italic">
                   &ldquo;{user.bio}&rdquo;
                 </div>
               ) : (
@@ -306,24 +306,24 @@ export default function DashboardPage() {
         </div>
 
         {/* Subscription & Entitlements Section */}
-        <div className="rounded-3xl glass-panel-glow border border-primary/20 p-6 sm:p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex items-start gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <Zap className="h-6 w-6" />
+        <div className="rounded-2xl sm:rounded-3xl glass-panel-glow border border-primary/20 p-5 sm:p-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
+            <div className="flex items-start gap-3.5 sm:gap-4">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Zap className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-display text-xl font-bold text-foreground">
-                    Subscription & Vision Credits
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-display text-lg sm:text-xl font-bold text-foreground">
+                    Subscription & Credits
                   </h3>
                   {isPro && (
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold">
                       Unlimited Plan
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
                   {isPro ? (
                     <>
                       Active until{' '}
@@ -339,17 +339,17 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 shrink-0">
-              <div className="text-right">
-                <div className="text-xs font-mono font-semibold text-muted-foreground">Remaining Credits</div>
-                <div className="text-xl font-display font-extrabold text-primary">
+            <div className="flex items-center justify-between sm:justify-end gap-4 pt-3 sm:pt-0 border-t sm:border-t-0 border-border/60 shrink-0">
+              <div className="text-left sm:text-right">
+                <div className="text-[11px] font-mono font-semibold text-muted-foreground">Remaining Credits</div>
+                <div className="text-lg sm:text-xl font-display font-extrabold text-primary">
                   {user.creditsRemaining === 999999 || isPro ? 'Unlimited' : user.creditsRemaining || 0}
                 </div>
               </div>
 
               <Button
                 onClick={() => router.push('/pricing')}
-                className="btn-primary-glow rounded-xl font-semibold text-xs h-11 px-5"
+                className="btn-primary-glow rounded-xl font-semibold text-xs h-10 px-4"
               >
                 {isPro ? 'Manage Plan' : 'Upgrade to Pro'}
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
