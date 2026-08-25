@@ -100,26 +100,6 @@ export default function ClientCardView({ initialUser, userId }: Props) {
     }
   }, []);
 
-  const androidIntentUrl = user
-    ? [
-        "intent:#Intent",
-        "action=android.intent.action.INSERT",
-        "type=vnd.android.cursor.dir/contact",
-        `S.name=${encodeURIComponent(fullName)}`,
-        user.phoneNumber ? `S.phone=${encodeURIComponent(user.phoneNumber)}` : "",
-        user.whatsappNumber && user.whatsappNumber !== user.phoneNumber
-          ? `S.secondary_phone=${encodeURIComponent(user.whatsappNumber)}`
-          : "",
-        user.email ? `S.email=${encodeURIComponent(user.email)}` : "",
-        user.company ? `S.company=${encodeURIComponent(user.company)}` : "",
-        user.position ? `S.job_title=${encodeURIComponent(user.position)}` : "",
-        user.bio ? `S.notes=${encodeURIComponent(user.bio)}` : "",
-        "end",
-      ]
-        .filter(Boolean)
-        .join(";")
-    : "#";
-
   const vCardUrl = user
     ? `/api/vcard?${new URLSearchParams({
         name: fullName,
@@ -134,7 +114,38 @@ export default function ClientCardView({ initialUser, userId }: Props) {
       }).toString()}`
     : "#";
 
-  const saveContactHref = isAndroid ? androidIntentUrl : vCardUrl;
+  const androidIntentUrl = user
+    ? [
+        "intent:#Intent",
+        "action=android.intent.action.INSERT",
+        "type=vnd.android.cursor.dir/contact",
+        `S.name=${encodeURIComponent(fullName)}`,
+        user.phoneNumber ? `S.phone=${encodeURIComponent(user.phoneNumber)}` : "",
+        user.whatsappNumber && user.whatsappNumber !== user.phoneNumber
+          ? `S.secondary_phone=${encodeURIComponent(user.whatsappNumber)}`
+          : "",
+        user.email ? `S.email=${encodeURIComponent(user.email)}` : "",
+        user.company ? `S.company=${encodeURIComponent(user.company)}` : "",
+        user.position ? `S.job_title=${encodeURIComponent(user.position)}` : "",
+        user.bio ? `S.notes=${encodeURIComponent(user.bio)}` : "",
+        typeof window !== "undefined" ? `S.browser_fallback_url=${encodeURIComponent(window.location.origin + vCardUrl)}` : "",
+        "end",
+      ]
+        .filter(Boolean)
+        .join(";")
+    : vCardUrl;
+
+  const handleSaveContact = (e: React.MouseEvent) => {
+    if (isAndroid) {
+      e.preventDefault();
+      // 1. Try launching native Google Contacts Intent
+      window.location.href = androidIntentUrl;
+      // 2. Seamless fallback to direct vCard stream if intent is blocked by in-app browser
+      setTimeout(() => {
+        window.location.href = vCardUrl;
+      }, 500);
+    }
+  };
 
   const handleDownloadPng = async () => {
     if (!cardRef.current) return;
@@ -392,7 +403,8 @@ export default function ClientCardView({ initialUser, userId }: Props) {
         {/* ===== PRIMARY SAVE CONTACT BUTTON ===== */}
         <div className="mt-6">
           <a
-            href={saveContactHref}
+            href={vCardUrl}
+            onClick={handleSaveContact}
             download={isAndroid ? undefined : `${fullName.replace(/\s+/g, "_")}.vcf`}
             className="w-full py-4 px-8 rounded-full bg-black hover:bg-slate-900 text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xl shadow-black/20 transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer text-center"
           >
