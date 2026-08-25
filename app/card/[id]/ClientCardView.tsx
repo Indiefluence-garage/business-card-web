@@ -1,7 +1,20 @@
 "use client";
 
-import React from "react";
-import { Mail, Phone, MessageCircle, Globe, MapPin, UserPlus, Share2, Sparkles } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import {
+  Mail,
+  Phone,
+  MessageCircle,
+  Globe,
+  MapPin,
+  UserPlus,
+  Share2,
+  Download,
+  Image as ImageIcon,
+  Check,
+  Loader2,
+} from "lucide-react";
+import { toPng } from "html-to-image";
 
 interface PublicUser {
   id: string;
@@ -26,9 +39,13 @@ interface Props {
 }
 
 export default function ClientCardView({ initialUser, userId }: Props) {
-  const [user, setUser] = React.useState<PublicUser | null>(initialUser);
+  const [user, setUser] = useState<PublicUser | null>(initialUser);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
-  React.useEffect(() => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
     if (!user && typeof window !== "undefined") {
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.toString()) {
@@ -58,6 +75,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Professional";
   const initials = (fullName.charAt(0) || "P").toUpperCase();
   const cardBg = user?.cardColor || "#033F63";
+  const effectiveWhatsapp = user?.whatsappNumber || user?.phoneNumber;
 
   const handleDownloadVCard = () => {
     if (!user) return;
@@ -85,6 +103,26 @@ END:VCARD`;
     URL.revokeObjectURL(url);
   };
 
+  const handleDownloadPng = async () => {
+    if (!cardRef.current) return;
+    try {
+      setIsDownloading(true);
+      const dataUrl = await toPng(cardRef.current, {
+        quality: 0.98,
+        pixelRatio: 3,
+        cacheBust: true,
+      });
+      const link = document.createElement("a");
+      link.download = `${fullName.replace(/\s+/g, "_")}_digital_card.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Failed to download image", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -96,9 +134,14 @@ END:VCARD`;
       } catch {}
     } else {
       await navigator.clipboard.writeText(window.location.href);
-      alert("Card link copied to clipboard!");
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2500);
     }
   };
+
+  const whatsappUrl = effectiveWhatsapp
+    ? `https://wa.me/${effectiveWhatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi ${fullName}, I just connected with you on your Lukewarm digital card!`)}`
+    : null;
 
   if (!user) {
     return (
@@ -117,28 +160,31 @@ END:VCARD`;
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] flex flex-col items-center justify-center p-4 py-8 antialiased">
+    <div className="min-h-screen bg-[#F7F8FA] flex flex-col items-center justify-center p-4 py-8 antialiased selection:bg-[#033F63]/20">
       {/* Container */}
       <div className="w-full max-w-md">
-        {/* Brand Header */}
+        {/* Top Brand Bar */}
         <div className="flex items-center justify-between mb-4 px-2">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#033F63] flex items-center justify-center text-white font-black text-sm">
+            <div className="w-7 h-7 rounded-lg bg-[#033F63] flex items-center justify-center text-white font-black text-sm shadow-sm">
               L
             </div>
             <span className="font-bold text-slate-800 text-sm tracking-tight">Lukewarm</span>
           </div>
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-3.5 py-1.5 rounded-full shadow-sm hover:bg-slate-50 transition-all active:scale-95 cursor-pointer"
           >
-            <Share2 className="w-3.5 h-3.5" />
-            Share
+            {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
+            {isCopied ? "Link Copied" : "Share"}
           </button>
         </div>
 
-        {/* Digital Business Card */}
-        <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 transition-all">
+        {/* ===== HERO DIGITAL BUSINESS CARD (CAPTURED FOR PNG) ===== */}
+        <div
+          ref={cardRef}
+          className="bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 transition-all"
+        >
           {/* Cover Banner */}
           <div
             className="h-32 p-5 flex flex-col justify-between relative overflow-hidden"
@@ -168,6 +214,7 @@ END:VCARD`;
                   src={user.imageUrl}
                   alt={fullName}
                   className="w-full h-full object-cover"
+                  crossOrigin="anonymous"
                 />
               ) : (
                 <span className="text-white text-3xl font-bold">{initials}</span>
@@ -229,9 +276,9 @@ END:VCARD`;
               </a>
             )}
 
-            {user.whatsappNumber && (
+            {effectiveWhatsapp && (
               <a
-                href={`https://wa.me/${user.whatsappNumber.replace(/[^0-9]/g, "")}`}
+                href={whatsappUrl || "#"}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition-colors group"
@@ -241,7 +288,7 @@ END:VCARD`;
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[11px] font-medium text-slate-400">WhatsApp</p>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{user.whatsappNumber}</p>
+                  <p className="text-xs font-semibold text-slate-800 truncate">{effectiveWhatsapp}</p>
                 </div>
               </a>
             )}
@@ -275,15 +322,54 @@ END:VCARD`;
               </div>
             )}
           </div>
+        </div>
 
-          {/* Primary Action: Add to Contacts */}
-          <div className="p-6 pt-2 pb-6">
+        {/* ===== CALL TO ACTION BUTTONS ===== */}
+        <div className="mt-5 space-y-3">
+          {/* Primary 1-Tap Add to Contacts */}
+          <button
+            onClick={handleDownloadVCard}
+            className="w-full py-4 px-6 rounded-2xl bg-[#033F63] hover:bg-[#022c45] text-white font-bold text-base flex items-center justify-center gap-2.5 shadow-lg shadow-[#033F63]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          >
+            <UserPlus className="w-5 h-5" />
+            Add to Contacts
+          </button>
+
+          {/* Secondary Action Grid: WhatsApp & Download PNG */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* WhatsApp Connect */}
+            {whatsappUrl ? (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+              >
+                <MessageCircle className="w-4 h-4 fill-white" />
+                WhatsApp
+              </a>
+            ) : (
+              <button
+                disabled
+                className="py-3 px-4 rounded-2xl bg-slate-200 text-slate-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 opacity-60 cursor-not-allowed"
+              >
+                <MessageCircle className="w-4 h-4" />
+                WhatsApp
+              </button>
+            )}
+
+            {/* Download as PNG */}
             <button
-              onClick={handleDownloadVCard}
-              className="w-full py-4 px-6 rounded-2xl bg-[#033F63] hover:bg-[#022c45] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[#033F63]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+              onClick={handleDownloadPng}
+              disabled={isDownloading}
+              className="py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
             >
-              <UserPlus className="w-5 h-5" />
-              Add to Contacts
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 animate-spin text-[#033F63]" />
+              ) : (
+                <Download className="w-4 h-4 text-[#033F63]" />
+              )}
+              {isDownloading ? "Saving..." : "Save as PNG"}
             </button>
           </div>
         </div>
