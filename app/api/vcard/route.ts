@@ -42,8 +42,8 @@ export async function GET(req: NextRequest) {
     status: 200,
     headers: {
       "Content-Type": "text/x-vcard; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${sanitizedFilename}"; filename*=UTF-8''${encodeURIComponent(sanitizedFilename)}`,
-      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      "Content-Disposition": `inline; filename="${sanitizedFilename}"; filename*=UTF-8''${encodeURIComponent(sanitizedFilename)}`,
+      "Cache-Control": "no-cache, no-store, must-revalidate",
     },
   });
 }

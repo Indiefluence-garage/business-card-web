@@ -107,11 +107,8 @@ export default function ClientCardView({ initialUser, userId }: Props) {
       bio: user.bio || "",
     }).toString();
 
-    // Trigger direct HTTP GET with text/vcard header
+    // Directly open inline vCard route to trigger native Contacts sheet immediately
     window.location.href = `/api/vcard?${params}`;
-
-    setDownloadSuccess("Contact file ready! Tap 'Save/Open' to add to your contacts.");
-    setTimeout(() => setDownloadSuccess(null), 6000);
   };
 
   const handleDownloadPng = async () => {
