@@ -26,7 +26,34 @@ interface Props {
 }
 
 export default function ClientCardView({ initialUser, userId }: Props) {
-  const user = initialUser;
+  const [user, setUser] = React.useState<PublicUser | null>(initialUser);
+
+  React.useEffect(() => {
+    if (!user && typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.toString()) {
+        const queryName = searchParams.get("name") || "";
+        const nameParts = queryName.split(" ");
+        setUser({
+          id: userId || "card",
+          firstName: nameParts[0] || "Professional",
+          lastName: nameParts.slice(1).join(" ") || "",
+          email: searchParams.get("email") || "",
+          phoneNumber: searchParams.get("phone") || "",
+          whatsappNumber: searchParams.get("whatsapp") || "",
+          company: searchParams.get("company") || "",
+          position: searchParams.get("position") || "",
+          cardColor: searchParams.get("cardColor") || "#033F63",
+          country: searchParams.get("country") || "",
+          bio: searchParams.get("bio") || "",
+          imageUrl: searchParams.get("avatar") || "",
+          socialLinks: {
+            website: searchParams.get("website") || "",
+          },
+        });
+      }
+    }
+  }, [user, userId]);
 
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Professional";
   const initials = (fullName.charAt(0) || "P").toUpperCase();

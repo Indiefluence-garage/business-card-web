@@ -4,56 +4,84 @@ import ClientCardView from "./ClientCardView";
 
 interface Props {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+const CANDIDATE_API_URLS = [
+  process.env.NEXT_PUBLIC_API_URL,
+  process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/api` : null,
+  "https://card-crm-api.lukewarm-api.workers.dev/api",
+  "https://lukewarm-api.onrender.com/api",
+  "http://localhost:4000/api",
+].filter(Boolean) as string[];
 
 async function getPublicProfile(userId: string) {
-  try {
-    const res = await fetch(`${API_BASE_URL}/profile/public/${userId}`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.data;
-  } catch {
-    return null;
+  for (const baseUrl of CANDIDATE_API_URLS) {
+    try {
+      const res = await fetch(`${baseUrl}/profile/public/${userId}`, {
+        next: { revalidate: 60 },
+        signal: AbortSignal.timeout(3000),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) return json.data;
+      }
+    } catch {}
   }
+  return null;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { id } = await params;
-  const user = await getPublicProfile(id);
+  const query = searchParams ? await searchParams : {};
+  let user = await getPublicProfile(id);
 
-  if (!user) {
-    return {
-      title: "Digital Business Card | Lukewarm",
-      description: "Scan and connect with professionals on Lukewarm.",
-    };
-  }
-
-  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
-  const title = `${fullName}${user.company ? ` • ${user.company}` : ""} | Digital Business Card`;
+  const queryName = typeof query?.name === "string" ? query.name : "";
+  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || queryName || "Digital Business Card";
+  const company = user?.company || (typeof query?.company === "string" ? query.company : "");
+  const title = `${fullName}${company ? ` • ${company}` : ""} | Lukewarm`;
 
   return {
     title,
-    description: `Connect with ${fullName} (${user.position || "Professional"}${user.company ? ` at ${user.company}` : ""}). Add contact to phone instantly.`,
-    openGraph: {
-      title,
-      description: `Connect with ${fullName}. Add contact directly to your phone.`,
-      images: user.imageUrl ? [{ url: user.imageUrl }] : [],
-    },
+    description: `Connect with ${fullName}. Add contact directly to your phone.`,
   };
 }
 
-export default async function PublicCardPage({ params }: Props) {
+export default async function PublicCardPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const query = searchParams ? await searchParams : {};
   let user = await getPublicProfile(id);
 
-  // Fallback demo user for local testing
-  if (!user && (id === "demo" || id === "preview" || process.env.NODE_ENV === "development")) {
+  // If query params are present in URL, overlay or populate them
+  if (query && Object.keys(query).length > 0) {
+    const queryName = typeof query.name === "string" ? query.name : "";
+    const nameParts = queryName.split(" ");
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ");
+
     user = {
-      id: id || "demo",
+      id: id || "card",
+      firstName: user?.firstName || firstName || "Professional",
+      lastName: user?.lastName || lastName || "",
+      email: user?.email || (typeof query.email === "string" ? query.email : ""),
+      phoneNumber: user?.phoneNumber || (typeof query.phone === "string" ? query.phone : ""),
+      whatsappNumber: user?.whatsappNumber || (typeof query.whatsapp === "string" ? query.whatsapp : ""),
+      company: user?.company || (typeof query.company === "string" ? query.company : ""),
+      position: user?.position || (typeof query.position === "string" ? query.position : ""),
+      cardColor: user?.cardColor || (typeof query.cardColor === "string" ? query.cardColor : "#033F63"),
+      country: user?.country || (typeof query.country === "string" ? query.country : ""),
+      bio: user?.bio || (typeof query.bio === "string" ? query.bio : ""),
+      imageUrl: user?.imageUrl || (typeof query.avatar === "string" ? query.avatar : ""),
+      socialLinks: user?.socialLinks || {
+        website: typeof query.website === "string" ? query.website : "",
+      },
+    };
+  }
+
+  // Fallback demo user if still empty
+  if (!user && (id === "demo" || id === "preview")) {
+    user = {
+      id: "demo",
       firstName: "Riya",
       lastName: "Sharma",
       email: "riyasham2151@gmail.com",
