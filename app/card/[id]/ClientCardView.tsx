@@ -92,34 +92,8 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const cardBg = user?.cardColor || "#033F63";
   const effectiveWhatsapp = user?.whatsappNumber || user?.phoneNumber;
 
-  const handleDownloadVCard = () => {
-    if (!user) return;
-
-    const isAndroid =
-      typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-      // Android Intent scheme directly invokes Android Contacts without any file download
-      const intentParts = [
-        "intent:#Intent",
-        "action=android.intent.action.INSERT",
-        "type=vnd.android.cursor.dir/contact",
-        `S.name=${encodeURIComponent(fullName)}`,
-        user.phoneNumber ? `S.phone=${encodeURIComponent(user.phoneNumber)}` : "",
-        user.whatsappNumber && user.whatsappNumber !== user.phoneNumber
-          ? `S.secondary_phone=${encodeURIComponent(user.whatsappNumber)}`
-          : "",
-        user.email ? `S.email=${encodeURIComponent(user.email)}` : "",
-        user.company ? `S.company=${encodeURIComponent(user.company)}` : "",
-        user.position ? `S.job_title=${encodeURIComponent(user.position)}` : "",
-        user.bio ? `S.notes=${encodeURIComponent(user.bio)}` : "",
-        "end",
-      ].filter(Boolean);
-
-      window.location.href = intentParts.join(";");
-    } else {
-      // iOS Safari and Desktop vCard stream
-      const params = new URLSearchParams({
+  const vCardUrl = user
+    ? `/api/vcard?${new URLSearchParams({
         name: fullName,
         email: user.email || "",
         phone: user.phoneNumber || "",
@@ -129,10 +103,12 @@ export default function ClientCardView({ initialUser, userId }: Props) {
         website: user.socialLinks?.website || "",
         country: user.country || "",
         bio: user.bio || "",
-      }).toString();
+      }).toString()}`
+    : "#";
 
-      window.location.href = `/api/vcard?${params}`;
-    }
+  const handleDownloadVCard = () => {
+    if (!user) return;
+    window.location.href = vCardUrl;
   };
 
   const handleDownloadPng = async () => {
@@ -390,13 +366,14 @@ export default function ClientCardView({ initialUser, userId }: Props) {
 
         {/* ===== PRIMARY SAVE CONTACT BUTTON ===== */}
         <div className="mt-6">
-          <button
-            onClick={handleDownloadVCard}
-            className="w-full py-4 px-8 rounded-full bg-black hover:bg-slate-900 text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xl shadow-black/20 transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
+          <a
+            href={vCardUrl}
+            download={`${fullName.replace(/\s+/g, "_")}.vcf`}
+            className="w-full py-4 px-8 rounded-full bg-black hover:bg-slate-900 text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xl shadow-black/20 transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer text-center"
           >
             <UserPlus className="w-5 h-5 stroke-[2.5]" />
             Save Contact
-          </button>
+          </a>
         </div>
 
         {/* ===== GORGEOUS APP ICON GRID (PHONE, WHATSAPP, EMAIL, DOWNLOAD, SOCIALS) ===== */}
