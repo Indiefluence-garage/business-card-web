@@ -9,13 +9,12 @@ import {
   MapPin,
   UserPlus,
   Share2,
-  Download,
   Check,
   Loader2,
-  Linkedin,
-  Instagram,
-  Facebook,
-  Twitter,
+  Sparkles,
+  Building2,
+  Briefcase,
+  ChevronRight,
 } from "lucide-react";
 import { toPng } from "html-to-image";
 
@@ -53,8 +52,15 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
+  const [isAndroid, setIsAndroid] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined") {
+      setIsAndroid(/Android/i.test(navigator.userAgent));
+    }
+  }, []);
 
   useEffect(() => {
     if (!user && typeof window !== "undefined") {
@@ -91,14 +97,6 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const initials = (fullName.charAt(0) || "P").toUpperCase();
   const cardBg = user?.cardColor || "#033F63";
   const effectiveWhatsapp = user?.whatsappNumber || user?.phoneNumber;
-
-  const [isAndroid, setIsAndroid] = useState(false);
-
-  useEffect(() => {
-    if (typeof navigator !== "undefined") {
-      setIsAndroid(/Android/i.test(navigator.userAgent));
-    }
-  }, []);
 
   const vCardUrl = user
     ? `/api/vcard?${new URLSearchParams({
@@ -138,9 +136,8 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const handleSaveContact = (e: React.MouseEvent) => {
     if (isAndroid) {
       e.preventDefault();
-      // 1. Try launching native Google Contacts Intent
+      // Try launching Google Contacts Intent, with rapid seamless fallback to direct vCard stream
       window.location.href = androidIntentUrl;
-      // 2. Seamless fallback to direct vCard stream if intent is blocked by in-app browser
       setTimeout(() => {
         window.location.href = vCardUrl;
       }, 500);
@@ -236,7 +233,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] flex flex-col items-center justify-center p-4 py-8 antialiased selection:bg-[#033F63]/20">
+    <div className="min-h-screen bg-[#F4F6F9] flex flex-col items-center justify-center p-4 py-8 antialiased selection:bg-[#033F63]/20">
       {/* Container */}
       <div className="w-full max-w-md">
         {/* Top Brand Bar */}
@@ -256,22 +253,27 @@ export default function ClientCardView({ initialUser, userId }: Props) {
           </button>
         </div>
 
-        {/* ===== HERO DIGITAL BUSINESS CARD (CAPTURED FOR PNG) ===== */}
+        {/* ===== REDESIGNED HERO DIGITAL BUSINESS CARD (CAPTURED FOR PNG) ===== */}
         <div
           ref={cardRef}
-          className="bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 transition-all"
+          className="bg-white rounded-[28px] overflow-hidden shadow-xl border border-slate-200/90 transition-all"
         >
-          {/* Cover Banner */}
+          {/* Cover Header Banner */}
           <div
-            className="h-32 p-5 flex flex-col justify-between relative overflow-hidden"
+            className="h-36 p-6 flex flex-col justify-between relative overflow-hidden"
             style={{ backgroundColor: cardBg }}
           >
+            {/* Ambient subtle decorative gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25 pointer-events-none" />
+
             <div className="flex items-center justify-between z-10">
-              <span className="text-white/80 text-[11px] font-bold tracking-widest uppercase">
-                {user.company || "LUKEWARM"}
-              </span>
-              <div className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold backdrop-blur-sm">
-                DIGITAL CARD
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold tracking-wider uppercase">
+                <Building2 className="w-3 h-3 text-white/90" />
+                <span>{user.company || "LUKEWARM"}</span>
+              </div>
+              <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[10px] font-extrabold tracking-wider uppercase">
+                <Sparkles className="w-2.5 h-2.5 text-amber-300 fill-amber-300" />
+                <span>DIGITAL CARD</span>
               </div>
             </div>
 
@@ -282,9 +284,9 @@ export default function ClientCardView({ initialUser, userId }: Props) {
             )}
           </div>
 
-          {/* Avatar Section */}
-          <div className="px-6 -mt-12 flex items-end justify-between relative z-20">
-            <div className="w-24 h-24 rounded-full border-4 border-white shadow-md overflow-hidden bg-[#033F63] flex items-center justify-center">
+          {/* Floating Executive Avatar Section */}
+          <div className="px-6 -mt-14 flex items-end justify-between relative z-20">
+            <div className="w-24 h-24 rounded-full ring-4 ring-white shadow-xl overflow-hidden bg-[#033F63] flex items-center justify-center">
               {user.imageUrl ? (
                 <img
                   src={user.imageUrl}
@@ -293,62 +295,68 @@ export default function ClientCardView({ initialUser, userId }: Props) {
                   crossOrigin="anonymous"
                 />
               ) : (
-                <span className="text-white text-3xl font-bold">{initials}</span>
+                <span className="text-white text-3xl font-black tracking-tight">{initials}</span>
               )}
             </div>
           </div>
 
-          {/* Name & Title */}
-          <div className="px-6 pt-3 pb-4">
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          {/* Name & Title Header */}
+          <div className="px-6 pt-3.5 pb-2">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
               {fullName}
             </h1>
-            <p className="text-sm font-semibold text-[#033F63] mt-0.5">
-              {user.position || "Professional"}
-            </p>
+            <div className="flex items-center gap-1.5 text-sm font-semibold text-[#033F63] mt-0.5">
+              <Briefcase className="w-3.5 h-3.5 text-[#033F63]" />
+              <span>{user.position || "Professional"}</span>
+            </div>
             {user.company && (
               <p className="text-xs font-medium text-slate-500 mt-0.5">
                 {user.company}
               </p>
             )}
+
             {user.bio && (
-              <p className="text-xs text-slate-600 mt-2.5 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+              <div className="mt-3 p-3 bg-slate-50/80 rounded-2xl border border-slate-100/80 text-xs text-slate-600 leading-relaxed font-normal">
                 {user.bio}
-              </p>
+              </div>
             )}
           </div>
 
-          <div className="mx-6 h-px bg-slate-100" />
-
-          {/* Contact Details List */}
-          <div className="px-6 py-4 space-y-2.5">
+          {/* Grouped Contact Details */}
+          <div className="p-4 sm:p-6 pt-2 space-y-2">
             {user.email && (
               <a
                 href={`mailto:${user.email}`}
-                className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition-colors group"
+                className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-100 transition-all group"
               >
-                <div className="w-9 h-9 rounded-full bg-[#033F63]/10 flex items-center justify-center text-[#033F63] group-hover:scale-105 transition-transform">
-                  <Mail className="w-4 h-4" />
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-[#4EA4F6] to-[#1C7EEB] flex items-center justify-center text-white shrink-0 shadow-sm">
+                    <Mail className="w-4 h-4 text-white stroke-[2.2]" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email</p>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{user.email}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium text-slate-400">Email</p>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{user.email}</p>
-                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
               </a>
             )}
 
             {user.phoneNumber && (
               <a
                 href={`tel:${user.phoneNumber}`}
-                className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition-colors group"
+                className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-100 transition-all group"
               >
-                <div className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-700 group-hover:scale-105 transition-transform">
-                  <Phone className="w-4 h-4" />
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-[#34C759] flex items-center justify-center text-white shrink-0 shadow-sm">
+                    <Phone className="w-4 h-4 text-white fill-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Phone</p>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{user.phoneNumber}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium text-slate-400">Phone</p>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{user.phoneNumber}</p>
-                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
               </a>
             )}
 
@@ -357,15 +365,18 @@ export default function ClientCardView({ initialUser, userId }: Props) {
                 href={whatsappUrl || "#"}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition-colors group"
+                className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-100 transition-all group"
               >
-                <div className="w-9 h-9 rounded-full bg-green-500/10 flex items-center justify-center text-green-600 group-hover:scale-105 transition-transform">
-                  <MessageCircle className="w-4 h-4" />
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-[#25D366] flex items-center justify-center text-white shrink-0 shadow-sm">
+                    <MessageCircle className="w-4 h-4 text-white fill-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">WhatsApp</p>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{effectiveWhatsapp}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium text-slate-400">WhatsApp</p>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{effectiveWhatsapp}</p>
-                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
               </a>
             )}
 
@@ -374,26 +385,31 @@ export default function ClientCardView({ initialUser, userId }: Props) {
                 href={websiteUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition-colors group"
+                className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-100 transition-all group"
               >
-                <div className="w-9 h-9 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-600 group-hover:scale-105 transition-transform">
-                  <Globe className="w-4 h-4" />
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white shrink-0 shadow-sm">
+                    <Globe className="w-4 h-4 text-white stroke-[2.2]" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Website</p>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{websiteUrl}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium text-slate-400">Website</p>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{websiteUrl}</p>
-                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
               </a>
             )}
 
             {user.country && (
-              <div className="flex items-center gap-3 p-2.5 rounded-2xl">
-                <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium text-slate-400">Location</p>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{user.country}</p>
+              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-600 shrink-0 shadow-sm">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Location</p>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{user.country}</p>
+                  </div>
                 </div>
               </div>
             )}
@@ -413,7 +429,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
           </a>
         </div>
 
-        {/* ===== GORGEOUS APP ICON GRID (PHONE, WHATSAPP, EMAIL, DOWNLOAD, SOCIALS) ===== */}
+        {/* ===== GORGEOUS APP ICON GRID (PHONE, WHATSAPP, EMAIL, DOWNLOAD PNG, SOCIALS) ===== */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-4 px-2">
           {/* 1. Phone App Icon Tile (Official iOS Phone Icon) */}
           {user.phoneNumber && (
@@ -458,18 +474,20 @@ export default function ClientCardView({ initialUser, userId }: Props) {
             </a>
           )}
 
-          {/* 4. Download / QR Code Tile (Official Dark Slate Tile) */}
+          {/* 4. Download Card as Image (Clean Down Arrow Icon) */}
           <button
             onClick={handleDownloadPng}
             disabled={isDownloading}
             className="w-14 h-14 rounded-2xl bg-[#1C1C1E] flex items-center justify-center shadow-lg shadow-black/30 hover:scale-110 active:scale-95 transition-all cursor-pointer group"
-            title="Save Card as Image"
+            title="Download Card as Image"
           >
             {isDownloading ? (
               <Loader2 className="w-6 h-6 animate-spin text-white" />
             ) : (
-              <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 4h6v6H4V4zm2 2v2h2V6H6zm8-2h6v6h-6V4zm2 2v2h2V6h-2zM4 14h6v6H4v-6zm2 2v2h2v-2H6zm10 0h2v2h-2v-2zm-2-2h2v2h-2v-2zm4 4h2v2h-2v-2zm-2 2h2v2h-2v-2zm4-4h2v2h-2v-2zm-4-4h2v2h-2v-2zm2 2h2v2h-2v-2z" />
+              <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
             )}
           </button>
