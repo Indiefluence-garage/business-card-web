@@ -19,7 +19,7 @@ async function getPublicProfile(userId: string) {
   for (const baseUrl of CANDIDATE_API_URLS) {
     try {
       const res = await fetch(`${baseUrl}/profile/public/${userId}`, {
-        next: { revalidate: 60 },
+        cache: "no-store",
         signal: AbortSignal.timeout(3000),
       });
       if (res.ok) {
@@ -37,8 +37,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   let user = await getPublicProfile(id);
 
   const queryName = typeof query?.name === "string" ? query.name : "";
-  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || queryName || "Digital Business Card";
-  const company = user?.company || (typeof query?.company === "string" ? query.company : "");
+  const fullName = queryName || [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Digital Business Card";
+  const company = (typeof query?.company === "string" ? query.company : "") || user?.company || "";
   const title = `${fullName}${company ? ` • ${company}` : ""} | Lukewarm`;
 
   return {
@@ -52,28 +52,32 @@ export default async function PublicCardPage({ params, searchParams }: Props) {
   const query = searchParams ? await searchParams : {};
   let user = await getPublicProfile(id);
 
-  // If query params are present in URL, overlay or populate them
+  // If query params are present in URL, overlay or populate them (giving priority to query)
   if (query && Object.keys(query).length > 0) {
     const queryName = typeof query.name === "string" ? query.name : "";
-    const nameParts = queryName.split(" ");
+    const nameParts = queryName ? queryName.split(" ") : [];
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ");
 
     user = {
       id: id || "card",
-      firstName: user?.firstName || firstName || "Professional",
-      lastName: user?.lastName || lastName || "",
-      email: user?.email || (typeof query.email === "string" ? query.email : ""),
-      phoneNumber: user?.phoneNumber || (typeof query.phone === "string" ? query.phone : ""),
-      whatsappNumber: user?.whatsappNumber || (typeof query.whatsapp === "string" ? query.whatsapp : ""),
-      company: user?.company || (typeof query.company === "string" ? query.company : ""),
-      position: user?.position || (typeof query.position === "string" ? query.position : ""),
-      cardColor: user?.cardColor || (typeof query.cardColor === "string" ? query.cardColor : "#033F63"),
-      country: user?.country || (typeof query.country === "string" ? query.country : ""),
-      bio: user?.bio || (typeof query.bio === "string" ? query.bio : ""),
-      imageUrl: user?.imageUrl || (typeof query.avatar === "string" ? query.avatar : ""),
-      socialLinks: user?.socialLinks || {
-        website: typeof query.website === "string" ? query.website : "",
+      firstName: (typeof query.name === "string" ? firstName : user?.firstName) || "Professional",
+      lastName: (typeof query.name === "string" ? lastName : user?.lastName) || "",
+      email: (typeof query.email === "string" ? query.email : user?.email) || "",
+      phoneNumber: (typeof query.phone === "string" ? query.phone : user?.phoneNumber) || "",
+      whatsappNumber: (typeof query.whatsapp === "string" ? query.whatsapp : user?.whatsappNumber) || "",
+      company: (typeof query.company === "string" ? query.company : user?.company) || "",
+      position: (typeof query.position === "string" ? query.position : user?.position) || "",
+      cardColor: (typeof query.cardColor === "string" ? query.cardColor : user?.cardColor) || "#033F63",
+      country: (typeof query.country === "string" ? query.country : user?.country) || "",
+      bio: (typeof query.bio === "string" ? query.bio : user?.bio) || "",
+      imageUrl: (typeof query.avatar === "string" ? query.avatar : user?.imageUrl) || "",
+      socialLinks: {
+        website: (typeof query.website === "string" ? query.website : user?.socialLinks?.website) || "",
+        linkedin: (typeof query.linkedin === "string" ? query.linkedin : (user as any)?.linkedin) || "",
+        instagram: (typeof query.instagram === "string" ? query.instagram : (user as any)?.instagram) || "",
+        twitter: (typeof query.twitter === "string" ? query.twitter : (user as any)?.twitter) || "",
+        facebook: (typeof query.facebook === "string" ? query.facebook : (user as any)?.facebook) || "",
       },
     };
   }
