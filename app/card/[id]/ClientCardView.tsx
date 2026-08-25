@@ -77,6 +77,8 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const cardBg = user?.cardColor || "#033F63";
   const effectiveWhatsapp = user?.whatsappNumber || user?.phoneNumber;
 
+  const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
+
   const handleDownloadVCard = () => {
     if (!user) return;
     const vCard = `BEGIN:VCARD
@@ -101,6 +103,9 @@ END:VCARD`;
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+
+    setDownloadSuccess("Contact file downloaded! Tap to add to your phone contacts.");
+    setTimeout(() => setDownloadSuccess(null), 5000);
   };
 
   const handleDownloadPng = async () => {
@@ -116,6 +121,8 @@ END:VCARD`;
       link.download = `${fullName.replace(/\s+/g, "_")}_digital_card.png`;
       link.href = dataUrl;
       link.click();
+      setDownloadSuccess("Digital card saved as PNG image!");
+      setTimeout(() => setDownloadSuccess(null), 5000);
     } catch (err) {
       console.error("Failed to download image", err);
     } finally {
@@ -379,6 +386,16 @@ END:VCARD`;
           Powered by <span className="font-bold text-slate-600">Lukewarm CRM</span>
         </p>
       </div>
+
+      {/* Floating Success Notification Toast */}
+      {downloadSuccess && (
+        <div className="fixed bottom-6 left-4 right-4 max-w-sm mx-auto bg-slate-900/95 backdrop-blur-md text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/10 z-50 animate-in fade-in slide-in-from-bottom-5">
+          <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
+            <Check className="w-4 h-4 text-white stroke-[3]" />
+          </div>
+          <p className="text-xs font-semibold leading-snug flex-1">{downloadSuccess}</p>
+        </div>
+      )}
     </div>
   );
 }
