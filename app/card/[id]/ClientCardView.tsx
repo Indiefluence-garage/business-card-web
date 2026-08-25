@@ -10,9 +10,12 @@ import {
   UserPlus,
   Share2,
   Download,
-  Image as ImageIcon,
   Check,
   Loader2,
+  Linkedin,
+  Instagram,
+  Facebook,
+  Twitter,
 } from "lucide-react";
 import { toPng } from "html-to-image";
 
@@ -30,7 +33,14 @@ interface PublicUser {
   bio?: string;
   imageUrl?: string;
   cardColor?: string;
-  socialLinks?: any;
+  socialLinks?: {
+    website?: string;
+    linkedin?: string;
+    instagram?: string;
+    twitter?: string;
+    facebook?: string;
+    [key: string]: any;
+  };
 }
 
 interface Props {
@@ -42,6 +52,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const [user, setUser] = useState<PublicUser | null>(initialUser);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -66,6 +77,10 @@ export default function ClientCardView({ initialUser, userId }: Props) {
           imageUrl: searchParams.get("avatar") || "",
           socialLinks: {
             website: searchParams.get("website") || "",
+            linkedin: searchParams.get("linkedin") || "",
+            instagram: searchParams.get("instagram") || "",
+            twitter: searchParams.get("twitter") || "",
+            facebook: searchParams.get("facebook") || "",
           },
         });
       }
@@ -76,8 +91,6 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const initials = (fullName.charAt(0) || "P").toUpperCase();
   const cardBg = user?.cardColor || "#033F63";
   const effectiveWhatsapp = user?.whatsappNumber || user?.phoneNumber;
-
-  const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
   const handleDownloadVCard = () => {
     if (!user) return;
@@ -94,10 +107,10 @@ export default function ClientCardView({ initialUser, userId }: Props) {
       bio: user.bio || "",
     }).toString();
 
-    // Direct HTTP GET with text/vcard MIME type to trigger OS native Contacts intent
+    // Trigger direct HTTP GET with text/vcard header
     window.location.href = `/api/vcard?${params}`;
 
-    setDownloadSuccess("Contact downloaded! Tap 'Save/Open' to add directly into your Contacts.");
+    setDownloadSuccess("Contact file ready! Tap 'Save/Open' to add to your contacts.");
     setTimeout(() => setDownloadSuccess(null), 6000);
   };
 
@@ -141,6 +154,36 @@ export default function ClientCardView({ initialUser, userId }: Props) {
 
   const whatsappUrl = effectiveWhatsapp
     ? `https://wa.me/${effectiveWhatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi ${fullName}, I just connected with you on your Lukewarm digital card!`)}`
+    : null;
+
+  const linkedinUrl = user?.socialLinks?.linkedin
+    ? user.socialLinks.linkedin.startsWith("http")
+      ? user.socialLinks.linkedin
+      : `https://linkedin.com/in/${user.socialLinks.linkedin.replace(/^@/, "")}`
+    : null;
+
+  const instagramUrl = user?.socialLinks?.instagram
+    ? user.socialLinks.instagram.startsWith("http")
+      ? user.socialLinks.instagram
+      : `https://instagram.com/${user.socialLinks.instagram.replace(/^@/, "")}`
+    : null;
+
+  const twitterUrl = user?.socialLinks?.twitter
+    ? user.socialLinks.twitter.startsWith("http")
+      ? user.socialLinks.twitter
+      : `https://x.com/${user.socialLinks.twitter.replace(/^@/, "")}`
+    : null;
+
+  const facebookUrl = user?.socialLinks?.facebook
+    ? user.socialLinks.facebook.startsWith("http")
+      ? user.socialLinks.facebook
+      : `https://facebook.com/${user.socialLinks.facebook.replace(/^@/, "")}`
+    : null;
+
+  const websiteUrl = user?.socialLinks?.website
+    ? user.socialLinks.website.startsWith("http")
+      ? user.socialLinks.website
+      : `https://${user.socialLinks.website}`
     : null;
 
   if (!user) {
@@ -293,9 +336,9 @@ export default function ClientCardView({ initialUser, userId }: Props) {
               </a>
             )}
 
-            {user.socialLinks?.website && (
+            {websiteUrl && (
               <a
-                href={user.socialLinks.website.startsWith("http") ? user.socialLinks.website : `https://${user.socialLinks.website}`}
+                href={websiteUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition-colors group"
@@ -305,7 +348,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[11px] font-medium text-slate-400">Website</p>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{user.socialLinks.website}</p>
+                  <p className="text-xs font-semibold text-slate-800 truncate">{websiteUrl}</p>
                 </div>
               </a>
             )}
@@ -324,58 +367,136 @@ export default function ClientCardView({ initialUser, userId }: Props) {
           </div>
         </div>
 
-        {/* ===== CALL TO ACTION BUTTONS ===== */}
-        <div className="mt-5 space-y-3">
-          {/* Primary 1-Tap Add to Contacts */}
+        {/* ===== PRIMARY SAVE CONTACT BUTTON ===== */}
+        <div className="mt-6">
           <button
             onClick={handleDownloadVCard}
-            className="w-full py-4 px-6 rounded-2xl bg-[#033F63] hover:bg-[#022c45] text-white font-bold text-base flex items-center justify-center gap-2.5 shadow-lg shadow-[#033F63]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+            className="w-full py-4 px-8 rounded-full bg-black hover:bg-slate-900 text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xl shadow-black/20 transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
           >
-            <UserPlus className="w-5 h-5" />
-            Add to Contacts
+            <UserPlus className="w-5 h-5 stroke-[2.5]" />
+            Save Contact
+          </button>
+        </div>
+
+        {/* ===== GORGEOUS APP ICON GRID (PHONE, WHATSAPP, EMAIL, DOWNLOAD, SOCIALS) ===== */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4 px-2">
+          {/* 1. Phone App Icon Tile */}
+          {user.phoneNumber && (
+            <a
+              href={`tel:${user.phoneNumber}`}
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#34C759] to-[#30D158] flex items-center justify-center shadow-md shadow-[#34C759]/25 hover:scale-110 active:scale-95 transition-all group"
+              title="Call"
+            >
+              <Phone className="w-6 h-6 text-white fill-white" />
+            </a>
+          )}
+
+          {/* 2. WhatsApp App Icon Tile */}
+          {effectiveWhatsapp && (
+            <a
+              href={whatsappUrl || "#"}
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#25D366] to-[#128C7E] flex items-center justify-center shadow-md shadow-emerald-500/25 hover:scale-110 active:scale-95 transition-all group"
+              title="WhatsApp"
+            >
+              <MessageCircle className="w-6 h-6 text-white fill-white" />
+            </a>
+          )}
+
+          {/* 3. Email App Icon Tile */}
+          {user.email && (
+            <a
+              href={`mailto:${user.email}`}
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#007AFF] to-[#5AC8FA] flex items-center justify-center shadow-md shadow-blue-500/25 hover:scale-110 active:scale-95 transition-all group"
+              title="Send Email"
+            >
+              <Mail className="w-6 h-6 text-white stroke-[2.5]" />
+            </a>
+          )}
+
+          {/* 4. Download / Save PNG Tile */}
+          <button
+            onClick={handleDownloadPng}
+            disabled={isDownloading}
+            className="w-14 h-14 rounded-2xl bg-[#1C1C1E] flex items-center justify-center shadow-md shadow-black/25 hover:scale-110 active:scale-95 transition-all cursor-pointer group"
+            title="Download Card as Image"
+          >
+            {isDownloading ? (
+              <Loader2 className="w-6 h-6 animate-spin text-white" />
+            ) : (
+              <Download className="w-6 h-6 text-white stroke-[2.5]" />
+            )}
           </button>
 
-          {/* Secondary Action Grid: WhatsApp & Download PNG */}
-          <div className="grid grid-cols-2 gap-3">
-            {/* WhatsApp Connect */}
-            {whatsappUrl ? (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
-              >
-                <MessageCircle className="w-4 h-4 fill-white" />
-                WhatsApp
-              </a>
-            ) : (
-              <button
-                disabled
-                className="py-3 px-4 rounded-2xl bg-slate-200 text-slate-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 opacity-60 cursor-not-allowed"
-              >
-                <MessageCircle className="w-4 h-4" />
-                WhatsApp
-              </button>
-            )}
-
-            {/* Download as PNG */}
-            <button
-              onClick={handleDownloadPng}
-              disabled={isDownloading}
-              className="py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          {/* 5. LinkedIn App Icon Tile (if present) */}
+          {linkedinUrl && (
+            <a
+              href={linkedinUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-[#0A66C2] flex items-center justify-center shadow-md shadow-blue-700/25 hover:scale-110 active:scale-95 transition-all group"
+              title="LinkedIn"
             >
-              {isDownloading ? (
-                <Loader2 className="w-4 h-4 animate-spin text-[#033F63]" />
-              ) : (
-                <Download className="w-4 h-4 text-[#033F63]" />
-              )}
-              {isDownloading ? "Saving..." : "Save as PNG"}
-            </button>
-          </div>
+              <Linkedin className="w-6 h-6 text-white fill-white" />
+            </a>
+          )}
+
+          {/* 6. Instagram App Icon Tile (if present) */}
+          {instagramUrl && (
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] flex items-center justify-center shadow-md shadow-pink-500/25 hover:scale-110 active:scale-95 transition-all group"
+              title="Instagram"
+            >
+              <Instagram className="w-6 h-6 text-white stroke-[2.5]" />
+            </a>
+          )}
+
+          {/* 7. Website Tile (if present) */}
+          {websiteUrl && (
+            <a
+              href={websiteUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#5856D6] to-[#AF52DE] flex items-center justify-center shadow-md shadow-purple-500/25 hover:scale-110 active:scale-95 transition-all group"
+              title="Website"
+            >
+              <Globe className="w-6 h-6 text-white stroke-[2.5]" />
+            </a>
+          )}
+
+          {/* 8. Twitter / X Tile (if present) */}
+          {twitterUrl && (
+            <a
+              href={twitterUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center shadow-md shadow-black/25 hover:scale-110 active:scale-95 transition-all group"
+              title="Twitter / X"
+            >
+              <Twitter className="w-6 h-6 text-white fill-white" />
+            </a>
+          )}
+
+          {/* 9. Facebook Tile (if present) */}
+          {facebookUrl && (
+            <a
+              href={facebookUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-[#1877F2] flex items-center justify-center shadow-md shadow-blue-600/25 hover:scale-110 active:scale-95 transition-all group"
+              title="Facebook"
+            >
+              <Facebook className="w-6 h-6 text-white fill-white" />
+            </a>
+          )}
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-slate-400 mt-6 flex items-center justify-center gap-1">
+        <p className="text-center text-xs text-slate-400 mt-8 flex items-center justify-center gap-1">
           Powered by <span className="font-bold text-slate-600">Lukewarm CRM</span>
         </p>
       </div>
