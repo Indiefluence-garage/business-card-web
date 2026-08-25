@@ -95,20 +95,44 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const handleDownloadVCard = () => {
     if (!user) return;
 
-    const params = new URLSearchParams({
-      name: fullName,
-      email: user.email || "",
-      phone: user.phoneNumber || "",
-      whatsapp: user.whatsappNumber || "",
-      company: user.company || "",
-      position: user.position || "",
-      website: user.socialLinks?.website || "",
-      country: user.country || "",
-      bio: user.bio || "",
-    }).toString();
+    const isAndroid =
+      typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent);
 
-    // Directly open inline vCard route to trigger native Contacts sheet immediately
-    window.location.href = `/api/vcard?${params}`;
+    if (isAndroid) {
+      // Android Intent scheme directly invokes Android Contacts without any file download
+      const intentParts = [
+        "intent:#Intent",
+        "action=android.intent.action.INSERT",
+        "type=vnd.android.cursor.dir/contact",
+        `S.name=${encodeURIComponent(fullName)}`,
+        user.phoneNumber ? `S.phone=${encodeURIComponent(user.phoneNumber)}` : "",
+        user.whatsappNumber && user.whatsappNumber !== user.phoneNumber
+          ? `S.secondary_phone=${encodeURIComponent(user.whatsappNumber)}`
+          : "",
+        user.email ? `S.email=${encodeURIComponent(user.email)}` : "",
+        user.company ? `S.company=${encodeURIComponent(user.company)}` : "",
+        user.position ? `S.job_title=${encodeURIComponent(user.position)}` : "",
+        user.bio ? `S.notes=${encodeURIComponent(user.bio)}` : "",
+        "end",
+      ].filter(Boolean);
+
+      window.location.href = intentParts.join(";");
+    } else {
+      // iOS Safari and Desktop vCard stream
+      const params = new URLSearchParams({
+        name: fullName,
+        email: user.email || "",
+        phone: user.phoneNumber || "",
+        whatsapp: user.whatsappNumber || "",
+        company: user.company || "",
+        position: user.position || "",
+        website: user.socialLinks?.website || "",
+        country: user.country || "",
+        bio: user.bio || "",
+      }).toString();
+
+      window.location.href = `/api/vcard?${params}`;
+    }
   };
 
   const handleDownloadPng = async () => {
