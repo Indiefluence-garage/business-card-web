@@ -92,6 +92,34 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const cardBg = user?.cardColor || "#033F63";
   const effectiveWhatsapp = user?.whatsappNumber || user?.phoneNumber;
 
+  const [isAndroid, setIsAndroid] = useState(false);
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined") {
+      setIsAndroid(/Android/i.test(navigator.userAgent));
+    }
+  }, []);
+
+  const androidIntentUrl = user
+    ? [
+        "intent:#Intent",
+        "action=android.intent.action.INSERT",
+        "type=vnd.android.cursor.dir/contact",
+        `S.name=${encodeURIComponent(fullName)}`,
+        user.phoneNumber ? `S.phone=${encodeURIComponent(user.phoneNumber)}` : "",
+        user.whatsappNumber && user.whatsappNumber !== user.phoneNumber
+          ? `S.secondary_phone=${encodeURIComponent(user.whatsappNumber)}`
+          : "",
+        user.email ? `S.email=${encodeURIComponent(user.email)}` : "",
+        user.company ? `S.company=${encodeURIComponent(user.company)}` : "",
+        user.position ? `S.job_title=${encodeURIComponent(user.position)}` : "",
+        user.bio ? `S.notes=${encodeURIComponent(user.bio)}` : "",
+        "end",
+      ]
+        .filter(Boolean)
+        .join(";")
+    : "#";
+
   const vCardUrl = user
     ? `/api/vcard?${new URLSearchParams({
         name: fullName,
@@ -106,10 +134,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
       }).toString()}`
     : "#";
 
-  const handleDownloadVCard = () => {
-    if (!user) return;
-    window.location.href = vCardUrl;
-  };
+  const saveContactHref = isAndroid ? androidIntentUrl : vCardUrl;
 
   const handleDownloadPng = async () => {
     if (!cardRef.current) return;
@@ -367,8 +392,8 @@ export default function ClientCardView({ initialUser, userId }: Props) {
         {/* ===== PRIMARY SAVE CONTACT BUTTON ===== */}
         <div className="mt-6">
           <a
-            href={vCardUrl}
-            download={`${fullName.replace(/\s+/g, "_")}.vcf`}
+            href={saveContactHref}
+            download={isAndroid ? undefined : `${fullName.replace(/\s+/g, "_")}.vcf`}
             className="w-full py-4 px-8 rounded-full bg-black hover:bg-slate-900 text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xl shadow-black/20 transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer text-center"
           >
             <UserPlus className="w-5 h-5 stroke-[2.5]" />
