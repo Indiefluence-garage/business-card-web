@@ -81,31 +81,24 @@ export default function ClientCardView({ initialUser, userId }: Props) {
 
   const handleDownloadVCard = () => {
     if (!user) return;
-    const vCard = `BEGIN:VCARD
-VERSION:3.0
-N:${user.lastName || ""};${user.firstName || ""};;;
-FN:${fullName}
-ORG:${user.company || ""}
-TITLE:${user.position || ""}
-TEL;TYPE=CELL:${user.phoneNumber || user.whatsappNumber || ""}
-EMAIL:${user.email || ""}
-URL:${user.socialLinks?.website || ""}
-ADR:;;;${user.country || ""};;;
-NOTE:${user.bio || "Connected via Lukewarm CRM"}
-END:VCARD`;
 
-    const blob = new Blob([vCard], { type: "text/vcard;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `${fullName.replace(/\s+/g, "_")}.vcf`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const params = new URLSearchParams({
+      name: fullName,
+      email: user.email || "",
+      phone: user.phoneNumber || "",
+      whatsapp: user.whatsappNumber || "",
+      company: user.company || "",
+      position: user.position || "",
+      website: user.socialLinks?.website || "",
+      country: user.country || "",
+      bio: user.bio || "",
+    }).toString();
 
-    setDownloadSuccess("Contact file downloaded! Tap to add to your phone contacts.");
-    setTimeout(() => setDownloadSuccess(null), 5000);
+    // Direct HTTP GET with text/vcard MIME type to trigger OS native Contacts intent
+    window.location.href = `/api/vcard?${params}`;
+
+    setDownloadSuccess("Contact downloaded! Tap 'Save/Open' to add directly into your Contacts.");
+    setTimeout(() => setDownloadSuccess(null), 6000);
   };
 
   const handleDownloadPng = async () => {
