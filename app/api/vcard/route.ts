@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   return new NextResponse(vCard, {
     status: 200,
     headers: {
-      "Content-Type": "text/vcard; charset=utf-8",
+      "Content-Type": "text/x-vcard; charset=utf-8",
       "Content-Disposition": `attachment; filename="${sanitizedFilename}"; filename*=UTF-8''${encodeURIComponent(sanitizedFilename)}`,
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
