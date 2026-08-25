@@ -48,7 +48,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PublicCardPage({ params }: Props) {
   const { id } = await params;
-  const user = await getPublicProfile(id);
+  let user = await getPublicProfile(id);
+
+  // Fallback demo user for local testing
+  if (!user && (id === "demo" || id === "preview" || process.env.NODE_ENV === "development")) {
+    user = {
+      id: id || "demo",
+      firstName: "Riya",
+      lastName: "Sharma",
+      email: "riyasham2151@gmail.com",
+      phoneNumber: "+91 456346757835",
+      whatsappNumber: "+91 456346757835",
+      company: "Indiefluence",
+      position: "Chief Operating Officer",
+      cardColor: "#033F63",
+      country: "India",
+      bio: "Building next-gen digital experiences for high-performing founders and teams.",
+      socialLinks: {
+        website: "indiefluence.com",
+      },
+    };
+  }
 
   return <ClientCardView initialUser={user} userId={id} />;
 }
