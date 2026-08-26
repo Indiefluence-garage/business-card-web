@@ -57,6 +57,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   const [isCopied, setIsCopied] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
   const [isAndroid, setIsAndroid] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -287,12 +288,12 @@ export default function ClientCardView({ initialUser, userId }: Props) {
           {/* Avatar Section */}
           <div className="px-6 -mt-12 flex items-end justify-between relative z-20">
             <div className="w-22 h-22 rounded-2xl ring-4 ring-white shadow-md overflow-hidden bg-slate-900 flex items-center justify-center">
-              {user.imageUrl ? (
+              {user.imageUrl && !imgError ? (
                 <img
                   src={user.imageUrl}
                   alt={fullName}
                   className="w-full h-full object-cover"
-                  crossOrigin="anonymous"
+                  onError={() => setImgError(true)}
                 />
               ) : (
                 <span className="text-white text-2xl font-bold tracking-tight">{initials}</span>
