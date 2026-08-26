@@ -11,7 +11,6 @@ const CANDIDATE_API_URLS = [
   process.env.NEXT_PUBLIC_API_URL,
   process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/api` : null,
   "https://card-crm-api.lukewarm-api.workers.dev/api",
-  "https://lukewarm-api.onrender.com/api",
   "http://localhost:4000/api",
 ].filter(Boolean) as string[];
 
