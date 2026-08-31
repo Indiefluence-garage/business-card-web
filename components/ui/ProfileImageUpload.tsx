@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, DragEvent, ChangeEvent } from 'react';
+import { useState, useRef, DragEvent, ChangeEvent, useEffect } from 'react';
 import { Camera, Trash2, Upload, X, Loader2 } from 'lucide-react';
 import { Button } from './button';
 import { userService } from '@/lib/services/user.service';
@@ -34,6 +34,7 @@ export function ProfileImageUpload({
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sizeClasses = {
@@ -41,6 +42,18 @@ export function ProfileImageUpload({
     md: 'h-24 w-24 text-3xl',
     lg: 'h-32 w-32 text-4xl',
   };
+
+  let displayImage = preview || currentImageUrl;
+  
+  // Fix blurry Google profile images by requesting a higher resolution
+  // Google URLs often end with =s96 or =s96-c. We safely replace that with =s400-c
+  if (displayImage && displayImage.includes('googleusercontent.com') && displayImage.includes('=s')) {
+    displayImage = displayImage.replace(/=s\d+.*$/, '=s400-c');
+  }
+
+  useEffect(() => {
+    setImageError(false);
+  }, [displayImage]);
 
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
@@ -160,8 +173,6 @@ export function ProfileImageUpload({
     }
   };
 
-  const displayImage = preview || currentImageUrl;
-
   return (
     <div className={`relative inline-block w-fit shrink-0 ${className}`}>
       {/* Main Image Display */}
@@ -173,9 +184,14 @@ export function ProfileImageUpload({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {displayImage ? (
+        {displayImage && !imageError ? (
           /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={displayImage} alt="Profile" className="h-full w-full object-cover" />
+          <img 
+            src={displayImage} 
+            alt="Profile" 
+            className="h-full w-full object-cover"
+            onError={() => setImageError(true)} 
+          />
         ) : (
           <span>{userInitials}</span>
         )}
@@ -207,12 +223,13 @@ export function ProfileImageUpload({
       </div>
 
       {/* Action Buttons */}
-      <div className="absolute -bottom-1 -right-1 flex gap-1">
+      <div className="absolute -bottom-2 -right-2 flex gap-1 p-1 bg-card rounded-full border border-border shadow-md">
         <label
-          className={`flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors shadow-lg ${
+          className={`flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground cursor-pointer hover:bg-primary/90 transition-colors shadow-sm ${
             uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
           }`}
           aria-label="Upload profile image"
+          title="Upload new photo"
         >
           <Camera className="h-4 w-4" />
           <input
@@ -229,10 +246,11 @@ export function ProfileImageUpload({
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={uploading || deleting}
-            className={`flex h-9 w-9 items-center justify-center rounded-full bg-destructive text-white hover:bg-destructive/90 transition-colors shadow-lg ${
+            className={`flex h-8 w-8 items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-sm ${
               uploading || deleting ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             aria-label="Delete profile image"
+            title="Remove photo"
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -240,7 +258,7 @@ export function ProfileImageUpload({
       </div>
 
       {error && (
-        <div className="absolute top-full mt-2 left-0 right-0 bg-destructive/10 border border-destructive/20 rounded-xl p-2 text-xs text-destructive">
+        <div className="absolute top-full mt-2 left-0 right-0 bg-destructive/10 border border-destructive/20 rounded-xl p-2 text-xs text-destructive z-10">
           {error}
         </div>
       )}
@@ -284,7 +302,7 @@ export function ProfileImageUpload({
       )}
 
       {showHelperText && (
-        <div className="mt-2 text-center text-xs leading-5 text-muted-foreground">
+        <div className="mt-3 text-center text-xs leading-5 text-muted-foreground">
           <p>{isDragging ? 'Drop to upload' : 'Click or drag to upload'}</p>
           <p className="text-[10px]">Max 5MB • JPG, PNG, WebP</p>
         </div>
