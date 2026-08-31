@@ -102,10 +102,10 @@ export function ScannerDemo() {
             <button
               key={card.id}
               onClick={() => setActiveCardId(card.id)}
-              className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all focus:outline-none outline-none ${
                 activeCardId === card.id
-                  ? 'bg-card text-foreground shadow-xs border border-border'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
               }`}
             >
               {card.name.split(' ')[0]}
