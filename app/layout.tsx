@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -53,6 +54,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <ScrollToTop />
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-1 flex flex-col">{children}</main>
