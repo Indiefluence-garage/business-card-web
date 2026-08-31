@@ -15,7 +15,8 @@ import {
   ArrowRight, 
   CreditCard, 
   Sparkles, 
-  ShieldCheck 
+  ShieldCheck,
+  Calendar
 } from 'lucide-react';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -106,51 +107,51 @@ export default function SignupPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
       
-      {/* Left Pane - Brand Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-12 flex-col justify-between text-white overflow-hidden">
+      {/* Left Pane - Simple Premium Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-12 flex-col justify-center text-white overflow-hidden">
+        
+        {/* Very subtle ambient light */}
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none" />
 
-        {/* Top brand */}
-        <Link href="/" className="relative z-10 flex items-center gap-2.5">
-          <Image
-            src="/logo.png"
-            alt="Lukewarm Logo"
-            width={38}
-            height={31}
-            className="h-8 w-auto object-contain"
-          />
-          <span className="font-display text-xl font-bold tracking-tight text-white">Lukewarm</span>
-        </Link>
+        <div className="relative z-10 w-full max-w-lg mx-auto space-y-12">
+          
+          <div className="space-y-4">
+            <p className="text-xs font-bold text-cyan-300 tracking-wider uppercase">
+              Living Contact Intelligence
+            </p>
+            <h2 className="font-display text-4xl sm:text-5xl lg:text-[44px] font-semibold leading-[1.15] text-zinc-100 tracking-tight">
+              Stop losing leads to disorganized paper cards.
+            </h2>
+          </div>
 
-        {/* Center content */}
-        <div className="relative z-10 max-w-md space-y-6">
-          <p className="text-xs font-bold text-cyan-300 tracking-wider uppercase">
-            Living Contact Intelligence
-          </p>
-
-          <h2 className="font-display text-3xl sm:text-4xl font-extrabold leading-tight">
-            Stop losing leads to disorganized paper cards.
-          </h2>
-
-          <div className="space-y-3 text-sm text-slate-300">
-            <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="h-4 w-4 text-cyan-400" />
-              <span>Zero credit card required to get started</span>
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <CheckCircle2 className="h-4 w-4" />
+              </div>
+              <span className="text-base font-medium text-zinc-200">Zero credit card required to get started</span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="h-4 w-4 text-cyan-400" />
-              <span>Full cloud sync across web and mobile</span>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <CheckCircle2 className="h-4 w-4" />
+              </div>
+              <span className="text-base font-medium text-zinc-200">Full cloud sync across web and mobile</span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="h-4 w-4 text-cyan-400" />
-              <span>Instant Google Calendar auto-scheduling</span>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <CheckCircle2 className="h-4 w-4" />
+              </div>
+              <span className="text-base font-medium text-zinc-200">Instant Google Calendar auto-scheduling</span>
             </div>
           </div>
         </div>
 
         {/* Bottom footer badge */}
-        <div className="relative z-10 flex items-center justify-between text-xs text-slate-400 pt-6 border-t border-white/10">
-          <span className="flex items-center gap-1.5 font-mono">
-            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+        <div className="absolute bottom-8 left-12 right-12 z-10 flex items-center justify-between text-[11px] text-zinc-500 pt-6 border-t border-white/5">
+          <span className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-emerald-500/70" />
             GDPR & CCPA Compliant
           </span>
           <span>© 2026 Lukewarm CRM</span>

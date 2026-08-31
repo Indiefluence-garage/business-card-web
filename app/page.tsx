@@ -247,17 +247,23 @@ export default function Home() {
                     className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-semibold text-foreground hover:bg-secondary/40 transition-colors"
                   >
                     <span className="text-sm sm:text-base">{faq.q}</span>
-                    {isOpen ? (
-                      <ChevronUp className="h-4 w-4 text-primary shrink-0 ml-2" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 ml-2" />
-                    )}
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 ml-2 transition-transform duration-300 ease-in-out ${
+                        isOpen ? 'text-primary rotate-180' : 'text-muted-foreground'
+                      }`}
+                    />
                   </button>
-                  {isOpen && (
-                    <div className="p-4 sm:p-5 pt-0 text-xs sm:text-sm text-muted-foreground leading-relaxed border-t border-border">
-                      {faq.a}
+                  <div
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="p-4 sm:p-5 pt-0 text-xs sm:text-sm text-muted-foreground leading-relaxed border-t border-border">
+                        {faq.a}
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}
