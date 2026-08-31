@@ -339,20 +339,24 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between sm:justify-end gap-4 pt-3 sm:pt-0 border-t sm:border-t-0 border-border/60 shrink-0">
-              <div className="text-left sm:text-right">
-                <div className="text-[11px] font-mono font-semibold text-muted-foreground">Remaining Credits</div>
-                <div className="text-lg sm:text-xl font-display font-extrabold text-primary">
+            <div className="flex items-center justify-between sm:justify-end gap-3 pt-4 sm:pt-0 border-t sm:border-t-0 border-border/60 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
+              
+              {/* Premium Credits Badge */}
+              <div className="flex flex-col justify-center px-5 h-12 bg-secondary/50 rounded-lg border border-border/50 shadow-sm">
+                <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-muted-foreground leading-none mb-1">
+                  Credits
+                </span>
+                <span className="text-base font-display font-black text-primary leading-none tracking-tight">
                   {user.creditsRemaining === 999999 || isPro ? 'Unlimited' : user.creditsRemaining || 0}
-                </div>
+                </span>
               </div>
 
               <Button
                 onClick={() => router.push('/pricing')}
-                className="btn-primary-glow rounded-xl font-semibold text-xs h-10 px-4"
+                className="btn-primary-glow rounded-lg font-bold text-sm h-12 px-6 flex items-center justify-center shrink-0 shadow-sm"
               >
                 {isPro ? 'Manage Plan' : 'Upgrade to Pro'}
-                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
