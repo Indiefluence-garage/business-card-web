@@ -17,6 +17,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://business-card-web-pi.vercel.app"),
   title: "Lukewarm — Executive Contact Intelligence & Business Card Scanner",
   description: "Transform business cards into living network intelligence. Instant sub-second OCR scanning, AI voice memos, automated follow-up tasks, and Google Calendar sync.",
   keywords: ["business card scanner", "contact intelligence", "OCR scanner", "voice notes", "Google Calendar sync", "Lukewarm"],

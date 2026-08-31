@@ -37,12 +37,39 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 
   const queryName = typeof query?.name === "string" ? query.name : "";
   const fullName = queryName || [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Digital Business Card";
+  const position = (typeof query?.position === "string" ? query.position : "") || user?.position || "";
   const company = (typeof query?.company === "string" ? query.company : "") || user?.company || "";
-  const title = `${fullName}${company ? ` • ${company}` : ""} | Lukewarm`;
+  const title = `${fullName}${position || company ? ` — ${[position, company].filter(Boolean).join(" at ")}` : ""} | Lukewarm`;
+  const description = `View and save digital business card for ${fullName}. 1-tap save to phone contacts, direct WhatsApp, and email.`;
+  const canonicalUrl = `https://business-card-web-pi.vercel.app/card/${id}`;
+  const avatarUrl = user?.imageUrl || "https://business-card-web-pi.vercel.app/logo.png";
 
   return {
     title,
-    description: `Connect with ${fullName}. Add contact directly to your phone.`,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      type: "profile",
+      images: [
+        {
+          url: avatarUrl,
+          width: 512,
+          height: 512,
+          alt: fullName,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: [avatarUrl],
+    },
   };
 }
 
@@ -101,5 +128,30 @@ export default async function PublicCardPage({ params, searchParams }: Props) {
     };
   }
 
-  return <ClientCardView initialUser={user} userId={id} />;
+  const personSchema = user ? {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": [user.firstName, user.lastName].filter(Boolean).join(" "),
+    "jobTitle": user.position || undefined,
+    "worksFor": user.company ? {
+      "@type": "Organization",
+      "name": user.company,
+    } : undefined,
+    "email": user.email || undefined,
+    "telephone": user.phoneNumber || undefined,
+    "image": user.imageUrl || undefined,
+    "url": `https://business-card-web-pi.vercel.app/card/${id}`,
+  } : null;
+
+  return (
+    <>
+      {personSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+      )}
+      <ClientCardView initialUser={user} userId={id} />
+    </>
+  );
 }
