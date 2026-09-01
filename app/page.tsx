@@ -127,18 +127,18 @@ export default function Home() {
       <section id="features" className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/30">
         <div className="max-w-6xl mx-auto">
           
-          <div className="max-w-3xl mb-12">
+          <div className="max-w-3xl mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
               Core Capabilities for Professional Networking
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-2">
               Built for conference attendees, sales executives, partners, and founders.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            <div className="p-6 rounded-xl bg-card border border-border space-y-3">
+            <div className="p-6 rounded-xl bg-card border border-border space-y-1.5">
               <Camera className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Continuous Flash Scan</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -146,7 +146,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="p-6 rounded-xl bg-card border border-border space-y-3">
+            <div className="p-6 rounded-xl bg-card border border-border space-y-1.5">
               <Users className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Contextual Photos</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -154,7 +154,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="p-6 rounded-xl bg-card border border-border space-y-3">
+            <div className="p-6 rounded-xl bg-card border border-border space-y-1.5">
               <Calendar className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Google Calendar Auto-Sync</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -162,7 +162,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="p-6 rounded-xl bg-card border border-border space-y-3">
+            <div className="p-6 rounded-xl bg-card border border-border space-y-1.5">
               <Globe className="h-6 w-6 text-primary" />
               <h3 className="text-base font-bold text-foreground">Event Tagging & Export</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -182,41 +182,41 @@ export default function Home() {
       {/* 6. SECURITY & DATA PRIVACY */}
       <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <p className="text-xs font-bold text-primary tracking-wider uppercase mb-1">
+          <div className="text-center max-w-2xl mx-auto mb-6 space-y-3">
+            <p className="text-xs font-bold text-primary tracking-wider uppercase">
               Enterprise Security & Privacy
             </p>
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
               Your Contacts Are Private & Secure
             </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               We never sell your contacts to third-party ad networks or use them to train public AI models.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-            <div className="p-4 rounded-xl bg-card border border-border text-center space-y-1">
-              <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+            <div className="p-6 rounded-xl bg-card border border-border text-center space-y-2">
+              <ShieldCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400 mx-auto" />
               <p className="font-bold text-foreground">AES-256 Vault</p>
-              <p className="text-muted-foreground text-[11px]">Encrypted at Rest</p>
+              <p className="text-muted-foreground text-xs">Encrypted at Rest</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-card border border-border text-center space-y-1">
-              <Lock className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto" />
+            <div className="p-6 rounded-xl bg-card border border-border text-center space-y-2">
+              <Lock className="h-6 w-6 text-emerald-600 dark:text-emerald-400 mx-auto" />
               <p className="font-bold text-foreground">TLS 1.3 Strict</p>
-              <p className="text-muted-foreground text-[11px]">Encrypted in Transit</p>
+              <p className="text-muted-foreground text-xs">Encrypted in Transit</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-card border border-border text-center space-y-1">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto" />
+            <div className="p-6 rounded-xl bg-card border border-border text-center space-y-2">
+              <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400 mx-auto" />
               <p className="font-bold text-foreground">GDPR & CCPA</p>
-              <p className="text-muted-foreground text-[11px]">Full Data Rights</p>
+              <p className="text-muted-foreground text-xs">Full Data Rights</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-card border border-border text-center space-y-1">
-              <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto" />
+            <div className="p-6 rounded-xl bg-card border border-border text-center space-y-2">
+              <Building2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400 mx-auto" />
               <p className="font-bold text-foreground">Zero AI Training</p>
-              <p className="text-muted-foreground text-[11px]">Private Cloud Processing</p>
+              <p className="text-muted-foreground text-xs">Private Cloud Processing</p>
             </div>
           </div>
         </div>
