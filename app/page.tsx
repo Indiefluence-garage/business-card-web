@@ -61,7 +61,7 @@ export default function Home() {
           </p>
 
           {/* Clear High-Contrast Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
             Turn Business Cards Into <br className="hidden sm:block" />
             Actionable Contacts & Meetings.
           </h1>
@@ -87,25 +87,25 @@ export default function Home() {
           {/* Clear Key Metrics Ribbon */}
           <div className="mt-12 pt-8 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-6 text-left sm:text-center">
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-foreground font-mono">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground font-mono">
                 <AnimatedCounter end={99.9} decimals={1} suffix="%" duration={1500} />
               </div>
               <div className="text-xs text-muted-foreground mt-0.5">OCR Field Accuracy</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-primary font-mono">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary font-mono">
                 <AnimatedCounter prefix="< " end={3.0} decimals={1} suffix="s" duration={1500} />
               </div>
               <div className="text-xs text-muted-foreground mt-0.5">Average Card Parse Time</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-foreground font-mono">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground font-mono">
                 <AnimatedCounter end={50000} suffix="+" duration={2000} />
               </div>
               <div className="text-xs text-muted-foreground mt-0.5">Executive Cards Scanned</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">
                 <AnimatedCounter end={100} suffix="%" duration={1500} />
               </div>
               <div className="text-xs text-muted-foreground mt-0.5">Google Calendar Sync</div>
@@ -138,7 +138,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           
           <div className="max-w-3xl mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
               Core Capabilities for Professional Networking
             </h2>
             <p className="text-sm text-muted-foreground mt-2">
@@ -196,7 +196,7 @@ export default function Home() {
             <p className="text-xs font-bold text-primary tracking-wider uppercase">
               Enterprise Security & Privacy
             </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
               Your Contacts Are Private & Secure
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground">
@@ -236,7 +236,7 @@ export default function Home() {
       <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-2">
               Frequently Asked Questions
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground">
@@ -287,8 +287,8 @@ export default function Home() {
 
       {/* 8. CLEAN BOTTOM CTA BANNER */}
       <section className="py-8 px-4 sm:px-6 lg:px-8 bg-secondary/50 border-b border-border">
-        <div className="max-w-4xl mx-auto text-center rounded-xl bg-card border border-border p-8 sm:p-12 shadow-xs">
-          <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-3">
+        <div className="max-w-4xl mx-auto text-center rounded-xl bg-card border border-border p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8 md:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-10 lg:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 shadow-xs">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3">
             Ready to Organize Your Professional Network?
           </h2>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto mb-6">
@@ -310,7 +310,7 @@ export default function Home() {
 
       {/* 9. EXECUTIVE FOOTER */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-card">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 lg:gap-8">
           
           <div className="flex flex-col items-start max-w-sm">
             <div className="flex items-center gap-2.5 mb-2">
@@ -331,7 +331,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-8 text-xs font-medium text-muted-foreground">
+          <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8 text-xs font-medium text-muted-foreground">
             <div className="flex flex-col gap-2">
               <span className="text-foreground font-bold uppercase tracking-wider text-[11px]">Product</span>
               <Link href="/#ocr" className="hover:text-foreground transition-colors">Optical Scanner</Link>

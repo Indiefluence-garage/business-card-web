@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
       
       {/* Left Pane - Brand Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-12 flex-col justify-between text-white overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 flex-col justify-between text-white overflow-hidden">
 
         {/* Top brand */}
         <Link href="/" className="relative z-10 flex items-center gap-2.5">
@@ -98,11 +98,11 @@ export default function ForgotPasswordPage() {
       </div>
 
       {/* Right Pane - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 bg-background">
         <div className="w-full max-w-md animate-fade-in space-y-6">
           
           {isSubmitted ? (
-            <div className="text-center space-y-6 rounded-3xl glass-panel p-8 border border-border">
+            <div className="text-center space-y-6 rounded-3xl glass-panel p-5 sm:p-6 lg:p-8 border border-border">
               <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
                 <CheckCircle2 className="h-8 w-8" />
               </div>
@@ -131,7 +131,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-foreground">
                   Reset Your Password
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">

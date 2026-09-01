@@ -78,7 +78,7 @@ export function StatusModal({
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-xl transition-all">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8 shadow-xl transition-all">
         
         {/* Close Button */}
         <button

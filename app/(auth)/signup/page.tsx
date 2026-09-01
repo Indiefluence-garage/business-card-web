@@ -108,7 +108,7 @@ export default function SignupPage() {
     <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
       
       {/* Left Pane - Simple Premium Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-12 flex-col justify-center text-white overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 flex-col justify-center text-white overflow-hidden">
         
         {/* Very subtle ambient light */}
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none" />
@@ -159,11 +159,11 @@ export default function SignupPage() {
       </div>
 
       {/* Right Pane - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 bg-background">
         <div className="w-full max-w-md animate-fade-in space-y-6">
           
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-foreground">
               Create Your Account
             </h1>
             <p className="text-sm text-muted-foreground mt-1">

@@ -98,7 +98,7 @@ export default function HelpCenterPage() {
           <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
             Support & Knowledge Base
           </p>
-          <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-foreground mb-3">
+          <h1 className="font-display text-xl sm:text-2xl lg:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3">
             How can we help you today?
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
@@ -196,7 +196,7 @@ export default function HelpCenterPage() {
         </div>
 
         {/* Contact Support Card */}
-        <div className="rounded-3xl glass-panel-glow border border-primary/20 p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-lg">
+        <div className="rounded-3xl glass-panel-glow border border-primary/20 p-5 sm:p-6 lg:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-lg">
           <div>
             <h3 className="font-display text-xl font-bold text-foreground mb-1">
               Still need assistance?

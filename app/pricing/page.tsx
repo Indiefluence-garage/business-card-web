@@ -340,7 +340,7 @@ function PricingContent() {
         <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
           Pricing & Subscriptions
         </p>
-        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground mb-3">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3">
           4 Straightforward Plans for Every Networker
         </h1>
         <p className="text-base text-muted-foreground max-w-2xl mx-auto">

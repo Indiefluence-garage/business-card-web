@@ -23,7 +23,7 @@ export default function TermsOfServicePage() {
           <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
             Terms of Service
           </p>
-          <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-foreground mb-3">
+          <h1 className="font-display text-xl sm:text-2xl lg:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3">
             Terms & Conditions
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mb-3">
@@ -38,7 +38,7 @@ export default function TermsOfServicePage() {
         <div className="space-y-8 text-xs sm:text-sm leading-relaxed text-muted-foreground">
           
           {/* Section 1 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 01
@@ -51,7 +51,7 @@ export default function TermsOfServicePage() {
           </section>
 
           {/* Section 2 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 02
@@ -67,7 +67,7 @@ export default function TermsOfServicePage() {
           </section>
 
           {/* Section 3 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 03
@@ -83,7 +83,7 @@ export default function TermsOfServicePage() {
           </section>
 
           {/* Section 4 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 04
@@ -99,7 +99,7 @@ export default function TermsOfServicePage() {
           </section>
 
           {/* Section 5 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 05
@@ -112,7 +112,7 @@ export default function TermsOfServicePage() {
           </section>
 
           {/* Contact Section */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 06

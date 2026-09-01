@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/hooks/use-auth';
@@ -21,6 +22,22 @@ export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    if (mobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
 
   const handleLogout = () => {
     logout();
@@ -37,11 +54,11 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur-md">
+    <header ref={navRef} className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         
         {/* Brand Logo & Title */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
           <Link href="/" className="flex items-center gap-2.5 group">
             <Image
               src="/logo.png"
@@ -57,7 +74,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -120,7 +137,7 @@ export function Navbar() {
           {/* Mobile Menu Trigger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="lg:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -129,54 +146,62 @@ export function Navbar() {
       </div>
 
       {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-card px-4 pt-3 pb-6 space-y-3">
-          <div className="space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block px-4 py-2.5 rounded-lg text-xs font-semibold ${
-                  pathname === link.href
-                    ? 'bg-secondary text-primary font-bold'
-                    : 'text-foreground hover:bg-secondary'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+            className="lg:hidden overflow-hidden border-t border-border bg-card"
+          >
+            <div className="px-4 pt-3 pb-6 space-y-3">
+              <div className="space-y-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block px-4 py-2.5 rounded-lg text-xs font-semibold ${
+                      pathname === link.href
+                        ? 'bg-secondary text-primary font-bold'
+                        : 'text-foreground hover:bg-secondary'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
 
-
-          </div>
-
-          <div className="pt-3 border-t border-border flex flex-col gap-2">
-            {!isAuthenticated ? (
-              <>
-                <Button variant="outline" className="w-full rounded-lg text-xs" asChild onClick={() => setMobileMenuOpen(false)}>
-                  <Link href="/login">Sign In</Link>
-                </Button>
-                <Button className="w-full btn-primary-glow rounded-lg font-semibold text-xs" asChild onClick={() => setMobileMenuOpen(false)}>
-                  <Link href="/signup">Create Account</Link>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" className="w-full rounded-lg text-xs" asChild onClick={() => setMobileMenuOpen(false)}>
-                  <Link href="/dashboard">My Dashboard</Link>
-                </Button>
-                <Button
-                  variant="destructive"
-                  className="w-full rounded-lg text-xs"
-                  onClick={handleLogout}
-                >
-                  Sign Out
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+              <div className="pt-3 border-t border-border flex flex-col gap-2">
+                {!isAuthenticated ? (
+                  <>
+                    <Button variant="outline" className="w-full rounded-lg text-xs" asChild onClick={() => setMobileMenuOpen(false)}>
+                      <Link href="/login">Sign In</Link>
+                    </Button>
+                    <Button className="w-full btn-primary-glow rounded-lg font-semibold text-xs" asChild onClick={() => setMobileMenuOpen(false)}>
+                      <Link href="/signup">Create Account</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" className="w-full rounded-lg text-xs" asChild onClick={() => setMobileMenuOpen(false)}>
+                      <Link href="/dashboard">My Dashboard</Link>
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      className="w-full rounded-lg text-xs"
+                      onClick={handleLogout}
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

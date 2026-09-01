@@ -60,9 +60,9 @@ export default function DeleteAccountPage() {
         </Link>
 
         {submitted ? (
-          <div className="rounded-3xl glass-panel border border-border p-8 sm:p-12 text-center shadow-2xl animate-fade-in">
+          <div className="rounded-3xl glass-panel border border-border p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8 md:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-10 lg:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 text-center shadow-2xl animate-fade-in">
             <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto mb-4" />
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3">
+            <h2 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-3">
               Account Deletion Request Received
             </h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6 text-xs sm:text-sm leading-relaxed">
@@ -76,12 +76,12 @@ export default function DeleteAccountPage() {
             </Link>
           </div>
         ) : (
-          <div className="rounded-3xl glass-panel border border-border p-6 sm:p-10 shadow-2xl animate-fade-in">
+          <div className="rounded-3xl glass-panel border border-border p-5 sm:p-6 md:p-5 sm:p-6 lg:p-8 lg:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-10 shadow-2xl animate-fade-in">
             <div className="mb-8">
               <p className="text-xs font-bold text-destructive tracking-wider uppercase mb-2">
                 Data & Privacy Rights
               </p>
-              <h1 className="font-display text-2xl sm:text-4xl font-bold text-foreground mb-2">
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">
                 Request Account & Data Deletion
               </h1>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3">

@@ -24,7 +24,7 @@ export function ComparisonSection() {
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-2">
           Why Executives & Founders Use Lukewarm
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -35,7 +35,7 @@ export function ComparisonSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
         
         {/* The Old Way */}
-        <div className="rounded-xl bg-card border border-border p-6 sm:p-8 flex flex-col justify-between">
+        <div className="rounded-xl bg-card border border-border p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8 flex flex-col justify-between">
           <div>
             <p className="text-xs font-bold text-destructive tracking-wider uppercase mb-2">
               The Manual Way
@@ -59,7 +59,7 @@ export function ComparisonSection() {
         </div>
 
         {/* The Lukewarm Way */}
-        <div className="rounded-xl bg-card border-2 border-primary p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+        <div className="rounded-xl bg-card border-2 border-primary p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8 flex flex-col justify-between shadow-xs">
           <div>
             <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
               The Lukewarm System

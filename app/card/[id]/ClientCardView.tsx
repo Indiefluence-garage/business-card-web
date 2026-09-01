@@ -224,7 +224,7 @@ export default function ClientCardView({ initialUser, userId }: Props) {
   if (!user) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-3xl shadow-sm max-w-sm w-full text-center border border-slate-200">
+        <div className="bg-white p-5 sm:p-6 lg:p-8 rounded-3xl shadow-sm max-w-sm w-full text-center border border-slate-200">
           <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-400">
             <UserPlus className="w-7 h-7" />
           </div>

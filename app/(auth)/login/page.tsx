@@ -97,7 +97,7 @@ function LoginForm() {
     <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
       
       {/* Left Pane - Brand Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-12 flex-col justify-between text-white overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#033F63] p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 flex-col justify-between text-white overflow-hidden">
 
         {/* Top brand */}
         <Link href="/" className="relative z-10 flex items-center gap-2.5">
@@ -148,11 +148,11 @@ function LoginForm() {
       </div>
 
       {/* Right Pane - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-6 sm:p-5 sm:p-6 lg:p-8 lg:p-12 bg-background">
         <div className="w-full max-w-md animate-fade-in space-y-6">
           
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-foreground">
               Sign In to Your Account
             </h1>
             <p className="text-sm text-muted-foreground mt-1">

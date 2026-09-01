@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
           <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
             Legal Documentation
           </p>
-          <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-foreground mb-3">
+          <h1 className="font-display text-xl sm:text-2xl lg:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3">
             Privacy Policy
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mb-3">
@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         {/* Highlight Box */}
-        <div className="mb-10 rounded-3xl glass-panel-glow border border-primary/20 p-6 sm:p-8 shadow-md">
+        <div className="mb-10 rounded-3xl glass-panel-glow border border-primary/20 p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8 shadow-md">
           <h2 className="text-base font-semibold text-foreground mb-2 flex items-center gap-2 font-display">
             <Lock className="h-4 w-4 text-primary" />
             Our Privacy Commitment
@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
         <div className="space-y-8 text-xs sm:text-sm leading-relaxed text-muted-foreground">
           
           {/* Section 1 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-4 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 01
@@ -81,7 +81,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           {/* Section 2 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-4 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 02
@@ -109,7 +109,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           {/* Section 3 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-4 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 03
@@ -127,7 +127,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           {/* Section 4 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-4 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 04
@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           {/* Section 5 */}
-          <section className="glass-panel border border-border rounded-3xl p-6 sm:p-8">
+          <section className="glass-panel border border-border rounded-3xl p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8">
             <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-4 flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold font-mono">
                 05

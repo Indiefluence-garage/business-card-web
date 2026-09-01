@@ -179,7 +179,7 @@ export default function VerifyOTPPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-background">
-      <div className="w-full max-w-md space-y-6 animate-fade-in rounded-3xl glass-panel p-8 border border-border shadow-2xl">
+      <div className="w-full max-w-md space-y-6 animate-fade-in rounded-3xl glass-panel p-5 sm:p-6 lg:p-8 border border-border shadow-2xl">
         
         <div className="text-center space-y-2">
           <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center mb-4">

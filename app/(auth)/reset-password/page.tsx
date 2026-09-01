@@ -52,7 +52,7 @@ function ResetPasswordForm() {
 
   if (!email) {
     return (
-      <div className="rounded-3xl glass-panel p-8 text-center space-y-4 max-w-md mx-auto">
+      <div className="rounded-3xl glass-panel p-5 sm:p-6 lg:p-8 text-center space-y-4 max-w-md mx-auto">
         <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
         <h2 className="text-xl font-bold font-display">Missing Email Parameter</h2>
         <p className="text-sm text-muted-foreground">No email address was provided for password reset.</p>
@@ -83,7 +83,7 @@ function ResetPasswordForm() {
 
   if (isSuccess) {
     return (
-      <div className="rounded-3xl glass-panel p-8 text-center space-y-6 max-w-md mx-auto shadow-2xl">
+      <div className="rounded-3xl glass-panel p-5 sm:p-6 lg:p-8 text-center space-y-6 max-w-md mx-auto shadow-2xl">
         <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto" />
         <div>
           <h2 className="text-2xl font-display font-bold text-foreground">Password Reset Successfully!</h2>
@@ -101,7 +101,7 @@ function ResetPasswordForm() {
   return (
     <div className="w-full max-w-md mx-auto space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-foreground">
           Set New Password
         </h1>
         <p className="text-sm text-muted-foreground mt-1">

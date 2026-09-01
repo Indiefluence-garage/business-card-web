@@ -306,7 +306,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Subscription & Entitlements Section */}
-        <div className="rounded-2xl sm:rounded-3xl glass-panel-glow border border-primary/20 p-5 sm:p-8">
+        <div className="rounded-2xl sm:rounded-3xl glass-panel-glow border border-primary/20 p-5 sm:p-5 sm:p-6 lg:p-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
             <div className="flex items-start gap-3.5 sm:gap-4">
               <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">

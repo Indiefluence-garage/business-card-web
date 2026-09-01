@@ -17,14 +17,14 @@ export function VoiceMemoDemo() {
   const [isPlaying, setIsPlaying] = useState(true);
 
   return (
-    <div className="w-full max-w-6xl mx-auto rounded-2xl bg-card border border-border p-4 sm:p-6 lg:p-8 shadow-sm">
+    <div className="w-full max-w-6xl mx-auto rounded-2xl bg-card border border-border p-4 sm:p-6 lg:p-5 sm:p-6 lg:p-8 shadow-sm">
       
       {/* Header */}
       <div className="max-w-3xl mb-8">
         <p className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
           Voice Intelligence Workflow
         </p>
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-2">
           Speak your notes. Lukewarm creates the tasks & calendar invites.
         </h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
