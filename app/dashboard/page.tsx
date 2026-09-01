@@ -165,7 +165,7 @@ export default function DashboardPage() {
         <div className="rounded-2xl sm:rounded-3xl glass-panel border border-border overflow-hidden shadow-xl">
           
           {/* Executive Cover Banner */}
-          <div className="relative h-28 sm:h-36 bg-secondary overflow-hidden border-b border-border">
+          <div className="relative h-24 bg-secondary overflow-hidden border-b border-border">
             <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex items-center gap-2">
               <span className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold border flex items-center gap-1.5 backdrop-blur-md ${
                 isPro 
@@ -180,7 +180,7 @@ export default function DashboardPage() {
 
           {/* User Profile Header Content */}
           <div className="px-4 sm:px-10 pb-6 sm:pb-8 relative">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 -mt-14 sm:-mt-20 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 -mt-16 mb-4 sm:mb-6">
               
               {/* Avatar upload */}
               <div className="relative inline-flex w-fit shrink-0">
