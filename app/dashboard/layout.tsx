@@ -33,15 +33,11 @@ export default function DashboardLayout({
   const NavContent = () => (
     <>
       {/* Header */}
-      <div className="flex h-14 items-center justify-between border-b border-border/50 px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
-          <LayoutDashboard className="h-5 w-5" />
-          <span>Dashboard</span>
-        </Link>
+      <div className="md:hidden flex h-14 items-center justify-end border-b border-border/50 px-6">
         {/* Close button for mobile */}
         <button
           onClick={() => setSidebarOpen(false)}
-          className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+          className="p-2 rounded-lg hover:bg-muted transition-colors"
         >
           <X className="h-5 w-5" />
         </button>

@@ -75,19 +75,7 @@ export function Navbar() {
               );
             })}
 
-            {isAuthenticated && (
-              <Link
-                href="/dashboard"
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-colors flex items-center gap-1.5 ${
-                  pathname === '/dashboard'
-                    ? 'text-primary bg-secondary font-bold'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
-                }`}
-              >
-                <Layers className="h-3.5 w-3.5" />
-                Dashboard
-              </Link>
-            )}
+
           </nav>
         </div>
 
@@ -159,19 +147,7 @@ export function Navbar() {
               </Link>
             ))}
 
-            {isAuthenticated && (
-              <Link
-                href="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block px-4 py-2.5 rounded-lg text-xs font-semibold ${
-                  pathname === '/dashboard'
-                    ? 'bg-secondary text-primary font-bold'
-                    : 'text-foreground hover:bg-secondary'
-                }`}
-              >
-                Dashboard
-              </Link>
-            )}
+
           </div>
 
           <div className="pt-3 border-t border-border flex flex-col gap-2">
