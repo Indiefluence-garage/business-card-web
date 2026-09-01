@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { ScannerDemo } from '@/components/home/ScannerDemo';
 import { VoiceMemoDemo } from '@/components/home/VoiceMemoDemo';
 import { ComparisonSection } from '@/components/home/ComparisonSection';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -85,19 +86,27 @@ export default function Home() {
           {/* Clear Key Metrics Ribbon */}
           <div className="mt-12 pt-8 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-6 text-left sm:text-center">
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-foreground font-mono">99.9%</div>
+              <div className="text-2xl sm:text-3xl font-bold text-foreground font-mono">
+                <AnimatedCounter end={99.9} decimals={1} suffix="%" duration={1500} />
+              </div>
               <div className="text-xs text-muted-foreground mt-0.5">OCR Field Accuracy</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-primary font-mono">&lt; 3.0s</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary font-mono">
+                <AnimatedCounter prefix="< " end={3.0} decimals={1} suffix="s" duration={1500} />
+              </div>
               <div className="text-xs text-muted-foreground mt-0.5">Average Card Parse Time</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-foreground font-mono">50,000+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-foreground font-mono">
+                <AnimatedCounter end={50000} suffix="+" duration={2000} />
+              </div>
               <div className="text-xs text-muted-foreground mt-0.5">Executive Cards Scanned</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">100%</div>
+              <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                <AnimatedCounter end={100} suffix="%" duration={1500} />
+              </div>
               <div className="text-xs text-muted-foreground mt-0.5">Google Calendar Sync</div>
             </div>
           </div>
