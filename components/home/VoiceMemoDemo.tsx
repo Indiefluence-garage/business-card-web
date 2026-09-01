@@ -33,10 +33,10 @@ export function VoiceMemoDemo() {
       </div>
 
       {/* 3-Step Functional Flow Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         
         {/* Step 1: Voice Recording & Audio Player */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-5 flex flex-col h-full gap-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               1. Voice Memo Recording
@@ -79,7 +79,7 @@ export function VoiceMemoDemo() {
             </div>
           </div>
 
-          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs leading-relaxed text-foreground/90">
+          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs leading-relaxed text-foreground/90 mt-auto">
             <p className="font-semibold text-muted-foreground text-[10px] uppercase mb-1">Raw Speech Transcript:</p>
             <p className="italic">
               &ldquo;Met Marcus at TechCrunch. He wants a demo of our continuous scan SDK next Tuesday at 3 PM. Send him the enterprise whitepaper beforehand.&rdquo;
@@ -88,7 +88,7 @@ export function VoiceMemoDemo() {
         </div>
 
         {/* Step 2: Extracted Follow-up Task */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-5 flex flex-col h-full gap-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               2. Extracted CRM Task
@@ -98,7 +98,7 @@ export function VoiceMemoDemo() {
             </span>
           </div>
 
-          <div className="p-4 rounded-lg bg-secondary border border-border space-y-2">
+          <div className="p-4 rounded-lg bg-secondary border border-border space-y-2 flex-1">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <FileText className="h-4 w-4 text-amber-500" />
               <span>Send Enterprise Whitepaper</span>
@@ -112,7 +112,7 @@ export function VoiceMemoDemo() {
             </div>
           </div>
 
-          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs text-muted-foreground">
+          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs text-muted-foreground mt-auto">
             <p className="flex items-center gap-1.5 text-foreground font-medium">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
               Linked directly to contact profile
@@ -121,7 +121,7 @@ export function VoiceMemoDemo() {
         </div>
 
         {/* Step 3: Auto-Scheduled Calendar Event */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-5 flex flex-col h-full gap-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               3. Google Calendar Sync
@@ -131,7 +131,7 @@ export function VoiceMemoDemo() {
             </span>
           </div>
 
-          <div className="p-4 rounded-lg bg-secondary border border-border space-y-2">
+          <div className="p-4 rounded-lg bg-secondary border border-border space-y-2 flex-1 flex flex-col">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <Calendar className="h-4 w-4 text-sky-500" />
               <span>Lukewarm Scan SDK Demo</span>
@@ -145,7 +145,7 @@ export function VoiceMemoDemo() {
             </p>
           </div>
 
-          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs text-muted-foreground">
+          <div className="p-3 rounded-lg bg-secondary/50 border border-border text-xs text-muted-foreground mt-auto">
             <p className="flex items-center gap-1.5 text-foreground font-medium">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
               Includes 15-minute prior reminder alert
