@@ -79,7 +79,7 @@ export function ScannerDemo() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto rounded-2xl bg-card border border-border p-6 sm:p-8 lg:p-10 shadow-sm">
+    <div className="w-full max-w-6xl mx-auto rounded-2xl bg-card border border-border px-6 pb-6 pt-4 sm:px-8 sm:pb-8 sm:pt-5 lg:px-10 lg:pb-10 lg:pt-6 shadow-sm">
       
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">

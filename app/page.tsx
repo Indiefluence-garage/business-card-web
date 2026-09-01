@@ -106,9 +106,9 @@ export default function Home() {
       </section>
 
       {/* 2. INTERACTIVE OCR ENGINE SHOWCASE */}
-      <section id="ocr" className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
+      <section id="ocr" className="pb-8 pt-2 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-8 mt-4">
             <h2 className="text-2xl font-bold text-foreground">Interactive Optical Scanner Demonstration</h2>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1">
               Test how Lukewarm detects, crops, and maps 8 core fields from different card layouts.
