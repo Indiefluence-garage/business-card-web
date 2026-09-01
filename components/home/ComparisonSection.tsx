@@ -22,7 +22,7 @@ export function ComparisonSection() {
   ];
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6">
       <div className="text-center max-w-2xl mx-auto mb-12">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">
           Why Executives & Founders Use Lukewarm

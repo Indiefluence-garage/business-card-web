@@ -17,7 +17,7 @@ export function VoiceMemoDemo() {
   const [isPlaying, setIsPlaying] = useState(true);
 
   return (
-    <div className="w-full max-w-6xl mx-auto rounded-2xl bg-card border border-border p-6 sm:p-8 lg:p-10 shadow-sm">
+    <div className="w-full max-w-6xl mx-auto rounded-2xl bg-card border border-border p-4 sm:p-6 lg:p-8 shadow-sm">
       
       {/* Header */}
       <div className="max-w-3xl mb-8">

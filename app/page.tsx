@@ -50,7 +50,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       
       {/* 1. CLEAN EXECUTIVE HERO SECTION */}
-      <section className="pt-12 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
+      <section className="pt-10 sm:pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
         <div className="max-w-4xl mx-auto text-center">
           
           {/* Executive Section Eyebrow */}
@@ -106,7 +106,7 @@ export default function Home() {
       </section>
 
       {/* 2. INTERACTIVE OCR ENGINE SHOWCASE */}
-      <section id="ocr" className="py-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
+      <section id="ocr" className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-foreground">Interactive Optical Scanner Demonstration</h2>
@@ -119,12 +119,12 @@ export default function Home() {
       </section>
 
       {/* 3. VOICE INTELLIGENCE SHOWCASE */}
-      <section id="voice" className="py-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
+      <section id="voice" className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
         <VoiceMemoDemo />
       </section>
 
       {/* 4. EXECUTIVE CAPABILITIES GRID */}
-      <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/30">
+      <section id="features" className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/30">
         <div className="max-w-6xl mx-auto">
           
           <div className="max-w-3xl mb-12">
@@ -175,12 +175,12 @@ export default function Home() {
       </section>
 
       {/* 5. WORKFLOW COMPARISON */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
+      <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
         <ComparisonSection />
       </section>
 
       {/* 6. SECURITY & DATA PRIVACY */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
+      <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <p className="text-xs font-bold text-primary tracking-wider uppercase mb-1">
@@ -223,7 +223,7 @@ export default function Home() {
       </section>
 
       {/* 7. FAQ ACCORDION */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
+      <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-border bg-card">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
@@ -272,7 +272,7 @@ export default function Home() {
       </section>
 
       {/* 8. CLEAN BOTTOM CTA BANNER */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-secondary/50 border-b border-border">
+      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-secondary/50 border-b border-border">
         <div className="max-w-4xl mx-auto text-center rounded-xl bg-card border border-border p-8 sm:p-12 shadow-xs">
           <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-3">
             Ready to Organize Your Professional Network?
