@@ -21,6 +21,7 @@ import {
   Layers
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FAQItem {
   question: string;
@@ -69,7 +70,7 @@ const FAQ_ITEMS: FAQItem[] = [
 export default function HelpCenterPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openQuestion, setOpenQuestion] = useState<string | null>(FAQ_ITEMS[0].question);
 
   const filteredFAQs = FAQ_ITEMS.filter((faq) => {
     const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
@@ -130,13 +131,20 @@ export default function HelpCenterPage() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`relative px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
                 selectedCategory === cat.id
-                  ? 'bg-primary text-white shadow-md'
+                  ? 'text-white'
                   : 'bg-card border border-border text-muted-foreground hover:text-foreground'
               }`}
             >
-              {cat.label}
+              {selectedCategory === cat.id && (
+                <motion.div
+                  layoutId="activeCategoryTab"
+                  className="absolute inset-0 bg-primary rounded-xl shadow-md"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10">{cat.label}</span>
             </button>
           ))}
         </div>
@@ -144,29 +152,39 @@ export default function HelpCenterPage() {
         {/* FAQ Accordion */}
         <div className="space-y-4 mb-14">
           {filteredFAQs.length > 0 ? (
-            filteredFAQs.map((faq, index) => {
-              const isOpen = openIndex === index;
+            filteredFAQs.map((faq) => {
+              const isOpen = openQuestion === faq.question;
               return (
                 <div
-                  key={index}
+                  key={faq.question}
                   className="rounded-2xl glass-panel border border-border overflow-hidden transition-all shadow-sm"
                 >
                   <button
-                    onClick={() => setOpenIndex(isOpen ? null : index)}
+                    onClick={() => setOpenQuestion(isOpen ? null : faq.question)}
                     className="w-full flex items-center justify-between p-5 text-left font-semibold text-foreground hover:bg-secondary/40 transition-colors"
                   >
                     <span className="text-sm sm:text-base">{faq.question}</span>
-                    {isOpen ? (
-                      <ChevronUp className="h-5 w-5 text-primary shrink-0 ml-2" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0 ml-2" />
-                    )}
+                    <ChevronDown
+                      className={`h-5 w-5 shrink-0 ml-2 transition-transform duration-300 ease-in-out ${
+                        isOpen ? 'text-primary rotate-180' : 'text-muted-foreground'
+                      }`}
+                    />
                   </button>
-                  {isOpen && (
-                    <div className="p-5 pt-0 text-xs sm:text-sm text-muted-foreground leading-relaxed border-t border-border/40">
-                      {faq.answer}
-                    </div>
-                  )}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-5 pt-0 text-xs sm:text-sm text-muted-foreground leading-relaxed border-t border-border/40">
+                          {faq.answer}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })
