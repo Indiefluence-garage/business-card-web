@@ -103,67 +103,59 @@ export default function InviteClientView({ token, initialInvite }: Props) {
 
   const isLeadRole = initialInvite.role === "lead";
   const isCompanyEvent = initialInvite.eventType === "company";
+  const cleanInviterName = initialInvite.inviterName?.replace(/\s+[a-zA-Z]$/, "").trim() || initialInvite.inviterName;
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
-      {/* Subtle Background Ambience Glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[400px] bg-primary/10 blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[350px] h-[350px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
-
-      <div className="relative max-w-xl mx-auto w-full z-10">
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-lg mx-auto w-full">
         
-        {/* Main Executive Invitation Card */}
-        <div className="bg-card/90 backdrop-blur-xl border border-border rounded-3xl p-6 sm:p-9 shadow-2xl transition-all">
+        {/* Main Clean Executive Card */}
+        <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
           
-          {/* Card Eyebrow & Status Badge */}
-          <div className="flex items-center justify-between gap-3 mb-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              Team Collaboration Invite
+          {/* Card Eyebrow */}
+          <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-border">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-muted text-foreground text-xs font-semibold tracking-wide uppercase">
+              <Users className="w-3.5 h-3.5 text-primary" />
+              <span>Team Collaboration Invite</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Verified Event</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              <span>Lukewarm Verified</span>
             </div>
           </div>
 
-          {/* Inviter Profile Section */}
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-muted/40 border border-border/60 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-blue-600 to-indigo-700 p-0.5 shadow-lg shadow-primary/15 shrink-0">
-              <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center text-white font-bold text-base">
-                {initialInvite.inviterAvatar && !avatarError ? (
-                  <img
-                    src={initialInvite.inviterAvatar}
-                    alt={initialInvite.inviterName}
-                    className="w-full h-full object-cover"
-                    onError={() => setAvatarError(true)}
-                  />
-                ) : (
-                  <span>{getInitials(initialInvite.inviterName)}</span>
-                )}
-              </div>
+          {/* Inviter Row */}
+          <div className="flex items-center gap-3.5 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-muted border border-border overflow-hidden flex items-center justify-center text-foreground font-bold text-sm shrink-0">
+              {initialInvite.inviterAvatar && !avatarError ? (
+                <img
+                  src={initialInvite.inviterAvatar}
+                  alt={cleanInviterName}
+                  className="w-full h-full object-cover"
+                  onError={() => setAvatarError(true)}
+                />
+              ) : (
+                <span>{getInitials(cleanInviterName)}</span>
+              )}
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                 Invited by
               </p>
-              <h3 className="font-display text-lg font-bold text-foreground truncate leading-snug">
-                {initialInvite.inviterName}
+              <h3 className="font-display text-base font-bold text-foreground truncate">
+                {cleanInviterName}
               </h3>
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                <span>Invited as</span>
-                <span className="font-semibold text-primary">
-                  {isLeadRole ? "Team Lead" : "Collaborator"}
-                </span>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Role: <span className="font-semibold text-foreground">{isLeadRole ? "Team Lead" : "Collaborator"}</span>
               </p>
             </div>
           </div>
 
-          {/* Event Spotlight Ticket */}
-          <div className="rounded-2xl border border-border/80 bg-background/80 p-5 sm:p-6 mb-6 relative overflow-hidden shadow-inner">
-            <div className="flex items-center justify-between gap-2 mb-3">
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
+          {/* Event Details Box */}
+          <div className="rounded-xl border border-border bg-muted/40 p-5 mb-6">
+            <div className="flex items-center justify-between gap-2 mb-2.5">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-primary uppercase tracking-wider">
                 {isCompanyEvent ? (
                   <>
                     <Building2 className="w-3.5 h-3.5" />
@@ -176,30 +168,21 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                   </>
                 )}
               </span>
-
-              <span className="text-[11px] font-medium text-muted-foreground bg-muted/80 border border-border/60 px-2.5 py-0.5 rounded-full">
-                {isLeadRole ? "Full Access" : "Shared Scanner"}
-              </span>
             </div>
 
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-4 leading-tight">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-3">
               {initialInvite.eventTitle}
             </h2>
 
-            {/* Event Metadata Grid */}
-            <div className="space-y-2.5 text-sm text-foreground/90">
-              <div className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <Calendar className="w-3.5 h-3.5" />
-                </div>
+            <div className="space-y-2 text-xs sm:text-sm text-foreground/90">
+              <div className="flex items-center gap-2.5">
+                <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
                 <span className="font-medium">{formattedDate}</span>
               </div>
 
               {initialInvite.eventLocation && (
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <MapPin className="w-3.5 h-3.5" />
-                  </div>
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                   <span className="text-muted-foreground line-clamp-2 leading-relaxed">
                     {initialInvite.eventLocation}
                   </span>
@@ -207,50 +190,46 @@ export default function InviteClientView({ token, initialInvite }: Props) {
               )}
             </div>
 
-            {/* Event Description if provided */}
             {initialInvite.eventDescription && (
-              <div className="mt-4 pt-4 border-t border-border/60 text-xs text-muted-foreground leading-relaxed italic">
-                &ldquo;{initialInvite.eventDescription}&rdquo;
-              </div>
+              <p className="mt-3.5 pt-3 border-t border-border text-xs text-muted-foreground leading-relaxed">
+                {initialInvite.eventDescription}
+              </p>
             )}
           </div>
 
-          {/* Team Collaboration Feature Highlight */}
-          <div className="rounded-2xl p-4 mb-6 bg-primary/5 border border-primary/15 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div className="text-xs text-foreground/90 leading-relaxed">
-              <span className="font-bold text-foreground block mb-0.5">Real-Time Team Lead Sync</span>
-              Every business card you scan at this event is instantly shared with your team and attributed to your profile.
-            </div>
+          {/* Live Lead Sync Notice */}
+          <div className="rounded-xl p-3.5 mb-6 bg-muted/60 border border-border flex items-start gap-2.5 text-xs text-muted-foreground">
+            <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong className="text-foreground">Shared Team Leads:</strong> Cards scanned at this event automatically sync to the team in real-time with scanner attribution.
+            </p>
           </div>
 
-          {/* Interactive CTAs */}
-          <div className="space-y-3">
+          {/* Actions */}
+          <div className="space-y-2.5">
             <Button
               size="lg"
               onClick={handleOpenApp}
-              className="w-full btn-primary-glow rounded-xl h-14 text-base font-bold shadow-xl shadow-primary/25 transition-all group"
+              className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
             >
               <span>Accept & Open in Lukewarm App</span>
-              <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4" />
             </Button>
 
             <Button
               size="lg"
               variant="outline"
               onClick={handleCopyLink}
-              className="w-full rounded-xl h-12 text-sm font-semibold transition-all"
+              className="w-full rounded-xl h-11 text-xs font-semibold"
             >
               {copied ? (
                 <>
-                  <Check className="w-4 h-4 mr-2 text-emerald-500" />
+                  <Check className="w-4 h-4 mr-1.5 text-emerald-500" />
                   <span className="text-emerald-500">Invitation Link Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 mr-2 text-muted-foreground" />
+                  <Copy className="w-4 h-4 mr-1.5 text-muted-foreground" />
                   <span>Copy Invitation Link</span>
                 </>
               )}
@@ -258,9 +237,9 @@ export default function InviteClientView({ token, initialInvite }: Props) {
           </div>
         </div>
 
-        {/* Bottom App Download Recommendation */}
-        <div className="mt-8 text-center">
-          <p className="text-xs text-muted-foreground mb-3 flex items-center justify-center gap-1.5">
+        {/* App Download Links */}
+        <div className="mt-6 text-center">
+          <p className="text-xs text-muted-foreground mb-2.5 flex items-center justify-center gap-1.5">
             <Smartphone className="w-3.5 h-3.5" />
             <span>Don&apos;t have the Lukewarm app installed yet?</span>
           </p>
@@ -269,7 +248,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
               href="https://apps.apple.com"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-card border border-border text-xs font-medium text-foreground hover:bg-muted transition-colors"
             >
               <span></span> App Store
             </a>
@@ -277,7 +256,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
               href="https://play.google.com"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-card border border-border text-xs font-medium text-foreground hover:bg-muted transition-colors"
             >
               <span>▶</span> Google Play
             </a>
