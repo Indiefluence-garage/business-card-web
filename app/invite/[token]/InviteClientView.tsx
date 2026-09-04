@@ -28,7 +28,15 @@ interface Props {
 
 export default function InviteClientView({ token, initialInvite }: Props) {
   const [copied, setCopied] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const deepLink = `lukewarm://invite?token=${token}`;
+
+  const getInitials = (name?: string) => {
+    if (!name) return "L";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
 
   const formattedDate = initialInvite?.eventDate
     ? new Date(initialInvite.eventDate).toLocaleDateString("en-US", {
@@ -98,16 +106,16 @@ export default function InviteClientView({ token, initialInvite }: Props) {
 
           {/* Inviter Info */}
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-neutral-800 border border-neutral-700/80 overflow-hidden flex items-center justify-center text-xl font-bold text-neutral-300 relative shadow-inner">
-              {initialInvite.inviterAvatar ? (
-                <Image
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 border border-blue-400/20 overflow-hidden flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-blue-500/10 shrink-0">
+              {initialInvite.inviterAvatar && !avatarError ? (
+                <img
                   src={initialInvite.inviterAvatar}
                   alt={initialInvite.inviterName}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
+                  onError={() => setAvatarError(true)}
                 />
               ) : (
-                initialInvite.inviterName.charAt(0).toUpperCase()
+                <span>{getInitials(initialInvite.inviterName)}</span>
               )}
             </div>
             <div>
