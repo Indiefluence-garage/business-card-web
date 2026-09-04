@@ -98,7 +98,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
   };
 
   const handleOpenApp = () => {
-    window.location.href = acceptedSuccess ? eventDeepLink : deepLink;
+    window.location.href = deepLink;
   };
 
   const handleAcceptInvite = async () => {
