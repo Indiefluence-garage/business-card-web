@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   Calendar, 
@@ -15,9 +15,17 @@ import {
   ExternalLink,
   Layers,
   Building2,
-  AlertCircle
+  AlertCircle,
+  LogIn,
+  UserPlus,
+  LogOut,
+  CheckCircle2,
+  Loader2,
+  AlertTriangle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/hooks/use-auth";
+import api from "@/lib/api";
 
 interface InviteData {
   id: string;
@@ -42,9 +50,30 @@ interface Props {
 }
 
 export default function InviteClientView({ token, initialInvite }: Props) {
+  const { isAuthenticated, isLoading: isAuthLoading, logout } = useAuth();
+  const [currentUser, setCurrentUser] = useState<{ email?: string; name?: string; firstName?: string } | null>(null);
+  
   const [copied, setCopied] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [acceptedSuccess, setAcceptedSuccess] = useState(initialInvite?.status === "accepted");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const deepLink = `lukewarm://invite?token=${token}`;
+  const eventDeepLink = initialInvite ? `lukewarm://(tabs)/(screens)/events/${initialInvite.eventId}` : deepLink;
+
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        setCurrentUser(JSON.parse(userStr));
+      } else {
+        setCurrentUser(null);
+      }
+    } catch {
+      setCurrentUser(null);
+    }
+  }, [isAuthenticated]);
 
   const getInitials = (name?: string) => {
     if (!name) return "LK";
@@ -69,7 +98,23 @@ export default function InviteClientView({ token, initialInvite }: Props) {
   };
 
   const handleOpenApp = () => {
-    window.location.href = deepLink;
+    window.location.href = acceptedSuccess ? eventDeepLink : deepLink;
+  };
+
+  const handleAcceptInvite = async () => {
+    setIsAccepting(true);
+    setErrorMessage(null);
+    try {
+      await api.post("/events/invites/accept", {
+        inviteToken: token,
+      });
+      setAcceptedSuccess(true);
+    } catch (err: any) {
+      const msg = err.response?.data?.error || err.message || "Failed to accept invitation";
+      setErrorMessage(msg);
+    } finally {
+      setIsAccepting(false);
+    }
   };
 
   if (!initialInvite) {
@@ -86,7 +131,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
             This invitation link may have expired, been revoked, or was already accepted by a team member.
           </p>
           <div className="space-y-3">
-            <Button size="lg" className="w-full btn-primary-glow rounded-xl h-12 text-sm font-semibold" asChild>
+            <Button size="lg" className="w-full rounded-xl h-12 text-sm font-semibold" asChild>
               <Link href="/">
                 <span>Return to Home</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -104,6 +149,15 @@ export default function InviteClientView({ token, initialInvite }: Props) {
   const isLeadRole = initialInvite.role === "lead";
   const isCompanyEvent = initialInvite.eventType === "company";
   const cleanInviterName = initialInvite.inviterName?.replace(/\s+[a-zA-Z]$/, "").trim() || initialInvite.inviterName;
+
+  const isMatchingAccount = currentUser?.email && initialInvite?.invitedEmail
+    ? currentUser.email.trim().toLowerCase() === initialInvite.invitedEmail.trim().toLowerCase()
+    : false;
+
+  const isDifferentAccount = isAuthenticated && currentUser?.email && !isMatchingAccount;
+
+  const loginRedirectUrl = `/login?redirect=${encodeURIComponent(`/invite/${token}`)}&email=${encodeURIComponent(initialInvite.invitedEmail)}`;
+  const signupRedirectUrl = `/signup?redirect=${encodeURIComponent(`/invite/${token}`)}&email=${encodeURIComponent(initialInvite.invitedEmail)}`;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
@@ -205,39 +259,167 @@ export default function InviteClientView({ token, initialInvite }: Props) {
             </p>
           </div>
 
-          {/* Actions */}
-          <div className="space-y-2.5">
-            <Button
-              size="lg"
-              onClick={handleOpenApp}
-              className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
-            >
-              <span>Accept & Open in Lukewarm App</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
+          {/* Error Message if any */}
+          {errorMessage && (
+            <div className="rounded-xl p-3 mb-4 bg-destructive/10 border border-destructive/20 text-xs text-destructive flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
 
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={handleCopyLink}
-              className="w-full rounded-xl h-11 text-xs font-semibold"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-4 h-4 mr-1.5 text-emerald-500" />
-                  <span className="text-emerald-500">Invitation Link Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4 mr-1.5 text-muted-foreground" />
-                  <span>Copy Invitation Link</span>
-                </>
-              )}
-            </Button>
-          </div>
+          {/* ==================== AUTH & ACCEPTANCE ACTIONS ==================== */}
+
+          {/* 1. Accepted Success State */}
+          {acceptedSuccess ? (
+            <div className="space-y-3 animate-in fade-in duration-300">
+              <div className="rounded-xl p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center">
+                <CheckCircle2 className="w-6 h-6 mx-auto mb-1.5" />
+                <p className="font-bold text-sm">You&apos;re in! Invitation Accepted.</p>
+                <p className="text-xs opacity-90 mt-0.5">
+                  You now have access to {initialInvite.eventTitle}&apos;s live team card scanner.
+                </p>
+              </div>
+
+              <Button
+                size="lg"
+                onClick={handleOpenApp}
+                className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <span>Open in Lukewarm Mobile App</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="w-full rounded-xl h-11 text-xs font-semibold"
+              >
+                <Link href="/dashboard">Go to Web Dashboard</Link>
+              </Button>
+            </div>
+          ) : !isAuthLoading && !isAuthenticated ? (
+            /* 2. Unauthenticated State (Step 1.0 & 1 of diagram) */
+            <div className="space-y-3">
+              <div className="rounded-xl p-3.5 bg-muted/70 border border-border text-xs text-muted-foreground text-center">
+                <p>
+                  This invite was sent to <strong className="text-foreground">{initialInvite.invitedEmail}</strong>.
+                </p>
+                <p className="mt-0.5">Please log in or create an account to join the team.</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <Button size="lg" className="rounded-xl h-12 text-sm font-semibold" asChild>
+                  <Link href={loginRedirectUrl} className="flex items-center justify-center gap-1.5">
+                    <LogIn className="w-4 h-4" />
+                    <span>Log In</span>
+                  </Link>
+                </Button>
+
+                <Button size="lg" variant="outline" className="rounded-xl h-12 text-sm font-semibold" asChild>
+                  <Link href={signupRedirectUrl} className="flex items-center justify-center gap-1.5">
+                    <UserPlus className="w-4 h-4" />
+                    <span>Create Account</span>
+                  </Link>
+                </Button>
+              </div>
+
+              <Button
+                size="lg"
+                variant="ghost"
+                onClick={handleOpenApp}
+                className="w-full rounded-xl h-11 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <span>Already have the mobile app? Open App</span>
+                <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
+              </Button>
+            </div>
+          ) : isDifferentAccount ? (
+            /* 3. Account Mismatch State */
+            <div className="space-y-3">
+              <div className="rounded-xl p-3.5 bg-amber-500/10 border border-amber-500/20 text-xs text-amber-600 dark:text-amber-400">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Account Mismatch Notice</p>
+                    <p className="mt-0.5 opacity-90">
+                      You are signed in as <strong className="underline">{currentUser?.email}</strong>, but this invite was sent to <strong className="underline">{initialInvite.invitedEmail}</strong>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                size="lg"
+                onClick={handleAcceptInvite}
+                disabled={isAccepting}
+                className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                {isAccepting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <span>Join with Current Account ({currentUser?.email})</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => {
+                  logout();
+                  window.location.href = loginRedirectUrl;
+                }}
+                className="w-full rounded-xl h-11 text-xs font-semibold flex items-center justify-center gap-1.5 text-muted-foreground"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Switch Account</span>
+              </Button>
+            </div>
+          ) : (
+            /* 4. Authenticated Matching Account -> 1-Click Accept (Step 2 of diagram) */
+            <div className="space-y-2.5">
+              <Button
+                size="lg"
+                onClick={handleAcceptInvite}
+                disabled={isAccepting}
+                className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                {isAccepting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <span>Accept Invitation</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={handleCopyLink}
+                className="w-full rounded-xl h-11 text-xs font-semibold"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 mr-1.5 text-emerald-500" />
+                    <span className="text-emerald-500">Invitation Link Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 mr-1.5 text-muted-foreground" />
+                    <span>Copy Invitation Link</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* App Download Links */}
+        {/* App Download Links (Step 3 of diagram) */}
         <div className="mt-6 text-center">
           <p className="text-xs text-muted-foreground mb-2.5 flex items-center justify-center gap-1.5">
             <Smartphone className="w-3.5 h-3.5" />
@@ -266,4 +448,5 @@ export default function InviteClientView({ token, initialInvite }: Props) {
     </div>
   );
 }
+
 
