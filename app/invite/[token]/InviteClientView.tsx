@@ -2,7 +2,22 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { 
+  Calendar, 
+  MapPin, 
+  Users, 
+  Sparkles, 
+  ArrowRight, 
+  Copy, 
+  Check, 
+  ShieldCheck, 
+  Smartphone,
+  ExternalLink,
+  Layers,
+  Building2,
+  AlertCircle
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface InviteData {
   id: string;
@@ -32,7 +47,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
   const deepLink = `lukewarm://invite?token=${token}`;
 
   const getInitials = (name?: string) => {
-    if (!name) return "L";
+    if (!name) return "LK";
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
@@ -50,7 +65,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 2200);
   };
 
   const handleOpenApp = () => {
@@ -59,168 +74,217 @@ export default function InviteClientView({ token, initialInvite }: Props) {
 
   if (!initialInvite) {
     return (
-      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col items-center justify-center p-6">
-        <div className="max-w-md w-full text-center bg-neutral-900 border border-neutral-800 rounded-3xl p-8 shadow-2xl">
-          <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-            !
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-12 bg-background">
+        <div className="max-w-md w-full text-center bg-card border border-border rounded-3xl p-8 sm:p-10 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold mb-2">Invitation Not Found</h1>
-          <p className="text-neutral-400 text-sm mb-8 leading-relaxed">
-            This invitation link may have expired or was already claimed by another team member.
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground mb-3">
+            Invitation Expired or Invalid
+          </h1>
+          <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+            This invitation link may have expired, been revoked, or was already accepted by a team member.
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center w-full py-3.5 px-6 rounded-2xl bg-white text-neutral-950 font-semibold hover:bg-neutral-200 transition-all text-sm"
-          >
-            Go to Lukewarm Home
-          </Link>
+          <div className="space-y-3">
+            <Button size="lg" className="w-full btn-primary-glow rounded-xl h-12 text-sm font-semibold" asChild>
+              <Link href="/">
+                <span>Return to Home</span>
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="w-full rounded-xl h-12 text-sm font-semibold" asChild>
+              <Link href="/help">Contact Support</Link>
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
+  const isLeadRole = initialInvite.role === "lead";
+  const isCompanyEvent = initialInvite.eventType === "company";
+
   return (
-    <div className="min-h-screen bg-[#07090E] text-white flex flex-col justify-between relative overflow-hidden font-sans">
-      {/* Dynamic Background Glows */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-blue-600/20 blur-[140px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-600/15 blur-[140px] rounded-full pointer-events-none" />
+    <div className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
+      {/* Subtle Background Ambience Glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[400px] bg-primary/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[350px] h-[350px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Top Navbar */}
-      <header className="max-w-6xl mx-auto w-full px-6 py-6 flex items-center justify-between z-10">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-black text-lg text-white shadow-lg shadow-blue-500/30">
-            L
-          </div>
-          <span className="text-xl font-bold tracking-tight">Lukewarm</span>
-        </Link>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-xl mx-auto w-full px-6 py-8 z-10 flex-1 flex flex-col justify-center">
-        <div className="bg-neutral-900/80 backdrop-blur-2xl border border-neutral-800/80 rounded-3xl p-8 sm:p-10 shadow-2xl relative">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-6">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-            Team Collaboration Invite
-          </div>
-
-          {/* Inviter Info */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 border border-blue-400/20 overflow-hidden flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-blue-500/10 shrink-0">
-              {initialInvite.inviterAvatar && !avatarError ? (
-                <img
-                  src={initialInvite.inviterAvatar}
-                  alt={initialInvite.inviterName}
-                  className="w-full h-full object-cover"
-                  onError={() => setAvatarError(true)}
-                />
-              ) : (
-                <span>{getInitials(initialInvite.inviterName)}</span>
-              )}
+      <div className="relative max-w-xl mx-auto w-full z-10">
+        
+        {/* Main Executive Invitation Card */}
+        <div className="bg-card/90 backdrop-blur-xl border border-border rounded-3xl p-6 sm:p-9 shadow-2xl transition-all">
+          
+          {/* Card Eyebrow & Status Badge */}
+          <div className="flex items-center justify-between gap-3 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              Team Collaboration Invite
             </div>
-            <div>
-              <p className="text-xs text-neutral-400 uppercase tracking-wider font-semibold">Invited by</p>
-              <h3 className="text-lg font-bold text-white leading-tight">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Verified Event</span>
+            </div>
+          </div>
+
+          {/* Inviter Profile Section */}
+          <div className="flex items-center gap-4 p-4 rounded-2xl bg-muted/40 border border-border/60 mb-6">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-blue-600 to-indigo-700 p-0.5 shadow-lg shadow-primary/15 shrink-0">
+              <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center text-white font-bold text-base">
+                {initialInvite.inviterAvatar && !avatarError ? (
+                  <img
+                    src={initialInvite.inviterAvatar}
+                    alt={initialInvite.inviterName}
+                    className="w-full h-full object-cover"
+                    onError={() => setAvatarError(true)}
+                  />
+                ) : (
+                  <span>{getInitials(initialInvite.inviterName)}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+                Invited by
+              </p>
+              <h3 className="font-display text-lg font-bold text-foreground truncate leading-snug">
                 {initialInvite.inviterName}
               </h3>
+              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                <span>Invited as</span>
+                <span className="font-semibold text-primary">
+                  {isLeadRole ? "Team Lead" : "Collaborator"}
+                </span>
+              </p>
             </div>
           </div>
 
-          {/* Event Card */}
-          <div className="bg-neutral-950/60 border border-neutral-800 rounded-2xl p-6 mb-8">
+          {/* Event Spotlight Ticket */}
+          <div className="rounded-2xl border border-border/80 bg-background/80 p-5 sm:p-6 mb-6 relative overflow-hidden shadow-inner">
             <div className="flex items-center justify-between gap-2 mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">
-                {initialInvite.eventType === "company" ? "🏢 Company Event" : "👤 Event Hub"}
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
+                {isCompanyEvent ? (
+                  <>
+                    <Building2 className="w-3.5 h-3.5" />
+                    <span>Company Event</span>
+                  </>
+                ) : (
+                  <>
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>Event Team Hub</span>
+                  </>
+                )}
               </span>
-              <span className="text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-full">
-                Role: {initialInvite.role === "lead" ? "Team Lead" : "Collaborator"}
+
+              <span className="text-[11px] font-medium text-muted-foreground bg-muted/80 border border-border/60 px-2.5 py-0.5 rounded-full">
+                {isLeadRole ? "Full Access" : "Shared Scanner"}
               </span>
             </div>
 
-            <h1 className="text-2xl font-black text-white mb-4 tracking-tight leading-snug">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-4 leading-tight">
               {initialInvite.eventTitle}
-            </h1>
+            </h2>
 
-            <div className="space-y-2 text-sm text-neutral-300">
-              <div className="flex items-center gap-2.5">
-                <span className="text-base">🗓️</span>
-                <span>{formattedDate}</span>
+            {/* Event Metadata Grid */}
+            <div className="space-y-2.5 text-sm text-foreground/90">
+              <div className="flex items-center gap-3">
+                <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <Calendar className="w-3.5 h-3.5" />
+                </div>
+                <span className="font-medium">{formattedDate}</span>
               </div>
+
               {initialInvite.eventLocation && (
-                <div className="flex items-center gap-2.5">
-                  <span className="text-base">📍</span>
-                  <span className="truncate">{initialInvite.eventLocation}</span>
+                <div className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                    <MapPin className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-muted-foreground line-clamp-2 leading-relaxed">
+                    {initialInvite.eventLocation}
+                  </span>
                 </div>
               )}
             </div>
 
+            {/* Event Description if provided */}
             {initialInvite.eventDescription && (
-              <p className="mt-4 pt-4 border-t border-neutral-800/80 text-xs text-neutral-400 leading-relaxed">
-                {initialInvite.eventDescription}
-              </p>
+              <div className="mt-4 pt-4 border-t border-border/60 text-xs text-muted-foreground leading-relaxed italic">
+                &ldquo;{initialInvite.eventDescription}&rdquo;
+              </div>
             )}
           </div>
 
-          {/* Value Prop Banner */}
-          <div className="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 border border-blue-500/20 rounded-2xl p-4 mb-8 text-xs text-blue-200 leading-relaxed flex items-start gap-3">
-            <span className="text-lg leading-none">✨</span>
-            <div>
-              <strong className="text-white">Shared Team Leads:</strong> All business cards you scan at this event will sync to the team in real-time, attribution-tagged with your name.
+          {/* Team Collaboration Feature Highlight */}
+          <div className="rounded-2xl p-4 mb-6 bg-primary/5 border border-primary/15 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div className="text-xs text-foreground/90 leading-relaxed">
+              <span className="font-bold text-foreground block mb-0.5">Real-Time Team Lead Sync</span>
+              Every business card you scan at this event is instantly shared with your team and attributed to your profile.
             </div>
           </div>
 
-          {/* Action CTA Buttons */}
+          {/* Interactive CTAs */}
           <div className="space-y-3">
-            <button
+            <Button
+              size="lg"
               onClick={handleOpenApp}
-              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-base shadow-xl shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
+              className="w-full btn-primary-glow rounded-xl h-14 text-base font-bold shadow-xl shadow-primary/25 transition-all group"
             >
               <span>Accept & Open in Lukewarm App</span>
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
+              <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+            </Button>
 
-            <button
+            <Button
+              size="lg"
+              variant="outline"
               onClick={handleCopyLink}
-              className="w-full py-3.5 px-6 rounded-2xl bg-neutral-800/80 hover:bg-neutral-800 border border-neutral-700/60 text-neutral-300 font-semibold text-sm transition-all flex items-center justify-center gap-2"
+              className="w-full rounded-xl h-12 text-sm font-semibold transition-all"
             >
-              <span>{copied ? "✓ Invite Link Copied!" : "Copy Invite Link"}</span>
-            </button>
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4 mr-2 text-emerald-500" />
+                  <span className="text-emerald-500">Invitation Link Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2 text-muted-foreground" />
+                  <span>Copy Invitation Link</span>
+                </>
+              )}
+            </Button>
           </div>
         </div>
 
-        {/* Mobile App Download Promo */}
+        {/* Bottom App Download Recommendation */}
         <div className="mt-8 text-center">
-          <p className="text-xs text-neutral-400 mb-3">
-            Don&apos;t have the Lukewarm app installed yet?
+          <p className="text-xs text-muted-foreground mb-3 flex items-center justify-center gap-1.5">
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Don&apos;t have the Lukewarm app installed yet?</span>
           </p>
-          <div className="flex items-center justify-center gap-4 text-xs font-semibold text-blue-400">
+          <div className="inline-flex items-center justify-center gap-3">
             <a
               href="https://apps.apple.com"
               target="_blank"
               rel="noreferrer"
-              className="hover:underline flex items-center gap-1.5"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted transition-colors shadow-sm"
             >
-              <span></span> Download on iOS
+              <span></span> App Store
             </a>
-            <span className="text-neutral-700">•</span>
             <a
               href="https://play.google.com"
               target="_blank"
               rel="noreferrer"
-              className="hover:underline flex items-center gap-1.5"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted transition-colors shadow-sm"
             >
-              <span>▶</span> Download on Android
+              <span>▶</span> Google Play
             </a>
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="max-w-6xl mx-auto w-full px-6 py-6 text-center text-xs text-neutral-500 z-10">
-        &copy; {new Date().getFullYear()} Lukewarm. All rights reserved.
-      </footer>
+      </div>
     </div>
   );
 }
+
