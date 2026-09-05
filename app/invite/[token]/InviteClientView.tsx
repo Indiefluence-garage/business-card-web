@@ -229,16 +229,16 @@ export default function InviteClientView({ token, initialInvite }: Props) {
       <div className="max-w-lg mx-auto w-full">
         
         {/* Main Clean Executive Card */}
-        <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-4 sm:p-8 shadow-sm">
           
           {/* Card Eyebrow */}
-          <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-border">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-muted text-foreground text-xs font-semibold tracking-wide uppercase">
-              <Users className="w-3.5 h-3.5 text-primary" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-6 pb-4 border-b border-border">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-muted text-foreground text-xs font-semibold tracking-wide uppercase self-start">
+              <Users className="w-3.5 h-3.5 text-primary shrink-0" />
               <span>Team Collaboration Invite</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium self-start sm:self-auto">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary shrink-0" />
               <span>Lukewarm Verified</span>
             </div>
           </div>
@@ -272,7 +272,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
           </div>
 
           {/* Event Details Box */}
-          <div className="rounded-xl border border-border bg-muted/40 p-5 mb-6">
+          <div className="rounded-xl border border-border bg-muted/40 p-4 sm:p-5 mb-6">
             <div className="flex items-center justify-between gap-2 mb-2.5">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-primary uppercase tracking-wider">
                 {isCompanyEvent ? (
@@ -289,7 +289,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
               </span>
             </div>
 
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-3">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-3 break-words">
               {invite.eventTitle}
             </h2>
 
@@ -302,7 +302,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
               {invite.eventLocation && (
                 <div className="flex items-start gap-2.5">
                   <MapPin className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                  <span className="text-muted-foreground line-clamp-2 leading-relaxed">
+                  <span className="text-muted-foreground line-clamp-2 leading-relaxed break-words">
                     {invite.eventLocation}
                   </span>
                 </div>
@@ -310,7 +310,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
             </div>
 
             {invite.eventDescription && (
-              <p className="mt-3.5 pt-3 border-t border-border text-xs text-muted-foreground leading-relaxed">
+              <p className="mt-3.5 pt-3 border-t border-border text-xs text-muted-foreground leading-relaxed break-words">
                 {invite.eventDescription}
               </p>
             )}
@@ -348,17 +348,17 @@ export default function InviteClientView({ token, initialInvite }: Props) {
               <Button
                 size="lg"
                 onClick={handleOpenApp}
-                className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
+                className="w-full rounded-xl min-h-[3rem] h-auto py-3 px-4 text-sm font-semibold flex items-center justify-center gap-2"
               >
                 <span>Open in Lukewarm Mobile App</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </Button>
 
               <Button
                 size="lg"
                 variant="outline"
                 asChild
-                className="w-full rounded-xl h-11 text-xs font-semibold"
+                className="w-full rounded-xl min-h-[2.75rem] h-auto py-2.5 px-4 text-xs font-semibold"
               >
                 <Link href="/dashboard">Go to Web Dashboard</Link>
               </Button>
@@ -367,23 +367,23 @@ export default function InviteClientView({ token, initialInvite }: Props) {
             /* 2. Unauthenticated State (Step 1.0 & 1 of diagram) */
             <div className="space-y-3">
               <div className="rounded-xl p-3.5 bg-muted/70 border border-border text-xs text-muted-foreground text-center">
-                <p>
-                  This invite was sent to <strong className="text-foreground">{invite.invitedEmail}</strong>.
+                <p className="leading-relaxed">
+                  This invite was sent to <strong className="text-foreground break-all">{invite.invitedEmail}</strong>.
                 </p>
                 <p className="mt-0.5">Please log in or create an account to join the team.</p>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                <Button size="lg" className="rounded-xl h-12 text-sm font-semibold" asChild>
+                <Button size="lg" className="rounded-xl min-h-[3rem] h-auto py-3 text-sm font-semibold" asChild>
                   <Link href={loginRedirectUrl} className="flex items-center justify-center gap-1.5">
-                    <LogIn className="w-4 h-4" />
+                    <LogIn className="w-4 h-4 shrink-0" />
                     <span>Log In</span>
                   </Link>
                 </Button>
 
-                <Button size="lg" variant="outline" className="rounded-xl h-12 text-sm font-semibold" asChild>
+                <Button size="lg" variant="outline" className="rounded-xl min-h-[3rem] h-auto py-3 text-sm font-semibold" asChild>
                   <Link href={signupRedirectUrl} className="flex items-center justify-center gap-1.5">
-                    <UserPlus className="w-4 h-4" />
+                    <UserPlus className="w-4 h-4 shrink-0" />
                     <span>Create Account</span>
                   </Link>
                 </Button>
@@ -393,10 +393,10 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                 size="lg"
                 variant="ghost"
                 onClick={handleOpenApp}
-                className="w-full rounded-xl h-11 text-xs text-muted-foreground hover:text-foreground"
+                className="w-full rounded-xl min-h-[2.75rem] h-auto py-2.5 px-3 text-xs text-muted-foreground hover:text-foreground"
               >
                 <span>Already have the mobile app? Open App</span>
-                <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
+                <ExternalLink className="w-3.5 h-3.5 ml-1.5 shrink-0" />
               </Button>
             </div>
           ) : isDifferentAccount ? (
@@ -405,10 +405,10 @@ export default function InviteClientView({ token, initialInvite }: Props) {
               <div className="rounded-xl p-3.5 bg-amber-500/10 border border-amber-500/20 text-xs text-amber-600 dark:text-amber-400">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="font-semibold">Account Mismatch Notice</p>
-                    <p className="mt-0.5 opacity-90">
-                      You are signed in as <strong className="underline">{currentUser?.email}</strong>, but this invite was sent to <strong className="underline">{invite.invitedEmail}</strong>.
+                    <p className="mt-0.5 opacity-90 leading-relaxed break-words">
+                      You are signed in as <strong className="underline break-all">{currentUser?.email}</strong>, but this invite was sent to <strong className="underline break-all">{invite.invitedEmail}</strong>.
                     </p>
                   </div>
                 </div>
@@ -418,14 +418,20 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                 size="lg"
                 onClick={handleAcceptInvite}
                 disabled={isAccepting}
-                className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
+                className="w-full rounded-xl min-h-[3.25rem] h-auto py-3 px-4 text-sm font-semibold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 leading-tight"
               >
                 {isAccepting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
                 ) : (
                   <>
-                    <span>Join with Current Account ({currentUser?.email})</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <div className="flex items-center gap-1.5 justify-center min-w-0 text-center">
+                      <span>Join with Current Account</span>
+                      <ArrowRight className="w-4 h-4 shrink-0 hidden sm:inline-block" />
+                    </div>
+                    <span className="text-xs opacity-85 font-normal truncate max-w-full block">
+                      ({currentUser?.email})
+                    </span>
+                    <ArrowRight className="w-4 h-4 shrink-0 sm:hidden mt-0.5" />
                   </>
                 )}
               </Button>
@@ -437,9 +443,9 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                   logout();
                   window.location.href = loginRedirectUrl;
                 }}
-                className="w-full rounded-xl h-11 text-xs font-semibold flex items-center justify-center gap-1.5 text-muted-foreground"
+                className="w-full rounded-xl min-h-[2.75rem] h-auto py-2.5 px-4 text-xs font-semibold flex items-center justify-center gap-1.5 text-muted-foreground"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <LogOut className="w-3.5 h-3.5 shrink-0" />
                 <span>Switch Account</span>
               </Button>
             </div>
@@ -450,14 +456,14 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                 size="lg"
                 onClick={handleAcceptInvite}
                 disabled={isAccepting}
-                className="w-full rounded-xl h-12 text-sm font-semibold flex items-center justify-center gap-2"
+                className="w-full rounded-xl min-h-[3rem] h-auto py-3 px-4 text-sm font-semibold flex items-center justify-center gap-2"
               >
                 {isAccepting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
                 ) : (
                   <>
                     <span>Accept Invitation</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4 shrink-0" />
                   </>
                 )}
               </Button>
@@ -466,16 +472,16 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                 size="lg"
                 variant="outline"
                 onClick={handleCopyLink}
-                className="w-full rounded-xl h-11 text-xs font-semibold"
+                className="w-full rounded-xl min-h-[2.75rem] h-auto py-2.5 px-4 text-xs font-semibold"
               >
                 {copied ? (
                   <>
-                    <Check className="w-4 h-4 mr-1.5 text-emerald-500" />
+                    <Check className="w-4 h-4 mr-1.5 text-emerald-500 shrink-0" />
                     <span className="text-emerald-500">Invitation Link Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-4 h-4 mr-1.5 text-muted-foreground" />
+                    <Copy className="w-4 h-4 mr-1.5 text-muted-foreground shrink-0" />
                     <span>Copy Invitation Link</span>
                   </>
                 )}
