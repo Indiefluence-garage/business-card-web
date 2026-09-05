@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -39,6 +39,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,12 +63,13 @@ export default function SignupPage() {
         lastName: data.lastName,
       });
 
+      const redirectTarget = searchParams.get('redirect');
       sessionStorage.setItem(
         'pendingVerification',
-        JSON.stringify({ email: data.email, timestamp: Date.now() })
+        JSON.stringify({ email: data.email, redirect: redirectTarget, timestamp: Date.now() })
       );
 
-      router.push('/verify-otp');
+      router.push('/verify-otp' + (redirectTarget ? `?redirect=${encodeURIComponent(redirectTarget)}` : ''));
     } catch (err: any) {
       console.error(err);
       let errorMessage = 'Failed to create account.';
@@ -88,7 +90,12 @@ export default function SignupPage() {
     setGoogleLoading(true);
     setError(null);
     try {
-      const callbackURL = window.location.origin + '/callback';
+      const redirectTarget = searchParams.get('redirect');
+      const callbackURL =
+        window.location.origin +
+        '/callback' +
+        (redirectTarget ? `?redirect=${encodeURIComponent(redirectTarget)}` : '');
+
       const response = await api.post('/better-auth/sign-in/social', {
         provider: 'google',
         callbackURL,

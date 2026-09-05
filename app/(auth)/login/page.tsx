@@ -78,7 +78,12 @@ function LoginForm() {
     setGoogleLoading(true);
     setError(null);
     try {
-      const callbackURL = window.location.origin + '/callback';
+      const redirectTarget = searchParams.get('redirect');
+      const callbackURL =
+        window.location.origin +
+        '/callback' +
+        (redirectTarget ? `?redirect=${encodeURIComponent(redirectTarget)}` : '');
+
       const response = await api.post('/better-auth/sign-in/social', {
         provider: 'google',
         callbackURL,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -31,6 +31,7 @@ const MAX_ATTEMPTS = 5;
 
 export default function VerifyOTPPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -103,13 +104,35 @@ export default function VerifyOTPPage() {
     setError(null);
 
     try {
-      await authService.verifyEmail({
+      const res: any = await authService.verifyEmail({
         email,
         otp: data.otp,
       });
 
+      if (res?.token) {
+        localStorage.setItem('token', res.token);
+      }
+      if (res?.user) {
+        localStorage.setItem('user', JSON.stringify(res.user));
+      }
+      window.dispatchEvent(new Event('auth-change'));
+
+      const pendingVerification = sessionStorage.getItem('pendingVerification');
+      let redirectTarget = searchParams.get('redirect');
+      if (!redirectTarget && pendingVerification) {
+        try {
+          const parsed = JSON.parse(pendingVerification);
+          if (parsed.redirect) redirectTarget = parsed.redirect;
+        } catch {}
+      }
+
       sessionStorage.removeItem('pendingVerification');
-      router.push('/login?verified=true');
+
+      if (redirectTarget) {
+        router.push(redirectTarget);
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       console.error(err);
 
