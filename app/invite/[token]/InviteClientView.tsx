@@ -53,14 +53,59 @@ export default function InviteClientView({ token, initialInvite }: Props) {
   const { isAuthenticated, isLoading: isAuthLoading, logout } = useAuth();
   const [currentUser, setCurrentUser] = useState<{ email?: string; name?: string; firstName?: string } | null>(null);
   
+  const [invite, setInvite] = useState<InviteData | null>(initialInvite);
+  const [isLoadingInvite, setIsLoadingInvite] = useState<boolean>(!initialInvite);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   const [copied, setCopied] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
-  const [acceptedSuccess, setAcceptedSuccess] = useState(initialInvite?.status === "accepted");
+  const [acceptedSuccess, setAcceptedSuccess] = useState(invite?.status === "accepted");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (initialInvite) {
+      setInvite(initialInvite);
+      setIsLoadingInvite(false);
+      setAcceptedSuccess(initialInvite.status === "accepted");
+      return;
+    }
+
+    let isMounted = true;
+    const fetchClientSideInvite = async () => {
+      setIsLoadingInvite(true);
+      setLoadError(null);
+      try {
+        const cleanToken = encodeURIComponent((token || "").trim());
+        const res = await api.get(`/events/invites/${cleanToken}/public`);
+        if (isMounted && res.data?.success && res.data?.data) {
+          setInvite(res.data.data);
+          if (res.data.data.status === "accepted") {
+            setAcceptedSuccess(true);
+          }
+        } else if (isMounted) {
+          setLoadError("Invitation not found");
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          console.error("Client-side invite fetch error:", err);
+          setLoadError(err.response?.data?.error || err.message || "Invitation link is invalid or expired.");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingInvite(false);
+        }
+      }
+    };
+
+    fetchClientSideInvite();
+    return () => {
+      isMounted = false;
+    };
+  }, [token, initialInvite]);
+
   const deepLink = `lukewarm://invite?token=${token}`;
-  const eventDeepLink = initialInvite ? `lukewarm://(tabs)/(screens)/events/${initialInvite.eventId}` : deepLink;
+  const eventDeepLink = invite ? `lukewarm://(tabs)/(screens)/events/${invite.eventId}` : deepLink;
 
   useEffect(() => {
     try {
@@ -82,8 +127,8 @@ export default function InviteClientView({ token, initialInvite }: Props) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  const formattedDate = initialInvite?.eventDate
-    ? new Date(initialInvite.eventDate).toLocaleDateString("en-US", {
+  const formattedDate = invite?.eventDate
+    ? new Date(invite.eventDate).toLocaleDateString("en-US", {
         weekday: "short",
         month: "short",
         day: "numeric",
@@ -117,7 +162,23 @@ export default function InviteClientView({ token, initialInvite }: Props) {
     }
   };
 
-  if (!initialInvite) {
+  if (isLoadingInvite) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-12 bg-background">
+        <div className="max-w-md w-full text-center bg-card border border-border rounded-3xl p-8 sm:p-10 shadow-sm flex flex-col items-center justify-center">
+          <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+          <h2 className="font-display text-lg font-bold text-foreground">
+            Loading invitation details...
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            Verifying your team invitation link
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!invite) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-12 bg-background">
         <div className="max-w-md w-full text-center bg-card border border-border rounded-3xl p-8 sm:p-10 shadow-2xl">
@@ -128,17 +189,21 @@ export default function InviteClientView({ token, initialInvite }: Props) {
             Invitation Expired or Invalid
           </h1>
           <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-            This invitation link may have expired, been revoked, or was already accepted by a team member.
+            {loadError || "This invitation link may have expired, been revoked, or was already accepted by a team member."}
           </p>
           <div className="space-y-3">
-            <Button size="lg" className="w-full rounded-xl h-12 text-sm font-semibold" asChild>
+            <Button
+              size="lg"
+              onClick={() => window.location.reload()}
+              className="w-full rounded-xl h-12 text-sm font-semibold"
+            >
+              <span>Try Again</span>
+            </Button>
+            <Button size="lg" variant="outline" className="w-full rounded-xl h-12 text-sm font-semibold" asChild>
               <Link href="/">
                 <span>Return to Home</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="w-full rounded-xl h-12 text-sm font-semibold" asChild>
-              <Link href="/help">Contact Support</Link>
             </Button>
           </div>
         </div>
@@ -146,18 +211,18 @@ export default function InviteClientView({ token, initialInvite }: Props) {
     );
   }
 
-  const isLeadRole = initialInvite.role === "lead";
-  const isCompanyEvent = initialInvite.eventType === "company";
-  const cleanInviterName = initialInvite.inviterName?.replace(/\s+[a-zA-Z]$/, "").trim() || initialInvite.inviterName;
+  const isLeadRole = invite.role === "lead";
+  const isCompanyEvent = invite.eventType === "company";
+  const cleanInviterName = invite.inviterName?.replace(/\s+[a-zA-Z]$/, "").trim() || invite.inviterName;
 
-  const isMatchingAccount = currentUser?.email && initialInvite?.invitedEmail
-    ? currentUser.email.trim().toLowerCase() === initialInvite.invitedEmail.trim().toLowerCase()
+  const isMatchingAccount = currentUser?.email && invite?.invitedEmail
+    ? currentUser.email.trim().toLowerCase() === invite.invitedEmail.trim().toLowerCase()
     : false;
 
   const isDifferentAccount = isAuthenticated && currentUser?.email && !isMatchingAccount;
 
-  const loginRedirectUrl = `/login?redirect=${encodeURIComponent(`/invite/${token}`)}&email=${encodeURIComponent(initialInvite.invitedEmail)}`;
-  const signupRedirectUrl = `/signup?redirect=${encodeURIComponent(`/invite/${token}`)}&email=${encodeURIComponent(initialInvite.invitedEmail)}`;
+  const loginRedirectUrl = `/login?redirect=${encodeURIComponent(`/invite/${token}`)}&email=${encodeURIComponent(invite.invitedEmail)}`;
+  const signupRedirectUrl = `/signup?redirect=${encodeURIComponent(`/invite/${token}`)}&email=${encodeURIComponent(invite.invitedEmail)}`;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
@@ -181,9 +246,9 @@ export default function InviteClientView({ token, initialInvite }: Props) {
           {/* Inviter Row */}
           <div className="flex items-center gap-3.5 mb-6">
             <div className="w-12 h-12 rounded-xl bg-muted border border-border overflow-hidden flex items-center justify-center text-foreground font-bold text-sm shrink-0">
-              {initialInvite.inviterAvatar && !avatarError ? (
+              {invite.inviterAvatar && !avatarError ? (
                 <img
-                  src={initialInvite.inviterAvatar}
+                  src={invite.inviterAvatar}
                   alt={cleanInviterName}
                   className="w-full h-full object-cover"
                   onError={() => setAvatarError(true)}
@@ -225,7 +290,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
             </div>
 
             <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-3">
-              {initialInvite.eventTitle}
+              {invite.eventTitle}
             </h2>
 
             <div className="space-y-2 text-xs sm:text-sm text-foreground/90">
@@ -234,19 +299,19 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                 <span className="font-medium">{formattedDate}</span>
               </div>
 
-              {initialInvite.eventLocation && (
+              {invite.eventLocation && (
                 <div className="flex items-start gap-2.5">
                   <MapPin className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                   <span className="text-muted-foreground line-clamp-2 leading-relaxed">
-                    {initialInvite.eventLocation}
+                    {invite.eventLocation}
                   </span>
                 </div>
               )}
             </div>
 
-            {initialInvite.eventDescription && (
+            {invite.eventDescription && (
               <p className="mt-3.5 pt-3 border-t border-border text-xs text-muted-foreground leading-relaxed">
-                {initialInvite.eventDescription}
+                {invite.eventDescription}
               </p>
             )}
           </div>
@@ -276,7 +341,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                 <CheckCircle2 className="w-6 h-6 mx-auto mb-1.5" />
                 <p className="font-bold text-sm">You&apos;re in! Invitation Accepted.</p>
                 <p className="text-xs opacity-90 mt-0.5">
-                  You now have access to {initialInvite.eventTitle}&apos;s live team card scanner.
+                  You now have access to {invite.eventTitle}&apos;s live team card scanner.
                 </p>
               </div>
 
@@ -303,7 +368,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
             <div className="space-y-3">
               <div className="rounded-xl p-3.5 bg-muted/70 border border-border text-xs text-muted-foreground text-center">
                 <p>
-                  This invite was sent to <strong className="text-foreground">{initialInvite.invitedEmail}</strong>.
+                  This invite was sent to <strong className="text-foreground">{invite.invitedEmail}</strong>.
                 </p>
                 <p className="mt-0.5">Please log in or create an account to join the team.</p>
               </div>
@@ -343,7 +408,7 @@ export default function InviteClientView({ token, initialInvite }: Props) {
                   <div>
                     <p className="font-semibold">Account Mismatch Notice</p>
                     <p className="mt-0.5 opacity-90">
-                      You are signed in as <strong className="underline">{currentUser?.email}</strong>, but this invite was sent to <strong className="underline">{initialInvite.invitedEmail}</strong>.
+                      You are signed in as <strong className="underline">{currentUser?.email}</strong>, but this invite was sent to <strong className="underline">{invite.invitedEmail}</strong>.
                     </p>
                   </div>
                 </div>
